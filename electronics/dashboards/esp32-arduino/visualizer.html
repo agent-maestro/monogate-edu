@@ -1,0 +1,3023 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ESP32 / Arduino Signal Visualizer</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #071014;
+      color: #f1faf7;
+      --panel: rgba(12, 19, 22, 0.9);
+      --line: rgba(142, 224, 178, 0.27);
+      --muted: #9db2ad;
+      --green: #83e6ac;
+      --cyan: #7bdcff;
+      --yellow: #fff29d;
+      --orange: #ffb86b;
+      --red: #ff6e83;
+      --purple: #bda0ff;
+    }
+    * { box-sizing: border-box; }
+    html {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+    body {
+      max-width: 100%;
+      min-height: 100vh;
+      margin: 0;
+      padding: 22px;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 18% 16%, rgba(131,230,172,0.12), transparent 28%),
+        radial-gradient(circle at 72% 8%, rgba(123,220,255,0.10), transparent 22%),
+        linear-gradient(140deg, #071014, #10191d 52%, #081013);
+    }
+    main {
+      width: 100%;
+      max-width: 1240px;
+      min-width: 0;
+      margin: 0 auto;
+      display: grid;
+      gap: 12px;
+    }
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: 0 18px 55px rgba(0,0,0,0.35);
+    }
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: center;
+      padding: 16px;
+      min-width: 0;
+    }
+    h1, p { margin: 0; }
+    h1 {
+      margin-top: 3px;
+      font-size: clamp(26px, 4vw, 46px);
+      line-height: 1;
+    }
+    .kicker, .label {
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+    .sub {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    .brand-version {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      margin-top: 9px;
+      padding: 0 9px;
+      border: 1px solid rgba(123,220,255,0.22);
+      border-radius: 999px;
+      color: #bfefff;
+      background: rgba(123,220,255,0.07);
+      font-size: 10px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: stretch;
+      padding: 10px;
+    }
+    .control-group {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      align-items: center;
+      padding: 8px;
+      border: 1px solid rgba(216,232,228,0.09);
+      border-radius: 8px;
+      background: rgba(7,16,20,0.36);
+    }
+    .control-label {
+      width: 100%;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 950;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+    button, .file-button, .export-menu summary {
+      min-height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 12px;
+      border: 1px solid rgba(216,232,228,0.16);
+      border-radius: 7px;
+      background: rgba(216,232,228,0.07);
+      color: #f1faf7;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .export-menu {
+      position: relative;
+    }
+    .export-menu summary {
+      list-style: none;
+    }
+    .export-menu summary::-webkit-details-marker { display: none; }
+    .export-options {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 6px);
+      z-index: 5;
+      display: grid;
+      gap: 6px;
+      min-width: 150px;
+      padding: 8px;
+      border: 1px solid rgba(216,232,228,0.16);
+      border-radius: 8px;
+      background: rgba(7,16,20,0.96);
+      box-shadow: 0 18px 42px rgba(0,0,0,0.35);
+    }
+    .export-options button {
+      justify-content: flex-start;
+      width: 100%;
+    }
+    .is-hidden {
+      display: none !important;
+    }
+    button[aria-pressed="true"] {
+      border-color: rgba(131,230,172,0.58);
+      background: rgba(131,230,172,0.14);
+      color: #ddffed;
+    }
+    input[type="file"] { display: none; }
+    .status {
+      display: grid;
+      justify-items: end;
+      gap: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      min-width: 0;
+    }
+    .status-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .pill {
+      min-width: 120px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      text-align: center;
+      color: #061b13;
+      background: var(--green);
+      font-weight: 950;
+    }
+    .pill.is-warn { background: var(--yellow); color: #201a04; }
+    .pill.is-error { background: var(--red); color: #29070c; }
+    .sound-preference {
+      width: 36px;
+      min-width: 36px;
+      height: 36px;
+      min-height: 36px;
+      padding: 0;
+      border-radius: 50%;
+      color: var(--muted);
+    }
+    .live-pause-toggle {
+      width: 36px;
+      min-width: 36px;
+      height: 36px;
+      min-height: 36px;
+      padding: 0;
+      border-radius: 50%;
+      color: var(--yellow);
+      border-color: rgba(255,242,157,0.42);
+      background: rgba(255,242,157,0.08);
+    }
+    .live-pause-toggle[disabled] {
+      opacity: 0.42;
+      cursor: not-allowed;
+    }
+    .sound-preference.is-on {
+      color: var(--yellow);
+      border-color: rgba(255,242,157,0.58);
+      background: rgba(255,242,157,0.12);
+      box-shadow: 0 0 22px rgba(255,242,157,0.10);
+    }
+    .sound-preference svg {
+      width: 18px;
+      height: 18px;
+      display: block;
+    }
+    .timestamp {
+      color: #f1faf7;
+      font-size: 15px;
+      font-weight: 950;
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+    .stage {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr);
+      gap: 12px;
+      min-width: 0;
+    }
+    .chart-wrap {
+      position: relative;
+      min-height: 620px;
+      overflow: hidden;
+      min-width: 0;
+    }
+    canvas {
+      width: 100%;
+      height: 620px;
+      display: block;
+    }
+    .legend {
+      position: absolute;
+      left: 14px;
+      top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      max-width: calc(100% - 28px);
+    }
+    .legend button {
+      min-height: 26px;
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+      padding: 5px 8px;
+      border: 1px solid rgba(216,232,228,0.12);
+      border-radius: 999px;
+      background: rgba(6, 13, 16, 0.76);
+      color: #e8f5f1;
+      font-size: 11px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .legend button.is-muted {
+      opacity: 0.58;
+      box-shadow: none;
+    }
+    .legend button[aria-pressed="true"]:not(.signal-shortcut) {
+      border-color: rgba(216,232,228,0.16);
+      background: rgba(6, 13, 16, 0.76);
+      color: currentColor;
+    }
+    .legend button.is-auto {
+      border-color: rgba(255,242,157,0.5);
+      background: rgba(255,242,157,0.10);
+    }
+    .legend button.is-auto::after {
+      content: "auto";
+      margin-left: 1px;
+      padding: 1px 5px;
+      border-radius: 999px;
+      color: #201a04;
+      background: var(--yellow);
+      font-size: 9px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+    .legend .signal-shortcut {
+      border-color: rgba(123,220,255,0.34);
+      color: #d8f6ff;
+      background: rgba(123,220,255,0.08);
+    }
+    .legend .signal-shortcut.is-on {
+      border-color: rgba(255,242,157,0.52);
+      color: var(--yellow);
+      background: rgba(255,242,157,0.10);
+      box-shadow: 0 0 18px rgba(255,242,157,0.08);
+    }
+    .swatch {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 14px currentColor;
+    }
+    .session-summary {
+      margin: 0 14px 14px;
+      padding: 10px;
+      border: 1px solid rgba(216,232,228,0.10);
+      border-radius: 8px;
+      background: rgba(216,232,228,0.035);
+    }
+    .session-summary .label {
+      display: block;
+      margin-bottom: 7px;
+    }
+    .session-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .session-stat {
+      min-height: 50px;
+      padding: 8px 10px;
+      border: 1px solid rgba(216,232,228,0.09);
+      border-radius: 7px;
+      background: rgba(7,16,20,0.54);
+    }
+    .session-stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+    .session-stat strong {
+      display: block;
+      margin-top: 5px;
+      color: #f7fffb;
+      font-size: 16px;
+      line-height: 1.05;
+      font-variant-numeric: tabular-nums;
+    }
+    .evidence-summary {
+      margin: 0 14px 14px;
+      padding: 12px;
+      border: 1px solid rgba(255,242,157,0.18);
+      border-radius: 8px;
+      background: rgba(255,242,157,0.035);
+    }
+    .evidence-summary-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 9px;
+    }
+    .evidence-summary-note {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .evidence-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .evidence-stat {
+      min-height: 58px;
+      padding: 8px 10px;
+      border: 1px solid rgba(216,232,228,0.09);
+      border-radius: 7px;
+      background: rgba(7,16,20,0.58);
+    }
+    .evidence-stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+    .evidence-stat strong {
+      display: block;
+      margin-top: 5px;
+      color: #f7fffb;
+      font-size: 15px;
+      line-height: 1.08;
+      font-variant-numeric: tabular-nums;
+    }
+    .evidence-claim {
+      margin-top: 9px;
+      color: #dce9e5;
+      font-size: 12px;
+      font-weight: 760;
+      line-height: 1.4;
+    }
+    .evidence-claim.ok {
+      color: #dfffee;
+    }
+    .evidence-claim.warn {
+      color: #fff2a6;
+    }
+    .side {
+      display: grid;
+      gap: 12px;
+      min-width: 0;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      padding: 12px;
+    }
+    .metric {
+      min-height: 82px;
+      padding: 11px;
+      border: 1px solid rgba(216,232,228,0.11);
+      border-radius: 7px;
+      background: rgba(216,232,228,0.055);
+      transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+    .metric.changed {
+      border-color: rgba(255,242,157,0.62);
+      box-shadow: 0 0 28px rgba(255,242,157,0.12);
+    }
+    .metric strong {
+      display: block;
+      margin-top: 8px;
+      color: var(--yellow);
+      font-size: 30px;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .story {
+      padding: 14px;
+    }
+    .story-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .node {
+      min-height: 92px;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      gap: 4px;
+      border: 1px solid rgba(216,232,228,0.13);
+      border-radius: 8px;
+      background: rgba(216,232,228,0.055);
+      text-align: center;
+      transition: box-shadow 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+    .node b { color: var(--yellow); font-size: 21px; }
+    .node small { color: var(--muted); font-weight: 900; }
+    .node.active {
+      border-color: rgba(131,230,172,0.56);
+      box-shadow: 0 0 34px rgba(131,230,172,0.15);
+      background: rgba(131,230,172,0.075);
+    }
+    .node.button-active {
+      border-color: rgba(189,160,255,0.72);
+      background: rgba(189,160,255,0.12);
+      box-shadow: 0 0 30px rgba(189,160,255,0.18);
+    }
+    .node.button-active b,
+    .node.button-active span {
+      color: #d9caff;
+    }
+    .node.clamp {
+      border-color: rgba(255,110,131,0.62);
+      box-shadow: 0 0 40px rgba(255,110,131,0.2);
+      background: rgba(255,110,131,0.08);
+    }
+    .caption {
+      min-height: 62px;
+      margin-top: 12px;
+      color: #ecf7f4;
+      font-size: 16px;
+      line-height: 1.35;
+    }
+    .events-panel {
+      padding: 14px;
+      border-color: rgba(142, 224, 178, 0.36);
+      background:
+        linear-gradient(180deg, rgba(131,230,172,0.055), rgba(12,19,22,0.9) 42%),
+        var(--panel);
+    }
+    .events {
+      display: grid;
+      gap: 6px;
+      margin-top: 8px;
+      margin-bottom: 0;
+      padding: 0;
+      list-style: none;
+      min-height: 148px;
+    }
+    .events li {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      padding: 9px 10px;
+      border: 1px solid rgba(216,232,228,0.10);
+      border-radius: 6px;
+      background: rgba(216,232,228,0.045);
+      color: #dce9e5;
+      font-size: 12px;
+      line-height: 1.3;
+    }
+    .event-badge {
+      flex: 0 0 auto;
+      min-width: 48px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      text-align: center;
+      font-size: 10px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+    .event-text {
+      min-width: 0;
+      font-weight: 750;
+    }
+    .events li.clamp {
+      border-color: rgba(255,110,131,0.66);
+      background: rgba(255,110,131,0.105);
+      color: #fff1f3;
+      box-shadow: 0 0 28px rgba(255,110,131,0.08);
+    }
+    .events li.clamp .event-badge {
+      color: #2a060a;
+      background: var(--red);
+    }
+    .events li.release {
+      border-color: rgba(131,230,172,0.48);
+      background: rgba(131,230,172,0.085);
+      box-shadow: 0 0 22px rgba(131,230,172,0.055);
+    }
+    .events li.release .event-badge {
+      color: #071b12;
+      background: var(--green);
+    }
+    .events li.led {
+      border-color: rgba(255,242,157,0.32);
+      background: rgba(255,242,157,0.055);
+    }
+    .events li.led .event-badge {
+      color: #211a03;
+      background: var(--yellow);
+    }
+    .events li.buzzer {
+      border-color: rgba(189,160,255,0.34);
+      background: rgba(189,160,255,0.065);
+    }
+    .events li.buzzer .event-badge {
+      color: #170c31;
+      background: var(--purple);
+    }
+    .events li.button {
+      border-color: rgba(123,220,255,0.5);
+      background: rgba(123,220,255,0.075);
+    }
+    .events li.button .event-badge {
+      color: #06131a;
+      background: var(--cyan);
+    }
+    .events li.empty {
+      color: var(--muted);
+      border-color: rgba(216,232,228,0.08);
+      background: rgba(216,232,228,0.025);
+    }
+    .events li.empty .event-badge {
+      color: var(--muted);
+      background: rgba(216,232,228,0.07);
+    }
+    .session-log {
+      padding: 14px;
+    }
+    .session-log-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .session-log-hint {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+    }
+    .log-list {
+      display: grid;
+      gap: 6px;
+      max-height: 260px;
+      overflow: auto;
+      padding-right: 3px;
+    }
+    .log-row {
+      display: grid;
+      grid-template-columns: 76px 82px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      padding: 9px 10px;
+      border: 1px solid rgba(216,232,228,0.10);
+      border-radius: 7px;
+      background: rgba(216,232,228,0.04);
+      color: #dce9e5;
+      font-size: 12px;
+      line-height: 1.35;
+      cursor: pointer;
+    }
+    .log-row:hover,
+    .log-row.is-inspected {
+      border-color: rgba(123,220,255,0.48);
+      box-shadow: 0 0 24px rgba(123,220,255,0.075);
+    }
+    .log-row .event-badge {
+      justify-self: start;
+    }
+    .log-time {
+      color: var(--muted);
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+    .log-time b {
+      display: block;
+      color: #dce9e5;
+      font-size: 12px;
+    }
+    .log-time small,
+    .event-clock {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 850;
+      font-variant-numeric: tabular-nums;
+    }
+    .event-clock {
+      display: inline-block;
+      margin: 0 8px 0 0;
+      vertical-align: baseline;
+    }
+    .log-detail {
+      min-width: 0;
+      font-weight: 760;
+    }
+    .log-detail small {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-weight: 850;
+    }
+    .log-row.clamp {
+      border-color: rgba(255,110,131,0.50);
+      background: rgba(255,110,131,0.075);
+    }
+    .log-row.release {
+      border-color: rgba(131,230,172,0.36);
+      background: rgba(131,230,172,0.055);
+    }
+    .log-row.led {
+      border-color: rgba(255,242,157,0.28);
+      background: rgba(255,242,157,0.045);
+    }
+    .log-row.buzzer {
+      border-color: rgba(189,160,255,0.30);
+      background: rgba(189,160,255,0.052);
+    }
+    .log-row.button {
+      border-color: rgba(123,220,255,0.34);
+      background: rgba(123,220,255,0.052);
+    }
+    .log-empty {
+      color: var(--muted);
+      padding: 10px;
+      border: 1px dashed rgba(216,232,228,0.12);
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .readout {
+      padding: 12px;
+      color: #dce9e5;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .readout summary {
+      cursor: pointer;
+      list-style: none;
+    }
+    .readout summary::-webkit-details-marker { display: none; }
+    .readout summary::after {
+      content: "+";
+      float: right;
+      color: var(--muted);
+      font-weight: 950;
+    }
+    .readout[open] summary::after { content: "-"; }
+    .readout pre {
+      max-height: 168px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .dashboard-strip {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 12px;
+      margin: 0 14px 14px;
+      padding: 12px;
+      border: 1px solid rgba(216,232,228,0.10);
+      border-radius: 8px;
+      background: rgba(216,232,228,0.032);
+    }
+    .dashboard-strip[hidden] {
+      display: none;
+    }
+    .dashboard-tile {
+      min-height: 88px;
+      padding: 12px;
+      border: 1px solid rgba(216,232,228,0.10);
+      border-radius: 8px;
+      background: rgba(216,232,228,0.045);
+    }
+    .dashboard-tile pre {
+      max-height: 145px;
+      overflow: auto;
+      margin: 8px 0 0;
+      color: #dce9e5;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    body.replay-export .controls {
+      justify-content: center;
+    }
+    body.replay-export .live-only {
+      display: none !important;
+    }
+    body.replay-export #playbackGroup {
+      flex: 1 1 420px;
+      justify-content: center;
+      border-color: rgba(255,242,157,0.30);
+      background: rgba(255,242,157,0.055);
+    }
+    body.replay-export #playbackGroup .control-label {
+      text-align: center;
+      color: var(--yellow);
+    }
+    .replay-step,
+    .replay-play {
+      min-width: 54px;
+    }
+    .jump-log {
+      min-width: 88px;
+    }
+    .replay-play {
+      min-width: 150px;
+      min-height: 44px;
+      border-color: rgba(255,242,157,0.62);
+      background: rgba(255,242,157,0.16);
+      color: #fff7ba;
+      box-shadow: 0 0 28px rgba(255,242,157,0.12);
+      font-size: 14px;
+    }
+    body.replay-export .replay-play {
+      min-width: 190px;
+      min-height: 50px;
+      font-size: 15px;
+    }
+    .replay-position {
+      min-height: 34px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 10px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+    @media (max-width: 1120px) {
+      body { padding: 14px; }
+      header, .stage { grid-template-columns: minmax(0, 1fr); }
+      .status { justify-items: start; }
+      .status-row { justify-content: flex-start; }
+      .timestamp { text-align: left; }
+    }
+    @media (max-width: 920px) {
+      body { padding: 12px; }
+      header, .stage { grid-template-columns: minmax(0, 1fr); }
+      .status { justify-items: start; }
+      .status-row { justify-content: flex-start; }
+      .timestamp { text-align: left; }
+      canvas { height: 420px; }
+      .chart-wrap { min-height: 420px; }
+      .session-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .evidence-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .log-row { grid-template-columns: 70px 1fr; }
+      .log-detail { grid-column: 1 / -1; }
+      .dashboard-strip { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="panel">
+      <div>
+        <p class="kicker">Monogate Electronics Bench</p>
+        <h1>Guard Trace Console</h1>
+        <p class="sub">Live graph and log path from input to guard decision to output.</p>
+        <span class="brand-version">Replay export v0 | course evidence packet v0</span>
+      </div>
+      <div class="status">
+        <div class="status-row">
+          <div id="status" class="pill">connecting</div>
+          <button id="headerPauseLive" class="live-pause-toggle" type="button" aria-label="Pause live visualizer" title="Pause live visualizer">⏸</button>
+          <button id="soundToggle" class="sound-preference" type="button" aria-label="Turn guard clamp sound on" title="Guard clamp sound only.">
+            <svg id="speakerIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M11 5 6 9H3v6h3l5 4V5Z"></path>
+              <path id="speakerWaveA" d="M15.5 8.5a5 5 0 0 1 0 7"></path>
+              <path id="speakerWaveB" d="M18.5 5.5a9 9 0 0 1 0 13"></path>
+              <path id="speakerMute" d="m16 9 5 5m0-5-5 5" style="display: none"></path>
+            </svg>
+          </button>
+        </div>
+        <div id="meta">Live Board</div>
+        <div id="clock" class="timestamp">--</div>
+      </div>
+    </header>
+
+    <nav class="controls panel" aria-label="Visualizer controls">
+      <div id="modeGroup" class="control-group live-only" aria-label="Mode controls">
+        <span class="control-label">Mode</span>
+        <button id="modeLive" type="button" aria-pressed="true">Live Visualizer</button>
+        <button id="dashboardToggle" type="button" aria-pressed="true">Dashboard</button>
+        <button id="modeReplay" type="button" aria-pressed="false" title="Load the newest saved JSONL capture.">Replay Capture</button>
+        <button id="diagnosticsLink" type="button" title="Open the raw serial diagnostic board.">Diagnostics</button>
+      </div>
+      <div id="captureGroup" class="control-group live-only" aria-label="Capture controls">
+        <span class="control-label">Capture</span>
+        <button id="captureToggle" type="button">Start Capture</button>
+        <button id="resetSession" type="button">Reset Session</button>
+        <button id="modeExample" type="button" aria-pressed="false">Example Trace</button>
+        <label class="file-button" for="captureFile">Load JSONL</label>
+        <input id="captureFile" type="file" accept=".jsonl,.txt,application/jsonl,text/plain" />
+      </div>
+      <div id="playbackGroup" class="control-group" aria-label="Playback controls">
+        <span class="control-label">Playback</span>
+        <button id="prevFrame" class="replay-step is-hidden" type="button" title="Previous frame">Prev</button>
+        <button id="playPause" class="replay-play is-hidden" type="button">Play</button>
+        <button id="nextFrame" class="replay-step is-hidden" type="button" title="Next frame">Next</button>
+        <button id="jumpLog" class="jump-log is-hidden" type="button">Log</button>
+        <span id="replayPosition" class="replay-position is-hidden">frame 0 / 0</span>
+      </div>
+      <div id="exportGroup" class="control-group live-only" aria-label="Export controls">
+        <span class="control-label">Export</span>
+        <details id="exportMenu" class="export-menu">
+          <summary>Export</summary>
+          <div class="export-options">
+            <button id="downloadJsonl" type="button">JSONL</button>
+            <button id="downloadCsv" type="button">CSV</button>
+            <button id="downloadPng" type="button">PNG</button>
+            <button id="downloadReplayHtml" type="button">Replay HTML</button>
+            <button id="downloadEvidencePacket" type="button">Evidence Packet</button>
+          </div>
+        </details>
+      </div>
+    </nav>
+
+    <section class="stage">
+      <div class="chart-wrap panel">
+        <canvas id="chart" width="1200" height="620" aria-label="Live ESP32 signal graph"></canvas>
+        <div class="legend">
+          <button type="button" data-series="pot_raw" style="color: var(--cyan)"><i class="swatch"></i>pot_raw</button>
+          <button type="button" data-series="requested_output" style="color: var(--orange)"><i class="swatch"></i>request</button>
+          <button type="button" data-series="safe_output" style="color: var(--green)"><i class="swatch"></i>safe</button>
+          <button type="button" data-series="led" style="color: var(--red)"><i class="swatch"></i>LED</button>
+          <button type="button" data-series="buzzer" style="color: var(--purple)"><i class="swatch"></i>buzzer</button>
+          <button id="showRequestSignal" class="signal-shortcut" type="button">Show Request</button>
+          <button id="showAllSignals" class="signal-shortcut" type="button">Show All</button>
+        </div>
+      <div class="session-summary" aria-label="Session summary">
+        <span class="label">Session Summary</span>
+        <div class="session-grid">
+          <div class="session-stat"><span>mode</span><strong id="sessionMode">live</strong></div>
+          <div class="session-stat"><span>clamps</span><strong id="sessionClamps">0</strong></div>
+          <div class="session-stat"><span>last clamp</span><strong id="sessionLastClamp">none</strong></div>
+          <div class="session-stat"><span>visible</span><strong id="sessionVisible">0 frames</strong></div>
+        </div>
+      </div>
+        <div class="evidence-summary" aria-label="Evidence summary">
+          <div class="evidence-summary-head">
+            <span class="label">Evidence Summary</span>
+            <span id="evidenceIntegrity" class="evidence-summary-note">computed from current frames</span>
+          </div>
+          <div class="evidence-grid">
+            <div class="evidence-stat"><span>guard events</span><strong id="evidenceGuardEvents">0</strong></div>
+            <div class="evidence-stat"><span>guard enabled</span><strong id="evidenceGuardTime">0.0s</strong></div>
+            <div class="evidence-stat"><span>duration</span><strong id="evidenceDuration">0.0s</strong></div>
+            <div class="evidence-stat"><span>data issues</span><strong id="evidenceIssues">none</strong></div>
+          </div>
+          <p id="evidenceClaim" class="evidence-claim">Waiting for enough frames to summarize.</p>
+        </div>
+        <div id="dashboardPanel" class="dashboard-strip">
+          <div class="dashboard-tile">
+            <span class="label">Dashboard Snapshot</span>
+            <pre id="dashboardSnapshot">waiting for live frame</pre>
+          </div>
+          <div class="dashboard-tile">
+            <span class="label">Latest Frame</span>
+            <pre id="dashboardFrame">waiting for live frame</pre>
+          </div>
+        </div>
+      </div>
+
+      <aside class="side">
+        <div class="cards panel">
+          <div class="metric" id="cardPot"><span class="label">pot</span><strong id="pot">--</strong></div>
+          <div class="metric" id="cardRequest"><span class="label">request</span><strong id="request">--</strong></div>
+          <div class="metric" id="cardSafe"><span class="label">safe</span><strong id="safe">--</strong></div>
+          <div class="metric" id="cardLed"><span class="label">LED</span><strong id="led">--</strong></div>
+          <div class="metric" id="cardBuzzer"><span class="label">buzzer</span><strong id="buzzer">--</strong></div>
+          <div class="metric" id="cardButton"><span class="label">button</span><strong id="buttonState">--</strong></div>
+        </div>
+
+        <div class="story panel">
+          <span class="label">Story View</span>
+          <div class="story-grid">
+            <div class="node" id="nodePot"><small>input</small><b>Pot</b><span id="nodePotValue">--</span></div>
+            <div class="node" id="nodeGuard"><small>kernel</small><b>Guard</b><span id="nodeGuardValue">--</span></div>
+            <div class="node" id="nodeLed"><small>output</small><b>LED</b><span id="nodeLedValue">--</span></div>
+            <div class="node" id="nodeBuzzer"><small>output</small><b>Buzzer</b><span id="nodeBuzzerValue">--</span></div>
+            <div class="node" id="nodeButton"><small>input</small><b>Button</b><span id="nodeButtonValue">--</span></div>
+          </div>
+          <p class="caption" id="caption">Waiting for a frame from the board.</p>
+        </div>
+
+        <div class="readout panel events-panel">
+          <span class="label">Recent Events</span>
+          <ul class="events" id="events" aria-label="Recent story events">
+            <li class="empty"><span class="event-badge">wait</span><span class="event-text">Waiting for guard, LED, buzzer, or button events.</span></li>
+          </ul>
+        </div>
+
+        <details class="readout panel">
+          <summary><span class="label">Evidence Boundary</span></summary>
+          <p>This page visualizes serial/replay frames. It does not recompute firmware. Example Trace is simulated.</p>
+          <pre id="details">waiting</pre>
+        </details>
+      </aside>
+    </section>
+
+    <section class="session-log panel" aria-label="Session log">
+      <div class="session-log-head">
+        <span class="label">Session Log</span>
+        <span id="sessionLogHint" class="session-log-hint">Waiting for guard, LED, buzzer, or button transitions.</span>
+      </div>
+      <div id="sessionLog" class="log-list">
+        <div class="log-empty">No session events recorded yet.</div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const canvas = $("chart");
+    const ctx = canvas.getContext("2d");
+    const colors = {
+      pot_raw: "#7bdcff",
+      requested_output: "#ffb86b",
+      safe_output: "#83e6ac",
+      led: "#ff6e83",
+      buzzer: "#bda0ff"
+    };
+    let mode = "live";
+    let livePaused = false;
+    let dashboardVisible = true;
+    let captureActive = false;
+    let sampleBaseline = null;
+    let inspectedEventKey = null;
+    let inspectedSampleIndex = null;
+    let frames = [];
+    let replayIndex = 0;
+    let playTimer = null;
+    let audio = null;
+    let soundEnabled = false;
+    let lastValues = {};
+    let lastClamp = false;
+    let lastLedOn = false;
+    let lastBuzzerOn = false;
+    let soundStatePrimed = false;
+    let storyStatePrimed = false;
+    let clampFlashUntil = 0;
+    let releaseFlashUntil = 0;
+    let sessionLog = [];
+    let embeddedReplayPayload = null;
+    let replayIntegrity = {
+      status: "live",
+      label: "computed from current frames"
+    };
+    const seenSessionEventKeys = new Set();
+    const seriesVisible = {
+      pot_raw: true,
+      requested_output: false,
+      safe_output: true,
+      led: true,
+      buzzer: true
+    };
+
+    const fmt = (value) => typeof value === "number" && Number.isFinite(value) ? value.toFixed(2) : "--";
+    const clamp01 = (value) => Math.max(0, Math.min(1, typeof value === "number" ? value : 0));
+    const isClamp = (frame) => frame?.guard_action === "clamp_to_safe_output";
+    const formatDateTime = () => new Date().toLocaleString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    });
+
+    function updateSoundButton() {
+      $("soundToggle").classList.toggle("is-on", soundEnabled);
+      $("soundToggle").setAttribute("aria-label", soundEnabled ? "Turn guard clamp sound off" : "Turn guard clamp sound on");
+      $("soundToggle").title = soundEnabled
+        ? "Guard clamp sound is on."
+        : "Event sounds are off. Click to enable guard clamp sound.";
+      $("speakerWaveA").style.display = soundEnabled ? "" : "none";
+      $("speakerWaveB").style.display = soundEnabled ? "" : "none";
+      $("speakerMute").style.display = soundEnabled ? "none" : "";
+    }
+
+    function hasClamp(framesToCheck = activeFrames()) {
+      return framesToCheck.some(isClamp);
+    }
+
+    function shouldDrawSeries(series, framesToCheck = activeFrames()) {
+      if (series === "requested_output" && hasClamp(framesToCheck)) return true;
+      if (series === "buzzer" && framesToCheck.some((frame) => (frame.buzzer ?? 0) > 0.03)) return true;
+      return seriesVisible[series] === true;
+    }
+
+    function updateLegend() {
+      document.querySelectorAll("[data-series]").forEach((button) => {
+        const series = button.dataset.series;
+        const auto = series === "requested_output" && !seriesVisible[series] && hasClamp();
+        button.classList.toggle("is-muted", !seriesVisible[series] && !auto);
+        button.classList.toggle("is-auto", auto);
+        button.setAttribute("aria-pressed", String(seriesVisible[series] === true));
+        button.title = auto ? "Request is shown only inside clamp regions." : "";
+      });
+      const requestButton = $("showRequestSignal");
+      const allButton = $("showAllSignals");
+      const allSignalsVisible = Object.values(seriesVisible).every(Boolean);
+      requestButton.classList.toggle("is-on", seriesVisible.requested_output);
+      requestButton.textContent = seriesVisible.requested_output ? "Hide Request" : "Show Request";
+      requestButton.setAttribute("aria-pressed", String(seriesVisible.requested_output));
+      requestButton.title = seriesVisible.requested_output
+        ? "Hide the request line except during clamp."
+        : "Show the firmware request line for this lesson.";
+      allButton.classList.toggle("is-on", allSignalsVisible);
+      allButton.textContent = allSignalsVisible ? "Core Signals" : "Show All";
+      allButton.setAttribute("aria-pressed", String(allSignalsVisible));
+      allButton.title = allSignalsVisible
+        ? "Return to the beginner view: pot, safe, LED, and buzzer."
+        : "Show every signal line on the graph.";
+    }
+
+    function setRequestVisible(visible) {
+      seriesVisible.requested_output = visible;
+      draw();
+    }
+
+    function setAllSignalsVisible(visible) {
+      Object.keys(seriesVisible).forEach((series) => {
+        seriesVisible[series] = visible || series !== "requested_output";
+      });
+      draw();
+    }
+
+    function eventLabel(kind) {
+      if (kind === "clamp") return "clamp";
+      if (kind === "release") return "pass";
+      if (kind === "led") return "led";
+      if (kind === "buzzer") return "buzz";
+      if (kind === "button") return "btn";
+      return "event";
+    }
+
+    function eventKey(frame, kind) {
+      return `${kind}:${frame.sample_index ?? frame.timestamp_ms ?? "unknown"}`;
+    }
+
+    function frameTimeLabel(frame, referenceFrames = frames) {
+      const firstFrame = referenceFrames.find((item) => typeof item?.timestamp_ms === "number");
+      if (typeof frame?.timestamp_ms === "number" && typeof firstFrame?.timestamp_ms === "number") {
+        const seconds = Math.max(0, (frame.timestamp_ms - firstFrame.timestamp_ms) / 1000);
+        return `t+${seconds.toFixed(1)}s`;
+      }
+      if (typeof frame?.timestamp_ms === "number") return `uptime ${(frame.timestamp_ms / 1000).toFixed(1)}s`;
+      return `sample ${frame?.sample_index ?? "n/a"}`;
+    }
+
+    function frameHumanTimeLabel(frame) {
+      const epochMs = typeof frame?.dashboard_received_epoch_ms === "number"
+        ? frame.dashboard_received_epoch_ms
+        : null;
+      const parsedIso = typeof frame?.dashboard_received_at === "string"
+        ? Date.parse(frame.dashboard_received_at)
+        : NaN;
+      const value = epochMs ?? (Number.isFinite(parsedIso) ? parsedIso : null);
+      if (value === null) return "";
+      return new Date(value).toLocaleTimeString(undefined, {
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+    }
+
+    function frameTimeMarkup(frame, referenceFrames = frames) {
+      const human = frameHumanTimeLabel(frame);
+      return `<b>${frameTimeLabel(frame, referenceFrames)}</b>${human ? `<small>${human}</small>` : ""}`;
+    }
+
+    function relativeTimeForFrame(frame, current) {
+      if (typeof frame?.timestamp_ms === "number" && typeof current?.timestamp_ms === "number") {
+        const seconds = Math.max(0, (current.timestamp_ms - frame.timestamp_ms) / 1000);
+        if (seconds < 1) return "now";
+        if (seconds < 60) return `${Math.round(seconds)}s ago`;
+        if (seconds < 3600) return `${Math.round(seconds / 60)}m ago`;
+        return `${Math.round(seconds / 3600)}h ago`;
+      }
+      return `sample ${frame?.sample_index ?? "n/a"}`;
+    }
+
+    function canonicalFramesJson(rows) {
+      return JSON.stringify(rows.map((frame) => frame.raw ?? frame));
+    }
+
+    function checksumText(text) {
+      let hash = 2166136261;
+      for (let i = 0; i < text.length; i += 1) {
+        hash ^= text.charCodeAt(i);
+        hash = Math.imul(hash, 16777619);
+      }
+      return (hash >>> 0).toString(16).padStart(8, "0");
+    }
+
+    async function sha256Text(text) {
+      if (!globalThis.crypto?.subtle) return null;
+      const bytes = new TextEncoder().encode(text);
+      const digest = await crypto.subtle.digest("SHA-256", bytes);
+      return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, "0")).join("");
+    }
+
+    async function frameIntegrity(rows) {
+      const json = canonicalFramesJson(rows);
+      return {
+        checksum: checksumText(json),
+        sha256: await sha256Text(json)
+      };
+    }
+
+    function formatSeconds(seconds) {
+      if (!Number.isFinite(seconds) || seconds <= 0) return "0.0s";
+      if (seconds < 60) return `${seconds.toFixed(1)}s`;
+      const minutes = Math.floor(seconds / 60);
+      const rest = Math.round(seconds % 60);
+      return `${minutes}m ${rest}s`;
+    }
+
+    function transitionEvents(data) {
+      const events = [];
+      data.forEach((frame, index) => {
+        const previous = data[index - 1];
+        if (!previous) return;
+        const clamp = isClamp(frame);
+        const previousClamp = isClamp(previous);
+      const ledOn = frame.led > 0.03;
+      const previousLedOn = previous.led > 0.03;
+      const buzzerOn = frame.buzzer > 0.03;
+      const previousBuzzerOn = previous.buzzer > 0.03;
+      const buttonPressed = frame.button_pressed === true;
+      const previousButtonPressed = previous.button_pressed === true;
+      const request = typeof frame.requested_output === "number" ? frame.requested_output : 0;
+        const safe = typeof frame.safe_output === "number" ? frame.safe_output : 0;
+        const margin = Math.max(0, request - safe);
+        if (clamp && !previousClamp) {
+          events.push({
+            kind: "clamp",
+            key: eventKey(frame, "clamp"),
+            frame,
+            message: `Guard clamped: request exceeded safe limit by ${fmt(margin)}.`,
+            detail: `request ${fmt(request)} -> safe ${fmt(safe)} | margin ${fmt(margin)}`
+          });
+        }
+        if (!clamp && previousClamp) {
+          events.push({
+            kind: "release",
+            key: eventKey(frame, "release"),
+            frame,
+            message: "Guard released: output is following the pot again.",
+            detail: `safe ${fmt(safe)} | pot ${fmt(frame.pot_raw)}`
+          });
+        }
+        if (ledOn && !previousLedOn) {
+          events.push({
+            kind: "led",
+            key: eventKey(frame, "led_on"),
+            frame,
+            message: `LED turned on when safe output reached ${fmt(frame.led)}.`,
+            detail: `sample ${frame.sample_index ?? "n/a"}`
+          });
+        }
+        if (!ledOn && previousLedOn) {
+          events.push({
+            kind: "led",
+            key: eventKey(frame, "led_off"),
+            frame,
+            message: "LED turned off because safe output dropped below the activation threshold.",
+            detail: `sample ${frame.sample_index ?? "n/a"}`
+          });
+        }
+        if (buzzerOn && !previousBuzzerOn) {
+          events.push({
+            kind: "buzzer",
+            key: eventKey(frame, "buzzer_on"),
+            frame,
+            message: `Buzzer turned on at output ${fmt(frame.buzzer)}.`,
+            detail: `GPIO26 duty ${fmt(frame.buzzer)} | sample ${frame.sample_index ?? "n/a"}`
+          });
+        }
+      if (!buzzerOn && previousBuzzerOn) {
+        events.push({
+          kind: "buzzer",
+          key: eventKey(frame, "buzzer_off"),
+          frame,
+          message: "Buzzer turned off because the guarded output returned below the audible threshold.",
+          detail: `sample ${frame.sample_index ?? "n/a"}`
+        });
+      }
+      if (buttonPressed && !previousButtonPressed) {
+        events.push({
+          kind: "button",
+          key: eventKey(frame, "button_down"),
+          frame,
+          message: "Button pressed on GPIO27; buzzer mute is active.",
+          detail: `sample ${frame.sample_index ?? "n/a"}`
+        });
+      }
+      if (!buttonPressed && previousButtonPressed) {
+        events.push({
+          kind: "button",
+          key: eventKey(frame, "button_up"),
+          frame,
+          message: "Button released on GPIO27.",
+          detail: `sample ${frame.sample_index ?? "n/a"}`
+        });
+      }
+      });
+      return events;
+    }
+
+    function recordSessionLog(data) {
+      transitionEvents(data).forEach((event) => {
+        if (seenSessionEventKeys.has(event.key)) return;
+        seenSessionEventKeys.add(event.key);
+        sessionLog.push(event);
+      });
+      sessionLog = sessionLog.slice(-160);
+    }
+
+    function eventsForLog() {
+      return mode === "live" ? sessionLog : transitionEvents(frames);
+    }
+
+    function buildStoryEvents(data) {
+      const current = data.at(-1);
+      const sourceEvents = mode === "live" ? sessionLog : transitionEvents(data);
+      const events = sourceEvents
+        .filter((event) => !current || typeof event.frame?.sample_index !== "number" || typeof current.sample_index !== "number" || event.frame.sample_index <= current.sample_index)
+        .slice(-6)
+        .reverse()
+        .map((event) => ({
+          ...event,
+          message: `${relativeTimeForFrame(event.frame, current)} ${event.message}`,
+          human_time: frameHumanTimeLabel(event.frame)
+        }));
+      if (!events.length && current) {
+        if (isClamp(current)) {
+          const request = typeof current.requested_output === "number" ? current.requested_output : 0;
+          const safe = typeof current.safe_output === "number" ? current.safe_output : 0;
+          events.push({
+            kind: "clamp",
+            key: "current-clamp",
+            frame: current,
+            message: `now Guard is clamped: request exceeds safe limit by ${fmt(Math.max(0, request - safe))}.`
+          });
+        } else if (current.led > 0.03 && current.buzzer > 0.03) {
+          events.push({
+            kind: "buzzer",
+            key: "current-outputs",
+            frame: current,
+            message: `now LED and buzzer are active at output ${fmt(current.safe_output)}.`
+          });
+        } else if (current.led > 0.03) {
+          events.push({
+            kind: "led",
+            key: "current-led",
+            frame: current,
+            message: `now LED is on at safe output ${fmt(current.safe_output)}.`
+          });
+        } else if (current.buzzer > 0.03) {
+          events.push({
+            kind: "buzzer",
+            key: "current-buzzer",
+            frame: current,
+            message: `now buzzer is active at output ${fmt(current.buzzer)}.`
+          });
+        }
+      }
+      return events;
+    }
+
+    function updateRecentEvents() {
+      const events = buildStoryEvents(activeFrames());
+      if (!events.length) {
+        $("events").innerHTML = '<li class="empty"><span class="event-badge">wait</span><span class="event-text">Waiting for guard, LED, buzzer, or button events.</span></li>';
+        return;
+      }
+      $("events").innerHTML = events
+        .map((event) => `<li class="${event.kind}${event.key === inspectedEventKey ? " is-inspected" : ""}" role="button" tabindex="0" data-event-key="${event.key}"><span class="event-badge">${eventLabel(event.kind)}</span><span class="event-text">${event.human_time ? `<span class="event-clock">${event.human_time}</span>` : ""}${event.message}</span></li>`)
+        .join("");
+    }
+
+    function updateSessionLog() {
+      const logEvents = eventsForLog();
+      $("sessionLogHint").textContent = logEvents.length
+        ? inspectedSampleIndex !== null
+          ? mode === "live"
+            ? `Inspecting firmware sample ${inspectedSampleIndex}. Resume live to return to the live stream.`
+            : `Inspecting firmware sample ${inspectedSampleIndex}. Use playback controls to continue.`
+          : `${logEvents.length} recorded transition${logEvents.length === 1 ? "" : "s"}. Click an entry to inspect its graph context.`
+        : "Waiting for guard, LED, buzzer, or button transitions.";
+      if (!logEvents.length) {
+        $("sessionLog").innerHTML = '<div class="log-empty">No session events recorded yet.</div>';
+        return;
+      }
+      $("sessionLog").innerHTML = logEvents
+        .slice()
+        .reverse()
+        .map((event) => `
+          <div class="log-row ${event.kind}${event.key === inspectedEventKey ? " is-inspected" : ""}" role="button" tabindex="0" data-event-key="${event.key}">
+            <span class="event-badge">${eventLabel(event.kind)}</span>
+            <span class="log-time">${frameTimeMarkup(event.frame, frames)}</span>
+            <span class="log-detail">${event.message}<small>${event.detail ?? `sample ${event.frame?.sample_index ?? "n/a"}`}</small></span>
+          </div>
+        `)
+        .join("");
+    }
+
+    function frameIndexForEvent(event) {
+      if (!event?.frame) return -1;
+      if (typeof event.frame.sample_index === "number") {
+        const bySample = frames.findIndex((frame) => frame.sample_index === event.frame.sample_index);
+        if (bySample >= 0) return bySample;
+      }
+      if (typeof event.frame.timestamp_ms === "number") {
+        return frames.findIndex((frame) => frame.timestamp_ms === event.frame.timestamp_ms);
+      }
+      return -1;
+    }
+
+    function inspectSessionEvent(eventKey) {
+      const event = eventsForLog().find((item) => item.key === eventKey)
+        || buildStoryEvents(activeFrames()).find((item) => item.key === eventKey);
+      if (!event || !event.frame) return;
+      inspectedEventKey = event.key;
+      inspectedSampleIndex = typeof event.frame.sample_index === "number" ? event.frame.sample_index : null;
+      if (mode === "live") setLivePaused(true);
+      const index = frameIndexForEvent(event);
+      if (mode !== "live" && index >= 0) replayIndex = index;
+      render();
+      const nextAction = mode === "live" ? "Resume live to continue streaming." : "Use playback controls to continue.";
+      const targetLabel = inspectedSampleIndex !== null
+        ? `firmware sample ${inspectedSampleIndex}`
+        : frameTimeLabel(event.frame, frames);
+      $("sessionLogHint").textContent = `Inspecting ${eventLabel(event.kind)} at ${targetLabel}. ${nextAction}`;
+    }
+
+    function jumpToSessionLog() {
+      document.querySelector(".session-log")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    async function verifyEmbeddedReplayPayload(payload) {
+      const integrity = await frameIntegrity(payload.frames || []);
+      const checksumOk = payload.frame_checksum_fnv1a
+        ? integrity.checksum === payload.frame_checksum_fnv1a
+        : null;
+      const shaOk = payload.frame_hash_sha256 && integrity.sha256
+        ? integrity.sha256 === payload.frame_hash_sha256
+        : null;
+      if (shaOk === true) {
+        replayIntegrity = { status: "ok", label: `frame payload verified: sha256 ${integrity.sha256.slice(0, 12)}...` };
+      } else if (shaOk === false) {
+        replayIntegrity = { status: "mismatch", label: "frame payload hash mismatch" };
+      } else if (checksumOk === true) {
+        replayIntegrity = { status: "ok", label: `frame payload verified: checksum ${integrity.checksum}` };
+      } else if (checksumOk === false) {
+        replayIntegrity = { status: "mismatch", label: "frame payload checksum mismatch" };
+      } else {
+        replayIntegrity = { status: "unknown", label: "no embedded frame hash available" };
+      }
+      updateEvidenceSummary();
+    }
+
+    function showNotice(kind, message) {
+      $("events").innerHTML = `<li class="${kind}"><span class="event-badge">${eventLabel(kind)}</span><span class="event-text">${message}</span></li>`;
+    }
+
+    function triggerClampFlash() {
+      clampFlashUntil = Date.now() + 900;
+      window.setTimeout(draw, 80);
+      window.setTimeout(draw, 240);
+      window.setTimeout(draw, 520);
+      window.setTimeout(draw, 900);
+    }
+
+    function triggerReleaseFlash() {
+      releaseFlashUntil = Date.now() + 620;
+      window.setTimeout(draw, 80);
+      window.setTimeout(draw, 220);
+      window.setTimeout(draw, 620);
+    }
+
+    function normalizeParsed(parsed) {
+      const outputs = parsed.outputs ?? {};
+      const guard = parsed.guard ?? {};
+      const inputs = parsed.inputs ?? {};
+      const buttonRaw = inputs.button_pressed ?? parsed.button_pressed ?? parsed.button;
+      const toNumber = (value) => {
+        const next = Number(value);
+        return Number.isFinite(next) ? next : null;
+      };
+      const toBoolean = (value) => value === true || value === "true" || value === 1 || value === "1";
+      return {
+        schema_version: parsed.schema_version,
+        kernel_id: parsed.kernel_id ?? parsed.kernel_sha256,
+        source: parsed.source,
+        board_id: parsed.board_id,
+        board_revision: parsed.board_revision,
+        esp32_chip_mac: parsed.esp32_chip_mac,
+        source_mode: parsed.source_mode ?? "loaded_capture",
+        mode: parsed.mode,
+        sample_index: parsed.sample_index,
+        timestamp_ms: parsed.timestamp_ms,
+        dashboard_received_at: parsed.dashboard_received_at,
+        dashboard_received_epoch_ms: typeof parsed.dashboard_received_epoch_ms === "number" ? parsed.dashboard_received_epoch_ms : null,
+        pot_raw: toNumber(parsed.pot_raw),
+        button_pressed: toBoolean(buttonRaw),
+        requested_output: toNumber(outputs.requested_output ?? guard.requested_output ?? parsed.requested_output),
+        safe_output: toNumber(outputs.safe_output ?? guard.safe_output ?? parsed.safe_output),
+        led: toNumber(outputs.led ?? parsed.led),
+        buzzer: toNumber(outputs.buzzer ?? parsed.buzzer),
+        guard_action: guard.guard_action ?? parsed.guard_action,
+        safety_margin: toNumber(guard.safety_margin ?? parsed.safety_margin),
+        bottleneck: guard.bottleneck ?? parsed.bottleneck,
+        hardware_observed: typeof parsed.hardware_observed === "boolean" ? parsed.hardware_observed : parsed.source_mode === "live_board",
+        dashboard_projection_only: true,
+        raw: parsed.raw ?? parsed
+      };
+    }
+
+    function setMode(next) {
+      const previousMode = mode;
+      mode = next;
+      if (previousMode !== next) resetSessionLog();
+      if (next !== "live") setLivePaused(false);
+      $("modeLive").setAttribute("aria-pressed", String(next === "live"));
+      $("modeReplay").setAttribute("aria-pressed", String(next === "replay"));
+      $("modeExample").setAttribute("aria-pressed", String(next === "example"));
+      $("playPause").classList.toggle("is-hidden", next === "live");
+      updatePlaybackControl();
+      $("meta").textContent = next === "live" ? "Live Board" : next === "example" ? "Example Trace" : "Replay Capture";
+      soundStatePrimed = false;
+      storyStatePrimed = false;
+      clampFlashUntil = 0;
+      releaseFlashUntil = 0;
+      inspectedEventKey = null;
+      inspectedSampleIndex = null;
+      $("events").innerHTML = '<li class="empty"><span class="event-badge">wait</span><span class="event-text">Waiting for guard, LED, buzzer, or button events.</span></li>';
+      stopPlayback();
+      updateSessionLog();
+    }
+
+    function resetSessionLog() {
+      sessionLog = [];
+      seenSessionEventKeys.clear();
+    }
+
+    function resetLocalSession() {
+      const current = frames.at(-1);
+      sampleBaseline = typeof current?.sample_index === "number" ? current.sample_index : null;
+      inspectedEventKey = null;
+      inspectedSampleIndex = null;
+      resetSessionLog();
+      storyStatePrimed = false;
+      soundStatePrimed = false;
+      render();
+      showNotice("release", "Session view reset. Future samples are counted relative to this moment.");
+    }
+
+    function clearInspection() {
+      inspectedEventKey = null;
+      inspectedSampleIndex = null;
+    }
+
+    function setLivePaused(paused) {
+      livePaused = paused;
+      if (!paused) clearInspection();
+      $("headerPauseLive").textContent = paused ? "▶" : "⏸";
+      $("headerPauseLive").setAttribute("aria-label", paused ? "Resume live visualizer" : "Pause live visualizer");
+      $("headerPauseLive").title = paused ? "Resume live visualizer" : "Pause live visualizer";
+      $("headerPauseLive").setAttribute("aria-pressed", String(paused));
+      $("headerPauseLive").disabled = mode !== "live";
+      $("status").textContent = paused ? "PAUSED" : $("status").textContent;
+      $("status").classList.toggle("is-warn", paused);
+      if (paused) $("meta").textContent = `${frames.length} frozen frames`;
+    }
+
+    function setDashboardVisible(visible) {
+      dashboardVisible = visible;
+      $("dashboardToggle").setAttribute("aria-pressed", String(visible));
+      $("dashboardPanel").hidden = !visible;
+      updateDashboardPanel();
+    }
+
+    function updatePlaybackControl() {
+      const playable = mode !== "live" && frames.length > 0;
+      $("playPause").disabled = !playable;
+      $("playPause").title = playable ? "Play replay frames." : "No replay frames loaded.";
+      const showReplayControls = mode !== "live";
+      document.querySelectorAll(".replay-step, #playPause, #jumpLog, #replayPosition").forEach((control) => {
+        control.classList.toggle("is-hidden", !showReplayControls);
+      });
+      $("prevFrame").disabled = !playable || replayIndex <= 0;
+      $("nextFrame").disabled = !playable || replayIndex >= frames.length - 1;
+      $("jumpLog").disabled = !frames.length;
+      $("replayPosition").textContent = playable ? `frame ${replayIndex + 1} / ${frames.length}` : "frame 0 / 0";
+    }
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      const ratio = Math.max(1, window.devicePixelRatio || 1);
+      canvas.width = Math.floor(rect.width * ratio);
+      canvas.height = Math.floor(rect.height * ratio);
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      draw();
+    }
+
+    function activeFrames() {
+      if (mode === "live") {
+        if (inspectedSampleIndex !== null) {
+          const targetIndex = frames.findIndex((frame) => frame.sample_index === inspectedSampleIndex);
+          if (targetIndex >= 0) {
+            const start = Math.max(0, targetIndex - 70);
+            const end = Math.min(frames.length, targetIndex + 45);
+            return frames.slice(start, end);
+          }
+        }
+        return frames;
+      }
+      return frames.slice(0, Math.max(1, replayIndex + 1));
+    }
+
+    function yFor(value, height, pad) {
+      return pad + (1 - clamp01(value)) * (height - pad * 2);
+    }
+
+    function drawGrid(width, height, pad) {
+      ctx.fillStyle = "#071014";
+      ctx.fillRect(0, 0, width, height);
+      ctx.strokeStyle = "rgba(216,232,228,0.08)";
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 10; i++) {
+        const y = pad + ((height - pad * 2) * i) / 10;
+        ctx.beginPath();
+        ctx.moveTo(pad, y);
+        ctx.lineTo(width - pad, y);
+        ctx.stroke();
+      }
+      for (let i = 0; i <= 12; i++) {
+        const x = pad + ((width - pad * 2) * i) / 12;
+        ctx.beginPath();
+        ctx.moveTo(x, pad);
+        ctx.lineTo(x, height - pad);
+        ctx.stroke();
+      }
+      ctx.fillStyle = "rgba(216,232,228,0.55)";
+      ctx.font = "11px ui-monospace, SFMono-Regular, Consolas, monospace";
+      ctx.fillText("1.0", 12, pad + 4);
+      ctx.fillText("0.0", 12, height - pad + 4);
+    }
+
+    function drawLine(series, color, width, height, pad) {
+      const data = activeFrames();
+      if (data.length < 2) return;
+      if (!shouldDrawSeries(series, data)) return;
+      const span = Math.max(1, data.length - 1);
+      const values = data.map((frame) => frame[series]).filter((value) => typeof value === "number" && Number.isFinite(value));
+      const isZeroOutputLine = series !== "pot_raw" && values.length > 0 && Math.max(...values) <= 0.03;
+      const autoRequest = series === "requested_output" && !seriesVisible.requested_output && hasClamp(data);
+      const activeBuzzer = series === "buzzer" && !seriesVisible.buzzer && values.length > 0 && Math.max(...values) > 0.03;
+      const weight = {
+        pot_raw: 1.55,
+        requested_output: autoRequest ? 1.45 : 1.85,
+        safe_output: 4.1,
+        led: isZeroOutputLine ? 1.1 : 1.55,
+        buzzer: activeBuzzer ? 2.2 : 1.9
+      }[series] ?? 2.2;
+      const alpha = isZeroOutputLine ? 0.18 : autoRequest ? 0.48 : activeBuzzer ? 0.72 : series === "pot_raw" ? 0.62 : series === "led" ? 0.52 : series === "requested_output" ? 0.7 : 1;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = isZeroOutputLine ? 2 : series === "safe_output" ? 15 : series === "pot_raw" ? 5 : series === "led" ? 4 : 8;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = weight;
+      if (autoRequest) {
+        ctx.setLineDash([5, 8]);
+        ctx.lineCap = "round";
+      } else if (series === "buzzer") {
+        ctx.setLineDash([3, 7]);
+        ctx.lineCap = "round";
+      }
+      ctx.beginPath();
+      let drawing = false;
+      data.forEach((frame, index) => {
+        if (autoRequest && !isClamp(frame)) {
+          drawing = false;
+          return;
+        }
+        const value = frame[series];
+        if (typeof value !== "number" || !Number.isFinite(value)) {
+          drawing = false;
+          return;
+        }
+        const x = pad + ((width - pad * 2) * index) / span;
+        const y = yFor(value, height, pad) + (series === "buzzer" && value > 0.03 ? 7 : 0);
+        if (!drawing) {
+          ctx.moveTo(x, y);
+          drawing = true;
+        }
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawCurrentMarkers(width, height, pad) {
+      const data = activeFrames();
+      const frame = data.at(-1);
+      if (!frame || data.length < 2) return;
+      const x = width - pad;
+      ["pot_raw", "led", "buzzer", "requested_output", "safe_output"].forEach((series) => {
+        const color = colors[series];
+        if (!shouldDrawSeries(series, data)) return;
+        if (series === "requested_output" && !seriesVisible.requested_output && !isClamp(frame)) return;
+        const value = frame[series];
+        if (typeof value !== "number" || !Number.isFinite(value)) return;
+        const y = yFor(value, height, pad) + (series === "buzzer" && value > 0.03 ? 7 : 0);
+        ctx.save();
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 12;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(x, y, 4.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+
+    function drawEvents(width, height, pad) {
+      const data = activeFrames();
+      const span = Math.max(1, data.length - 1);
+      let regionStart = null;
+      const flashRemaining = Math.max(0, clampFlashUntil - Date.now());
+      const releaseRemaining = Math.max(0, releaseFlashUntil - Date.now());
+      if (flashRemaining > 0) {
+        const flashAlpha = Math.min(0.18, flashRemaining / 900 * 0.18);
+        const flash = ctx.createRadialGradient(width * 0.5, height * 0.48, 12, width * 0.5, height * 0.48, Math.max(width, height) * 0.62);
+        flash.addColorStop(0, `rgba(255,110,131,${flashAlpha})`);
+        flash.addColorStop(1, "rgba(255,110,131,0)");
+        ctx.fillStyle = flash;
+        ctx.fillRect(pad, pad, width - pad * 2, height - pad * 2);
+      }
+      if (releaseRemaining > 0) {
+        const releaseAlpha = Math.min(0.13, releaseRemaining / 620 * 0.13);
+        const release = ctx.createRadialGradient(width * 0.5, height * 0.48, 10, width * 0.5, height * 0.48, Math.max(width, height) * 0.52);
+        release.addColorStop(0, `rgba(131,230,172,${releaseAlpha})`);
+        release.addColorStop(1, "rgba(131,230,172,0)");
+        ctx.fillStyle = release;
+        ctx.fillRect(pad, pad, width - pad * 2, height - pad * 2);
+      }
+      data.forEach((frame, index) => {
+        if (isClamp(frame)) {
+          regionStart ??= index;
+        }
+        if ((!isClamp(frame) || index === data.length - 1) && regionStart !== null) {
+          const regionEnd = isClamp(frame) && index === data.length - 1 ? index : Math.max(regionStart, index - 1);
+          const x1 = pad + ((width - pad * 2) * regionStart) / span;
+          const x2 = pad + ((width - pad * 2) * regionEnd) / span;
+          const fill = ctx.createLinearGradient(x1, 0, x2, 0);
+          fill.addColorStop(0, "rgba(255,110,131,0.025)");
+          fill.addColorStop(0.5, "rgba(255,110,131,0.075)");
+          fill.addColorStop(1, "rgba(255,110,131,0.025)");
+          ctx.fillStyle = fill;
+          ctx.fillRect(x1, pad, Math.max(5, x2 - x1), height - pad * 2);
+          ctx.strokeStyle = "rgba(255,110,131,0.62)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(x1, pad);
+          ctx.lineTo(x1, height - pad);
+          ctx.stroke();
+          ctx.strokeStyle = "rgba(255,110,131,0.25)";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(x2, pad);
+          ctx.lineTo(x2, height - pad);
+          ctx.stroke();
+          regionStart = null;
+        }
+        const x = pad + ((width - pad * 2) * index) / span;
+        const prev = data[index - 1];
+        if (frame.led > 0.03 && (!prev || prev.led <= 0.03)) {
+          const y = yFor(frame.led, height, pad);
+          const gradient = ctx.createRadialGradient(x, y, 0, x, y, 34);
+          gradient.addColorStop(0, "rgba(255,110,131,0.30)");
+          gradient.addColorStop(1, "rgba(255,110,131,0)");
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(x, y, 34, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      });
+      const current = data.at(-1);
+      if (isClamp(current)) {
+        const pulse = 0.5 + Math.sin(Date.now() / 130) * 0.18;
+        ctx.save();
+        ctx.strokeStyle = `rgba(255,110,131,${pulse})`;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(pad, pad, width - pad * 2, height - pad * 2);
+        ctx.font = "900 11px ui-monospace, SFMono-Regular, Consolas, monospace";
+        ctx.textBaseline = "middle";
+        const label = "CLAMP ACTIVE";
+        const labelWidth = ctx.measureText(label).width + 20;
+        const labelX = width - pad - labelWidth - 8;
+        const labelY = pad + 18;
+        ctx.fillStyle = "rgba(255,110,131,0.16)";
+        ctx.strokeStyle = "rgba(255,110,131,0.62)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(labelX, labelY - 12, labelWidth, 24, 12);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = colors.led;
+        ctx.fillText(label, labelX + 10, labelY);
+        ctx.restore();
+      }
+    }
+
+    function draw() {
+      const rect = canvas.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
+      const pad = 42;
+      drawGrid(width, height, pad);
+      drawEvents(width, height, pad);
+      drawLine("led", colors.led, width, height, pad);
+      drawLine("pot_raw", colors.pot_raw, width, height, pad);
+      drawLine("requested_output", colors.requested_output, width, height, pad);
+      drawLine("safe_output", colors.safe_output, width, height, pad);
+      drawLine("buzzer", colors.buzzer, width, height, pad);
+      drawCurrentMarkers(width, height, pad);
+      updateLegend();
+      const current = activeFrames().at(-1);
+      if (current) {
+        ctx.fillStyle = "#f1faf7";
+        ctx.font = "700 13px ui-monospace, SFMono-Regular, Consolas, monospace";
+        const hasSample = typeof current.sample_index === "number";
+        const relativeSample = hasSample && sampleBaseline !== null ? current.sample_index - sampleBaseline : null;
+        const sampleText = relativeSample !== null
+          ? `run sample +${Math.max(0, relativeSample)} | firmware sample ${current.sample_index}`
+          : `firmware sample ${current.sample_index ?? "n/a"}`;
+        const inspectText = inspectedSampleIndex !== null ? " | inspecting log event" : "";
+        ctx.fillText(`frames ${activeFrames().length} | ${sampleText}${inspectText}`, pad, height - 14);
+      }
+    }
+
+    function summarizeClamps(data) {
+      let total = 0;
+      let last = null;
+      data.forEach((frame, index) => {
+        if (!isClamp(frame)) return;
+        const previous = data[index - 1];
+        if (!previous || !isClamp(previous)) {
+          total += 1;
+          last = frame;
+        }
+      });
+      return { total, last };
+    }
+
+    function medianFrameIntervalMs(data) {
+      const intervals = [];
+      for (let i = 1; i < data.length; i += 1) {
+        const previous = data[i - 1]?.timestamp_ms;
+        const current = data[i]?.timestamp_ms;
+        if (typeof previous === "number" && typeof current === "number" && current > previous) {
+          intervals.push(current - previous);
+        }
+      }
+      if (!intervals.length) return 0;
+      intervals.sort((a, b) => a - b);
+      return intervals[Math.floor(intervals.length / 2)];
+    }
+
+    function evidenceSummaryFor(data) {
+      const summary = summarizeClamps(data);
+      const transitions = transitionEvents(data);
+      const medianMs = medianFrameIntervalMs(data);
+      const firstTimestamp = data.find((frame) => typeof frame.timestamp_ms === "number")?.timestamp_ms;
+      const lastTimestamp = data.slice().reverse().find((frame) => typeof frame.timestamp_ms === "number")?.timestamp_ms;
+      const durationMs = typeof firstTimestamp === "number" && typeof lastTimestamp === "number"
+        ? Math.max(0, lastTimestamp - firstTimestamp)
+        : Math.max(0, (data.length - 1) * medianMs);
+      let clampMs = 0;
+      data.forEach((frame, index) => {
+        if (!isClamp(frame)) return;
+        const current = frame.timestamp_ms;
+        const next = data[index + 1]?.timestamp_ms;
+        const interval = typeof current === "number" && typeof next === "number" && next > current
+          ? next - current
+          : medianMs;
+        clampMs += Math.max(0, interval);
+      });
+      let malformed = 0;
+      let outOfRange = 0;
+      data.forEach((frame) => {
+        const required = ["pot_raw", "requested_output", "safe_output", "led", "buzzer"];
+        if (required.some((key) => typeof frame[key] !== "number" || !Number.isFinite(frame[key]))) malformed += 1;
+        required.forEach((key) => {
+          const value = frame[key];
+          if (typeof value === "number" && Number.isFinite(value) && (value < -0.001 || value > 1.001)) outOfRange += 1;
+        });
+      });
+      const ledEvents = transitions.filter((event) => event.kind === "led").length;
+      const buzzerEvents = transitions.filter((event) => event.kind === "buzzer").length;
+      const buttonEvents = transitions.filter((event) => event.kind === "button").length;
+      let buttonPressedMs = 0;
+      data.forEach((frame, index) => {
+        if (frame.button_pressed !== true) return;
+        const current = frame.timestamp_ms;
+        const next = data[index + 1]?.timestamp_ms;
+        const interval = typeof current === "number" && typeof next === "number" && next > current
+          ? next - current
+          : medianMs;
+        buttonPressedMs += Math.max(0, interval);
+      });
+      const liveFrames = data.length > 0 && data.every((frame) => frame.hardware_observed === true);
+      return {
+        frames: data.length,
+        guardEvents: summary.total,
+        transitions: transitions.length,
+        ledEvents,
+        buzzerEvents,
+        buttonEvents,
+        durationSeconds: durationMs / 1000,
+        clampSeconds: clampMs / 1000,
+        buttonPressedSeconds: buttonPressedMs / 1000,
+        buttonPressedFrames: data.filter((frame) => frame.button_pressed === true).length,
+        malformed,
+        outOfRange,
+        liveFrames
+      };
+    }
+
+    function updateEvidenceSummary() {
+      const data = mode === "live" ? activeFrames() : frames;
+      const evidence = evidenceSummaryFor(data);
+      $("evidenceGuardEvents").textContent = String(evidence.guardEvents);
+      $("evidenceGuardTime").textContent = formatSeconds(evidence.clampSeconds);
+      $("evidenceDuration").textContent = formatSeconds(evidence.durationSeconds);
+      $("evidenceIssues").textContent = evidence.malformed || evidence.outOfRange
+        ? `${evidence.malformed} malformed / ${evidence.outOfRange} range`
+        : "none";
+      const integrity = mode === "replay" && embeddedReplayPayload
+        ? replayIntegrity.label
+        : evidence.liveFrames
+          ? "live serial frames"
+          : "computed from current frames";
+      $("evidenceIntegrity").textContent = integrity;
+      const claim = evidence.frames
+        ? `Observed ${evidence.guardEvents} guard clamp event${evidence.guardEvents === 1 ? "" : "s"} over ${formatSeconds(evidence.durationSeconds)}. Guard was enabled for ${formatSeconds(evidence.clampSeconds)}. LED transitions: ${evidence.ledEvents}; buzzer transitions: ${evidence.buzzerEvents}. ${evidence.malformed || evidence.outOfRange ? "Review required: frame data issues were detected." : "No frame schema/range issues detected in this replay."}`
+        : "Waiting for enough frames to summarize.";
+      $("evidenceClaim").textContent = claim;
+      $("evidenceClaim").classList.toggle("ok", evidence.frames > 0 && !evidence.malformed && !evidence.outOfRange);
+      $("evidenceClaim").classList.toggle("warn", evidence.malformed > 0 || evidence.outOfRange > 0 || (mode === "replay" && replayIntegrity.status === "mismatch"));
+    }
+
+    function updateSessionSummary() {
+      const data = activeFrames();
+      const summary = summarizeClamps(data);
+      const current = data.at(-1);
+      const label = livePaused && mode === "live" ? "paused" : mode === "live" ? "live" : mode === "example" ? "example" : "replay";
+      const lastClampLabel = summary.last
+        ? relativeTimeForFrame(summary.last, current)
+        : "none";
+      $("sessionMode").textContent = label;
+      $("sessionClamps").textContent = String(summary.total);
+      $("sessionVisible").textContent = `${data.length} frame${data.length === 1 ? "" : "s"}`;
+      $("sessionLastClamp").textContent = lastClampLabel;
+      updateEvidenceSummary();
+    }
+
+    function updateDashboardPanel() {
+      if (!dashboardVisible) return;
+      const data = activeFrames();
+      const frame = data.at(-1);
+      if (!frame) {
+        $("dashboardSnapshot").textContent = "waiting for live frame";
+        $("dashboardFrame").textContent = "waiting for live frame";
+        return;
+      }
+      const summary = summarizeClamps(data);
+      $("dashboardSnapshot").textContent = [
+        `mode: ${livePaused && mode === "live" ? "paused" : mode}`,
+        `visible_frames: ${data.length}`,
+        `human_time: ${frameHumanTimeLabel(frame) || "n/a"}`,
+        `clamp_events: ${summary.total}`,
+        `current_guard: ${frame.guard_action ?? "n/a"}`,
+        `board_id: ${frame.board_id ?? "n/a"}`,
+        `esp32_chip_mac: ${frame.esp32_chip_mac ?? "n/a"}`,
+        `led: ${fmt(frame.led)}`,
+        `buzzer: ${fmt(frame.buzzer)}`,
+        `hardware_observed: ${frame.hardware_observed === true}`
+      ].join("\n");
+      $("dashboardFrame").textContent = JSON.stringify(frame.raw ?? frame, null, 2);
+    }
+
+    function pulse(id, value) {
+      const key = id + ":" + JSON.stringify(value);
+      if (lastValues[id] && lastValues[id] !== key) {
+        $(id).classList.add("changed");
+        setTimeout(() => $(id).classList.remove("changed"), 520);
+      }
+      lastValues[id] = key;
+    }
+
+    function tone(freq, duration = 0.08, type = "sine", volume = 0.075) {
+      if (!soundEnabled) return;
+      audio ??= new AudioContext();
+      const osc = audio.createOscillator();
+      const gain = audio.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, audio.currentTime);
+      gain.gain.exponentialRampToValueAtTime(volume, audio.currentTime + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + duration);
+      osc.connect(gain).connect(audio.destination);
+      osc.start();
+      osc.stop(audio.currentTime + duration + 0.02);
+    }
+
+    function eventSound(kind) {
+      if (kind === "clamp_on") {
+        tone(520, 0.09, "triangle", 0.095);
+        setTimeout(() => tone(680, 0.065, "triangle", 0.07), 58);
+        return;
+      }
+      if (kind === "clamp_off") {
+        tone(420, 0.07, "sine", 0.052);
+        setTimeout(() => tone(315, 0.08, "sine", 0.042), 62);
+        return;
+      }
+      if (kind === "led_on") {
+        tone(740, 0.075, "sine", 0.058);
+        return;
+      }
+      if (kind === "led_off") {
+        tone(360, 0.07, "sine", 0.046);
+        return;
+      }
+      if (kind === "buzzer_on") {
+        tone(880, 0.06, "square", 0.045);
+        return;
+      }
+      if (kind === "buzzer_off") {
+        tone(290, 0.055, "triangle", 0.035);
+      }
+    }
+
+    function primeSoundState(clamp, ledOn, buzzerOn) {
+      lastClamp = clamp;
+      lastLedOn = ledOn;
+      lastBuzzerOn = buzzerOn;
+      soundStatePrimed = true;
+    }
+
+    function updateStory(frame) {
+      if (!frame) return;
+      const visibleFrames = activeFrames();
+      const previous = visibleFrames.length > 1 ? visibleFrames[visibleFrames.length - 2] : null;
+      const clamp = isClamp(frame);
+      const ledOn = frame.led > 0.03;
+      const buzzerOn = frame.buzzer > 0.03;
+      const buttonPressed = frame.button_pressed === true;
+      const previousClamp = previous ? isClamp(previous) : clamp;
+      const previousLedOn = previous ? previous.led > 0.03 : ledOn;
+      const previousBuzzerOn = previous ? previous.buzzer > 0.03 : buzzerOn;
+      const request = typeof frame.requested_output === "number" ? frame.requested_output : 0;
+      const safe = typeof frame.safe_output === "number" ? frame.safe_output : 0;
+      const margin = Math.max(0, request - safe);
+      $("pot").textContent = fmt(frame.pot_raw);
+      $("request").textContent = fmt(frame.requested_output);
+      $("safe").textContent = fmt(frame.safe_output);
+      $("led").textContent = fmt(frame.led);
+      $("buzzer").textContent = fmt(frame.buzzer);
+      $("buttonState").textContent = buttonPressed ? "down" : "up";
+      pulse("cardPot", frame.pot_raw);
+      pulse("cardRequest", frame.requested_output);
+      pulse("cardSafe", frame.safe_output);
+      pulse("cardLed", frame.led);
+      pulse("cardBuzzer", frame.buzzer);
+      pulse("cardButton", buttonPressed ? 1 : 0);
+      $("nodePot").classList.toggle("active", frame.pot_raw > 0.02);
+      $("nodeGuard").classList.toggle("clamp", clamp);
+      $("nodeGuard").classList.toggle("active", !clamp);
+      $("nodeLed").classList.toggle("active", ledOn);
+      $("nodeBuzzer").classList.toggle("active", buzzerOn);
+      $("nodeButton").classList.toggle("active", buttonPressed);
+      $("nodeButton").classList.toggle("button-active", buttonPressed);
+      $("nodePotValue").textContent = fmt(frame.pot_raw);
+      $("nodeGuardValue").textContent = clamp ? "clamp" : "pass";
+      $("nodeLedValue").textContent = fmt(frame.led);
+      $("nodeBuzzerValue").textContent = fmt(frame.buzzer);
+      $("nodeButtonValue").textContent = buttonPressed ? "down" : "up";
+      if (!storyStatePrimed) {
+        storyStatePrimed = true;
+      } else if (clamp && !previousClamp) {
+        triggerClampFlash();
+      } else if (!clamp && previousClamp) {
+        triggerReleaseFlash();
+      }
+      if (buttonPressed && safe > 0.06) {
+        $("caption").textContent = `Button pressed: buzzer is muted while the guard and LED output stay at ${fmt(safe)}.`;
+      } else if (buttonPressed) {
+        $("caption").textContent = "Button pressed: GPIO27 is pulled to ground. Outputs are already quiet.";
+      } else if (clamp) {
+        $("caption").textContent = `Guard clamped: request exceeded safe limit by ${fmt(margin)}. LED and buzzer are held at ${fmt(safe)}.`;
+      } else if (ledOn && buzzerOn) {
+        $("caption").textContent = `Guard passing: safe output is ${fmt(safe)}, so the LED is lit and the buzzer is active.`;
+      } else if (ledOn) {
+        $("caption").textContent = `Guard passing: safe output is ${fmt(safe)}, so the LED is lit.`;
+      } else if (buzzerOn) {
+        $("caption").textContent = `Guard passing: safe output is ${fmt(safe)}, so the buzzer is active.`;
+      } else if (request <= 0.03 && (frame.pot_raw ?? 0) > 0.02) {
+        $("caption").textContent = "Firmware request is off while the pot is below the active output range. Outputs stay off.";
+      } else if ((frame.pot_raw ?? 0) > 0.02) {
+        $("caption").textContent = "Safe output is below the activation threshold. LED and buzzer stay off.";
+      } else {
+        $("caption").textContent = "Pot is at rest near zero. The firmware leaves the outputs off.";
+      }
+      $("details").textContent = JSON.stringify({
+        source_mode: frame.source_mode,
+        hardware_observed: frame.hardware_observed,
+        guard_action: frame.guard_action,
+        button_pressed: buttonPressed,
+        request_margin: fmt(margin),
+        sample_index: frame.sample_index,
+        timestamp_ms: frame.timestamp_ms
+      }, null, 2);
+      if (!soundStatePrimed) {
+        primeSoundState(clamp, ledOn, buzzerOn);
+        return;
+      }
+      if (clamp && !lastClamp) eventSound("clamp_on");
+      if (ledOn && !lastLedOn) eventSound("led_on");
+      if (!ledOn && lastLedOn) eventSound("led_off");
+      if (buzzerOn && !lastBuzzerOn) eventSound("buzzer_on");
+      if (!buzzerOn && lastBuzzerOn) eventSound("buzzer_off");
+      lastClamp = clamp;
+      lastLedOn = ledOn;
+      lastBuzzerOn = buzzerOn;
+    }
+
+    function render() {
+      const current = activeFrames().at(-1);
+      recordSessionLog(activeFrames());
+      updateStory(current);
+      updateSessionSummary();
+      updateRecentEvents();
+      updateSessionLog();
+      updateDashboardPanel();
+      updatePlaybackControl();
+      draw();
+      $("clock").textContent = formatDateTime();
+    }
+
+    async function loadLive() {
+      if (mode !== "live") return;
+      if (livePaused) return;
+      try {
+        const res = await fetch("/history", { cache: "no-store" });
+        const data = await res.json();
+        if (mode !== "live" || livePaused) return;
+        frames = data.history || [];
+        if (captureActive && sampleBaseline === null) {
+          const first = frames.find((frame) => typeof frame.sample_index === "number");
+          if (first) sampleBaseline = first.sample_index;
+        }
+        $("status").textContent = data.connected ? "LIVE" : "offline";
+        $("status").classList.toggle("is-error", !data.connected);
+        $("status").classList.toggle("is-warn", data.capture_active);
+        captureActive = Boolean(data.capture_active);
+        $("captureToggle").textContent = captureActive ? "Stop + Save" : "Start Capture";
+        $("captureToggle").setAttribute("aria-pressed", String(captureActive));
+        $("captureToggle").title = captureActive
+          ? `${data.capture_frames ?? 0} live frames captured. Stop and save JSONL.`
+          : "Start a saved live JSONL capture.";
+        $("meta").textContent = `${data.port} @ ${data.baud} | ${frames.length} visible frames`;
+        $("headerPauseLive").disabled = false;
+        render();
+      } catch (error) {
+        $("status").textContent = "offline";
+        $("status").classList.add("is-error");
+        $("details").textContent = String(error);
+      }
+    }
+
+    async function toggleCapture() {
+      if (window.__MONOGATE_REPLAY_EXPORT__) {
+        showNotice("empty", "This exported replay is offline. Capture controls require the live dashboard server.");
+        return;
+      }
+      if (captureActive) {
+        const res = await fetch("/capture/stop", { method: "POST" });
+        const data = await res.json();
+        captureActive = false;
+        $("captureToggle").textContent = "Start Capture";
+        if (data.ok) {
+          frames = data.frames_data || frames;
+          replayIndex = Math.max(0, frames.length - 1);
+          setMode("replay");
+          $("status").textContent = "CAPTURE SAVED";
+          $("status").classList.add("is-warn");
+          $("meta").textContent = `${frames.length} saved frames ready for PNG/export`;
+          render();
+          showNotice("release", `Saved ${data.frames} frames to ${data.path}. Graph is frozen on that capture for export.`);
+        } else {
+          showNotice("empty", data.error ?? "No frames captured.");
+          await loadLive();
+        }
+        return;
+      }
+      if (mode !== "live") {
+        setMode("live");
+      }
+      await fetch("/capture/start", { method: "POST" });
+      captureActive = true;
+      sampleBaseline = null;
+      inspectedEventKey = null;
+      inspectedSampleIndex = null;
+      resetSessionLog();
+      $("captureToggle").textContent = "Stop + Save";
+      showNotice("release", "Capture started. Turn the pot through the behavior you want to preserve.");
+      await loadLive();
+    }
+
+    async function loadReplay() {
+      if (window.__MONOGATE_REPLAY_EXPORT__) {
+        showNotice("empty", "This exported replay already has its capture embedded.");
+        return;
+      }
+      $("status").textContent = "LOADING";
+      $("status").classList.add("is-warn");
+      $("meta").textContent = "Checking for a saved capture...";
+      $("modeReplay").disabled = true;
+      try {
+        const res = await fetch("/captures/latest", { cache: "no-store" });
+        if (!res.ok) {
+          frames = [];
+          replayIndex = 0;
+          setMode("replay");
+          $("status").textContent = "NO REPLAY";
+          $("status").classList.add("is-warn");
+          $("meta").textContent = "No saved capture yet. Use Load JSONL or Example Trace.";
+          $("details").textContent = "Replay Capture loads the newest saved capture from captures/esp32-arduino. No saved capture was found.";
+          updateSessionSummary();
+          draw();
+          showNotice("empty", "No saved replay capture found yet. Use Load JSONL or Example Trace, or save a capture from the dashboard first.");
+          return;
+        }
+        const data = await res.json();
+        frames = data.frames || [];
+        replayIndex = Math.max(0, frames.length - 1);
+        setMode("replay");
+        $("status").textContent = "REPLAY";
+        $("status").classList.remove("is-warn");
+        $("meta").textContent = `${frames.length} frames`;
+        render();
+      } catch (error) {
+        frames = [];
+        replayIndex = 0;
+        setMode("replay");
+        $("status").textContent = "NO REPLAY";
+        $("status").classList.add("is-warn");
+        $("meta").textContent = "Could not load replay capture.";
+        $("details").textContent = String(error);
+        updateSessionSummary();
+        draw();
+        showNotice("empty", "Could not load Replay Capture. Use Load JSONL or Example Trace.");
+      } finally {
+        $("modeReplay").disabled = false;
+      }
+    }
+
+    async function loadExample() {
+      if (window.__MONOGATE_REPLAY_EXPORT__) {
+        showNotice("empty", "Example Trace requires the live dashboard server.");
+        return;
+      }
+      const res = await fetch("/example", { cache: "no-store" });
+      const data = await res.json();
+      frames = data.frames || [];
+      replayIndex = Math.max(0, frames.length - 1);
+      setMode("example");
+      $("status").textContent = "EXAMPLE";
+      $("status").classList.add("is-warn");
+      $("meta").textContent = `${frames.length} simulated frames`;
+      render();
+    }
+
+    function stopPlayback() {
+      if (playTimer !== null) clearInterval(playTimer);
+      playTimer = null;
+      $("playPause").textContent = "Play";
+    }
+
+    function showReplayFrame(index) {
+      if (mode === "live" || !frames.length) return;
+      replayIndex = Math.max(0, Math.min(frames.length - 1, index));
+      render();
+    }
+
+    function togglePlayback() {
+      if (mode === "live" || !frames.length) return;
+      if (playTimer !== null) {
+        stopPlayback();
+        return;
+      }
+      $("playPause").textContent = "Pause";
+      replayIndex = 0;
+      const firstFrame = frames[0];
+      if (firstFrame) primeSoundState(isClamp(firstFrame), firstFrame.led > 0.03, firstFrame.buzzer > 0.03);
+      render();
+      playTimer = setInterval(() => {
+        replayIndex = replayIndex + 1 >= frames.length ? 0 : replayIndex + 1;
+        render();
+      }, 160);
+    }
+
+    function rowsForDownload() {
+      return frames.length ? frames : activeFrames();
+    }
+
+    function frameNumber(frame, key) {
+      const outputs = frame?.outputs ?? {};
+      const guard = frame?.guard ?? {};
+      const value = key === "requested_output"
+        ? outputs.requested_output ?? guard.requested_output ?? frame?.requested_output
+        : key === "safe_output"
+          ? outputs.safe_output ?? guard.safe_output ?? frame?.safe_output
+          : key === "led"
+            ? outputs.led ?? frame?.led
+            : key === "buzzer"
+              ? outputs.buzzer ?? frame?.buzzer
+              : frame?.[key];
+      const next = Number(value);
+      return Number.isFinite(next) ? next : 0;
+    }
+
+    function replayExportWindow(rows) {
+      if (!rows.length) {
+        return { frames: rows, start: 0, end: 0, raw_count: 0, replay_count: 0, trimmed_lead: 0, trimmed_tail: 0 };
+      }
+      const preRoll = 6;
+      const postRoll = 30;
+      const baselinePot = frameNumber(rows[0], "pot_raw");
+      const significant = (frame) => {
+        if (isClamp(frame)) return true;
+        if (frameNumber(frame, "requested_output") > 0.03) return true;
+        if (frameNumber(frame, "safe_output") > 0.03) return true;
+        if (frameNumber(frame, "led") > 0.03) return true;
+        if (frameNumber(frame, "buzzer") > 0.03) return true;
+        return Math.abs(frameNumber(frame, "pot_raw") - baselinePot) > 0.035;
+      };
+      const first = rows.findIndex(significant);
+      const last = rows.length - 1 - rows.slice().reverse().findIndex(significant);
+      if (first < 0 || last < first) {
+        return { frames: rows, start: 0, end: rows.length - 1, raw_count: rows.length, replay_count: rows.length, trimmed_lead: 0, trimmed_tail: 0 };
+      }
+      const start = Math.max(0, first - preRoll);
+      const end = Math.min(rows.length - 1, last + postRoll);
+      const trimmed = rows.slice(start, end + 1);
+      return {
+        frames: trimmed,
+        start,
+        end,
+        raw_count: rows.length,
+        replay_count: trimmed.length,
+        trimmed_lead: start,
+        trimmed_tail: Math.max(0, rows.length - end - 1)
+      };
+    }
+
+    function dashboardSnapshotForPacket(rows) {
+      const frame = rows.at(-1);
+      const summary = summarizeClamps(rows);
+      return {
+        mode: livePaused && mode === "live" ? "paused" : mode,
+        visible_frames: rows.length,
+        clamp_events: summary.total,
+        last_clamp: summary.last ? relativeTimeForFrame(summary.last, frame) : "none",
+        current_guard: frame?.guard_action ?? null,
+        latest_sample_index: frame?.sample_index ?? null,
+        latest_human_time: frameHumanTimeLabel(frame) || null,
+        board_id: frame?.board_id ?? null,
+        board_revision: frame?.board_revision ?? null,
+        esp32_chip_mac: frame?.esp32_chip_mac ?? null,
+        latest_pot_raw: frame?.pot_raw ?? null,
+        latest_safe_output: frame?.safe_output ?? null,
+        latest_led: frame?.led ?? null,
+        latest_buzzer: frame?.buzzer ?? null,
+        latest_button_pressed: frame?.button_pressed ?? null,
+        latest_button_action: frame?.button_action ?? null
+      };
+    }
+
+    function buildEvidencePacketStarter() {
+      const rows = rowsForDownload();
+      const replayWindow = replayExportWindow(rows);
+      const evidenceSummary = evidenceSummaryFor(rows);
+      const now = new Date();
+      const stamp = now.toISOString().slice(0, 10).replaceAll("-", "_");
+      const liveBoardFrames = rows.length > 0 && rows.every((frame) => frame.source_mode === "live_board" && frame.hardware_observed === true);
+      const jsonl = rows.map((frame) => JSON.stringify(frame.raw ?? frame)).join("\n") + (rows.length ? "\n" : "");
+      return {
+        schema_version: "monogate-electronics.course-evidence-packet.v0",
+        packet_id: `reflex_lab_01_reflexcourse_${stamp}_dashboard_draft`,
+        course_id: "reflex_lab_01",
+        course_title: "Reflex Lab 01: Pot to Guarded LED/Buzzer",
+        kernel_id: "threshold_reflex_v0",
+        board_id: rows.find((frame) => frame.board_id)?.board_id ?? null,
+        board_revision: rows.find((frame) => frame.board_revision)?.board_revision ?? null,
+        esp32_chip_mac: rows.find((frame) => frame.esp32_chip_mac)?.esp32_chip_mac ?? null,
+        evidence_level: liveBoardFrames ? "live_capture" : "draft",
+        review_status: "draft",
+        packet_role: "starter",
+        packet_note: "Dashboard export creates a draft packet starter. Add physical artifacts and human review before treating it as final evidence.",
+        generated_at: now.toISOString(),
+        source: "esp32-arduino-visualizer",
+        claim_flags: {
+          simulated: mode === "example",
+          hardware_observed: liveBoardFrames,
+          live_serial_capture_performed: liveBoardFrames,
+          certified_safety_claim: false,
+          production_controller_claim: false
+        },
+        sections: {
+          course_claim: "Reflex Course ran threshold_reflex_v0 and produced replayable guard/output evidence.",
+          simulation_evidence: "Add golden trace validation and replay outputs before review.",
+          physical_evidence: liveBoardFrames
+            ? "Dashboard export contains live-board frames. Add wiring photos, demo media, button-mute observation, and measurements before review."
+            : "This dashboard starter does not yet prove live physical hardware. Add live capture and physical artifacts.",
+          sim_vs_hardware_comparison: "Pending: compare expected trace with captured hardware trace.",
+          domain_safety_lens: "Low-voltage educational evidence only. No motors, relays, coils, mains voltage, certified safety, or production-control claims.",
+          blocked_claims: "See blocked_claims list.",
+          artifacts_links: "This starter embeds JSONL text and graph PNG data URL. Save final artifacts, photos, and replay HTML as separate files before review.",
+          operator_notes: "Pending: builder, wiring notes, anomalies, and tutorial links.",
+          review_status: "Draft starter exported from dashboard. Human review required."
+        },
+        operator_notes: {
+          builder_name: "",
+          capture_date_local: "",
+          bench_location: "",
+          wiring_notes: "",
+          observed_behavior: "",
+          button_mute_observation: "",
+          anomalies_or_failures: "",
+          instructor_notes: ""
+        },
+        tutorial_links: {
+          youtube_url: "",
+          youtube_visibility: "",
+          course_docs_url: "",
+          published_replay_url: "",
+          evidence_packet_url: ""
+        },
+        photo_manifest: [
+          { id: "01_parts_layout", filename: "01_parts_layout.jpg", required: true, description: "ESP32, breadboards, pot, LED, resistor, buzzer, button, and jumper wires before wiring." },
+          { id: "02_esp32_on_mini_breadboards", filename: "02_esp32_on_mini_breadboards.jpg", required: true, description: "ESP32 straddling the two mini breadboards, powered off." },
+          { id: "03_power_and_ground", filename: "03_power_and_ground.jpg", required: true, description: "3V3 and GND jumpers from ESP32 to breadboard rails." },
+          { id: "04_pot_wiring", filename: "04_pot_wiring.jpg", required: true, description: "Potentiometer legs and GPIO34 signal path." },
+          { id: "05_led_resistor_path", filename: "05_led_resistor_path.jpg", required: true, description: "GPIO output through resistor and LED return path." },
+          { id: "06_button_buzzer_path", filename: "06_button_buzzer_path.jpg", required: true, description: "GPIO27 button input and GPIO26 buzzer path with resistor." },
+          { id: "07_final_powered_build", filename: "07_final_powered_build.jpg", required: true, description: "Final powered breadboard with LED/buzzer behavior visible if possible." },
+          { id: "08_dashboard_live_capture", filename: "08_dashboard_live_capture.png", required: true, description: "Dashboard showing live serial capture, graph, summary, and event log." },
+          { id: "09_button_mute_action", filename: "09_button_mute_action.jpg", required: false, description: "Optional photo or still showing button press while buzzer is muted." }
+        ],
+        physical_artifact_placeholders: {
+          wiring_diagram_path: "wiring/reflex_lab_01b_wiring_diagram.png",
+          schematic_export_path: "schematic/reflex_lab_01b_schematic.png",
+          tutorial_video_path_or_url: "",
+          physical_build_notes_path: "physical_build_notes.md",
+          operator_findings_path: "FINDINGS.md"
+        },
+        review_checklist: [
+          "Live serial capture is present or hardware_observed remains false.",
+          "Replay HTML opens and matches the exported JSONL trace.",
+          "Graph PNG or dashboard screenshot is included.",
+          "Physical wiring photos cover power, ground, pot, LED, buzzer, and button.",
+          "Button mute behavior is observed or marked not tested.",
+          "YouTube/tutorial link is added or marked not published.",
+          "Blocked claims were reviewed and remain in force.",
+          "Packet manifest hashes were generated after all files were added."
+        ],
+        artifacts: {
+          trace_path: "live_trace.jsonl",
+          validation_output_path: "validation_output.txt",
+          replay_output_path: "replay_output.txt",
+          dashboard_export_path: "dashboard_export.json",
+          replay_html_path: "replay.html",
+          graph_png_path: "dashboard_graph.png",
+          wiring_diagram_path: "wiring/reflex_lab_01b_wiring_diagram.png",
+          schematic_export_path: "schematic/reflex_lab_01b_schematic.png",
+          operator_notes_path: "operator_notes.md",
+          wiring_photo_paths: [],
+          demo_media_links: [],
+          docs_links: [
+            "docs/evidence-grammar.md",
+            "courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/lab-packet.md",
+            "courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/evidence-packet-guide.md"
+          ]
+        },
+        dashboard_snapshot: dashboardSnapshotForPacket(rows),
+        evidence_summary: evidenceSummary,
+        hardware_behavior_summary: {
+          guard_event_count: evidenceSummary.guardEvents,
+          total_guard_enabled_seconds: evidenceSummary.clampSeconds,
+          led_transition_count: evidenceSummary.ledEvents,
+          buzzer_transition_count: evidenceSummary.buzzerEvents,
+          button_transition_count: evidenceSummary.buttonEvents,
+          button_pressed_seconds: evidenceSummary.buttonPressedSeconds,
+          button_pressed_frames: evidenceSummary.buttonPressedFrames,
+          note: "Counts are computed from exported frames and should be checked against the replay before final review."
+        },
+        replay_export_window: {
+          raw_count: replayWindow.raw_count,
+          replay_count: replayWindow.replay_count,
+          trimmed_lead: replayWindow.trimmed_lead,
+          trimmed_tail: replayWindow.trimmed_tail,
+          note: "Replay HTML trims quiet lead-in/trailing frames for readability. JSONL remains the raw capture."
+        },
+        session_log: sessionLog.map((event) => ({
+          kind: event.kind,
+          message: event.message,
+          detail: event.detail ?? null,
+          sample_index: event.frame?.sample_index ?? null,
+          timestamp_ms: event.frame?.timestamp_ms ?? null,
+          human_time: frameHumanTimeLabel(event.frame) || null,
+          dashboard_received_at: event.frame?.dashboard_received_at ?? null,
+          dashboard_received_epoch_ms: event.frame?.dashboard_received_epoch_ms ?? null
+        })),
+        embedded_artifacts: {
+          live_trace_jsonl: jsonl,
+          replay_html_filename: "reflex-lab-01-replay.html",
+          graph_png_data_url: canvas.toDataURL("image/png")
+        },
+        blocked_claims: [
+          "No certified safety claim.",
+          "No production controller claim.",
+          "No high-current actuation claim.",
+          "No motor, relay, solenoid, coil, or mains-voltage validation claim.",
+          "No final hardware truth claim until live capture is paired with operator-supplied physical artifacts."
+        ]
+      };
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function buildMiniReplayHtml() {
+      const rawRows = rowsForDownload();
+      const replayWindow = replayExportWindow(rawRows);
+      const rows = replayWindow.frames;
+      const snapshot = dashboardSnapshotForPacket(rows);
+      const generatedAt = new Date().toISOString();
+      const embedded = JSON.stringify(rows.map((frame) => frame.raw ?? frame));
+      return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reflex Lab 01 Replay</title>
+  <style>
+    :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #071014; color: #f1faf7; --green: #83e6ac; --cyan: #7bdcff; --orange: #ffb86b; --red: #ff6e83; --purple: #bda0ff; --muted: #9fb1ad; }
+    body { margin: 0; padding: 20px; background: linear-gradient(135deg, #071014, #0d171a 60%, #081114); }
+    main { width: min(1240px, 100%); margin: 0 auto; display: grid; gap: 14px; }
+    header, section { border: 1px solid rgba(131,230,172,0.28); border-radius: 8px; background: rgba(12,19,22,0.88); box-shadow: 0 18px 48px rgba(0,0,0,0.28); }
+    header { padding: 16px; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 12px; align-items: center; }
+    h1, p { margin: 0; }
+    h1 { font-size: clamp(26px, 4vw, 44px); line-height: 1; }
+    .label { color: var(--green); font-size: 11px; font-weight: 950; text-transform: uppercase; }
+    .brand-line { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .brand-mark { color: #ffb22e; font-size: 12px; font-weight: 950; letter-spacing: 0; text-transform: uppercase; }
+    .version { display: inline-flex; min-height: 20px; align-items: center; padding: 0 8px; border: 1px solid rgba(123,220,255,0.24); border-radius: 999px; color: #bfefff; background: rgba(123,220,255,0.07); font-size: 10px; font-weight: 950; text-transform: uppercase; }
+    .muted { color: var(--muted); font-size: 13px; margin-top: 6px; }
+    .stage { display: grid; grid-template-columns: minmax(0,1.55fr) minmax(320px,0.85fr); gap: 14px; align-items: start; }
+    .side { display: grid; gap: 12px; }
+    canvas { width: 100%; height: 540px; display: block; }
+    .panel { padding: 14px; }
+    .chart-wrap { padding: 0; overflow: hidden; }
+    .controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+    button { border: 1px solid rgba(216,232,228,0.18); border-radius: 7px; background: rgba(216,232,228,0.08); color: #f4fffb; padding: 9px 12px; font-weight: 900; cursor: pointer; }
+    input[type="range"] { flex: 1 1 260px; }
+    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .card { border: 1px solid rgba(216,232,228,0.12); border-radius: 7px; background: rgba(216,232,228,0.055); padding: 10px; }
+    .card strong { display: block; margin-top: 5px; color: #fff2a6; font-size: 24px; }
+    .events { display: grid; gap: 6px; max-height: 340px; overflow: auto; padding: 0; list-style: none; }
+    .events li { border: 1px solid rgba(216,232,228,0.12); border-radius: 7px; padding: 8px 10px; background: rgba(216,232,228,0.045); font-size: 12px; line-height: 1.35; cursor: pointer; }
+    .events li:hover { border-color: rgba(123,220,255,0.45); }
+    .session-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 8px; margin: 0 14px 14px; }
+    .session-stat { min-height: 50px; padding: 8px 10px; border: 1px solid rgba(216,232,228,0.10); border-radius: 7px; background: rgba(7,16,20,0.54); }
+    .session-stat span { display: block; color: var(--muted); font-size: 10px; font-weight: 950; text-transform: uppercase; }
+    .session-stat strong { display: block; margin-top: 5px; color: #f7fffb; font-size: 16px; font-variant-numeric: tabular-nums; }
+    .story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+    .node { min-height: 78px; display: grid; align-content: center; justify-items: center; gap: 3px; border: 1px solid rgba(216,232,228,0.13); border-radius: 8px; background: rgba(216,232,228,0.055); text-align: center; }
+    .node b { color: #fff2a6; font-size: 20px; }
+    .node small { color: var(--muted); font-weight: 900; }
+    .node.active { border-color: rgba(131,230,172,0.56); box-shadow: 0 0 28px rgba(131,230,172,0.13); }
+    .node.button-active { border-color: rgba(189,160,255,0.72); background: rgba(189,160,255,0.12); box-shadow: 0 0 30px rgba(189,160,255,0.18); }
+    .node.button-active b, .node.button-active span { color: #d9caff; }
+    .node.clamp { border-color: rgba(255,110,131,0.62); box-shadow: 0 0 34px rgba(255,110,131,0.18); background: rgba(255,110,131,0.08); }
+    .caption { margin-top: 10px; min-height: 54px; color: #ecf7f4; font-size: 15px; line-height: 1.35; }
+    .boundary { color: #dce9e5; font-size: 12px; line-height: 1.45; }
+    @media (max-width: 860px) { .stage, header { grid-template-columns: 1fr; } canvas { height: 420px; } .session-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <p class="brand-line"><span class="brand-mark">Monogate</span><span class="label">Electronics Evidence Replay</span><span class="version">Replay export v0</span></p>
+      <h1>Reflex Lab 01</h1>
+      <p class="muted">Standalone replay generated ${escapeHtml(generatedAt)}. Replay frames: ${rows.length} of ${replayWindow.raw_count}. Trimmed lead-in: ${replayWindow.trimmed_lead}. Board: ${escapeHtml(snapshot.board_id ?? "n/a")}.</p>
+    </div>
+    <div class="boundary">Draft educational artifact<br />Not certified safety<br />Not production controller</div>
+  </header>
+  <div class="stage">
+    <section class="panel chart-wrap">
+      <canvas id="replayChart" width="1200" height="620" aria-label="Replay graph"></canvas>
+      <div class="controls" style="padding:0 14px 12px">
+        <button id="play" type="button">Play</button>
+        <button id="prev" type="button">Prev</button>
+        <button id="next" type="button">Next</button>
+        <input id="scrub" type="range" min="0" max="${Math.max(0, rows.length - 1)}" value="0" />
+        <span id="position" class="muted"></span>
+      </div>
+      <div class="session-grid">
+        <div class="session-stat"><span>mode</span><strong>replay</strong></div>
+        <div class="session-stat"><span>clamps</span><strong id="clampCount">0</strong></div>
+        <div class="session-stat"><span>last clamp</span><strong id="lastClamp">none</strong></div>
+        <div class="session-stat"><span>frames</span><strong>${rows.length}</strong></div>
+      </div>
+    </section>
+    <aside class="side">
+      <section class="panel">
+        <p class="label">Latest Frame</p>
+        <div class="cards">
+          <div class="card">pot<strong id="pot">--</strong></div>
+          <div class="card">request<strong id="request">--</strong></div>
+          <div class="card">safe<strong id="safe">--</strong></div>
+          <div class="card">LED<strong id="led">--</strong></div>
+          <div class="card">buzzer<strong id="buzzer">--</strong></div>
+          <div class="card">button<strong id="buttonState">--</strong></div>
+          <div class="card">guard<strong id="guard">--</strong></div>
+        </div>
+      </section>
+      <section class="panel">
+        <p class="label">Story View</p>
+        <div class="story-grid">
+          <div class="node" id="nodePot"><small>input</small><b>Pot</b><span id="nodePotValue">--</span></div>
+          <div class="node" id="nodeGuard"><small>kernel</small><b>Guard</b><span id="nodeGuardValue">--</span></div>
+          <div class="node" id="nodeLed"><small>output</small><b>LED</b><span id="nodeLedValue">--</span></div>
+          <div class="node" id="nodeBuzzer"><small>output</small><b>Buzzer</b><span id="nodeBuzzerValue">--</span></div>
+          <div class="node" id="nodeButton"><small>input</small><b>Button</b><span id="nodeButtonValue">--</span></div>
+        </div>
+        <p class="caption" id="caption">Replay ready.</p>
+      </section>
+      <section class="panel">
+        <p class="label">Session Events</p>
+        <ul id="events" class="events"></ul>
+      </section>
+    </aside>
+  </div>
+  <section class="panel boundary">
+    <p class="label">Evidence Boundary</p>
+    <p>This replay trims quiet lead-in/trailing frames for readability. The JSONL capture remains the raw evidence. It does not recompute firmware, certify safety, or claim production-controller readiness. Pair it with JSONL, validation output, replay output, wiring photos, tutorial links, and human review before using it as evidence. Desktop or tablet viewing is recommended for full graph context.</p>
+  </section>
+</main>
+<script>
+const frames = ${embedded};
+const colors = { pot_raw:"#7bdcff", requested_output:"#ffb86b", safe_output:"#83e6ac", led:"#ff6e83", buzzer:"#bda0ff" };
+const canvas = document.getElementById("replayChart");
+const ctx = canvas.getContext("2d");
+const $ = (id) => document.getElementById(id);
+let index = 0;
+let timer = null;
+let replayEvents = [];
+const clamp01 = (value) => Math.max(0, Math.min(1, typeof value === "number" ? value : Number(value) || 0));
+const fmt = (value) => typeof value === "number" && Number.isFinite(value) ? value.toFixed(2) : "--";
+const isClamp = (frame) => frame?.guard_action === "clamp_to_safe_output" || frame?.guard?.guard_action === "clamp_to_safe_output";
+function valueOf(frame, key) {
+  const outputs = frame.outputs || {};
+  const guard = frame.guard || {};
+  if (key === "requested_output") return Number(outputs.requested_output ?? guard.requested_output ?? frame.requested_output);
+  if (key === "safe_output") return Number(outputs.safe_output ?? guard.safe_output ?? frame.safe_output);
+  if (key === "led") return Number(outputs.led ?? frame.led);
+  if (key === "buzzer") return Number(outputs.buzzer ?? frame.buzzer);
+  return Number(frame[key]);
+}
+function yFor(value, height, pad) { return pad + (1 - clamp01(value)) * (height - pad * 2); }
+function drawLine(key) {
+  const pad = 42, width = canvas.clientWidth, height = canvas.clientHeight;
+  const span = Math.max(1, index);
+  ctx.save();
+  ctx.strokeStyle = colors[key];
+  ctx.lineWidth = key === "safe_output" ? 5.2 : key === "buzzer" ? 2.2 : 1.8;
+  ctx.globalAlpha = key === "buzzer" ? 0.9 : 0.82;
+  if (key === "buzzer") ctx.setLineDash([3, 7]);
+  ctx.shadowColor = colors[key];
+  ctx.shadowBlur = key === "safe_output" ? 14 : key === "buzzer" ? 8 : 4;
+  ctx.beginPath();
+  let drawing = false;
+  for (let i = 0; i <= index; i++) {
+    const value = valueOf(frames[i], key);
+    if (!Number.isFinite(value)) { drawing = false; continue; }
+    const x = pad + ((width - pad * 2) * i) / span;
+    const y = yFor(value, height, pad) + (key === "buzzer" && value > 0.03 ? 7 : 0);
+    if (!drawing) { ctx.moveTo(x, y); drawing = true; } else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  ctx.restore();
+}
+function draw() {
+  const ratio = Math.max(1, window.devicePixelRatio || 1);
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = Math.floor(rect.width * ratio);
+  canvas.height = Math.floor(rect.height * ratio);
+  ctx.setTransform(ratio,0,0,ratio,0,0);
+  const width = rect.width, height = rect.height, pad = 42;
+  ctx.fillStyle = "#071014"; ctx.fillRect(0,0,width,height);
+  ctx.strokeStyle = "rgba(216,232,228,0.08)";
+  for (let i=0;i<=10;i++) {
+    const x = pad + ((width - pad * 2) * i) / 10;
+    const y = pad + ((height - pad * 2) * i) / 10;
+    ctx.beginPath(); ctx.moveTo(x,pad); ctx.lineTo(x,height-pad); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(width-pad,y); ctx.stroke();
+  }
+  for (let i=0;i<=index;i++) {
+    if (!isClamp(frames[i])) continue;
+    const x = pad + ((width - pad * 2) * i) / Math.max(1,index);
+    ctx.fillStyle = "rgba(255,110,131,0.08)";
+    ctx.fillRect(x, pad, 4, height - pad * 2);
+  }
+  ["led","pot_raw","requested_output","safe_output","buzzer"].forEach(drawLine);
+  const frame = frames[index] || {};
+  if (isClamp(frame)) {
+    const pulse = 0.5 + Math.sin(Date.now() / 130) * 0.18;
+    ctx.save();
+    const flash = ctx.createRadialGradient(width * 0.5, height * 0.48, 12, width * 0.5, height * 0.48, Math.max(width, height) * 0.62);
+    flash.addColorStop(0, \`rgba(255,110,131,\${Math.min(0.16, pulse * 0.18)})\`);
+    flash.addColorStop(1, "rgba(255,110,131,0)");
+    ctx.fillStyle = flash;
+    ctx.fillRect(pad, pad, width - pad * 2, height - pad * 2);
+    ctx.strokeStyle = \`rgba(255,110,131,\${pulse})\`;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(pad, pad, width - pad * 2, height - pad * 2);
+    ctx.font = "900 11px ui-monospace, Consolas, monospace";
+    const label = "CLAMP ACTIVE";
+    const labelWidth = ctx.measureText(label).width + 20;
+    const labelX = width - pad - labelWidth - 8;
+    const labelY = pad + 18;
+    ctx.fillStyle = "rgba(255,110,131,0.16)";
+    ctx.strokeStyle = "rgba(255,110,131,0.62)";
+    ctx.beginPath();
+    ctx.roundRect(labelX, labelY - 12, labelWidth, 24, 12);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = colors.led;
+    ctx.fillText(label, labelX + 10, labelY);
+    ctx.restore();
+  }
+  ctx.fillStyle = "#f1faf7";
+  ctx.font = "700 13px ui-monospace, Consolas, monospace";
+  ctx.fillText(\`frame \${index + 1}/\${frames.length} | sample \${frame.sample_index ?? "n/a"}\`, pad, height - 14);
+}
+function summarizeClamps() {
+  let total = 0;
+  let last = null;
+  for (let i = 0; i < frames.length; i++) {
+    if (!isClamp(frames[i])) continue;
+    if (!frames[i - 1] || !isClamp(frames[i - 1])) {
+      total += 1;
+      last = i;
+    }
+  }
+  $("clampCount").textContent = String(total);
+  $("lastClamp").textContent = last === null ? "none" : \`frame \${last + 1}\`;
+}
+function buildEvents() {
+  replayEvents = [];
+  for (let i=1;i<frames.length;i++) {
+    const frame = frames[i], prev = frames[i-1];
+    const clamp = isClamp(frame), previousClamp = isClamp(prev);
+    const ledOn = valueOf(frame,"led") > 0.03, prevLedOn = valueOf(prev,"led") > 0.03;
+    const buzzerOn = valueOf(frame,"buzzer") > 0.03, prevBuzzerOn = valueOf(prev,"buzzer") > 0.03;
+    const buttonPressed = frame.button_pressed === true, prevButtonPressed = prev.button_pressed === true;
+    if (clamp && !previousClamp) replayEvents.push(["CLAMP", i, "Guard clamped request to safe output."]);
+    if (!clamp && previousClamp) replayEvents.push(["PASS", i, "Guard released back to pass-through."]);
+    if (ledOn && !prevLedOn) replayEvents.push(["LED", i, "LED turned on."]);
+    if (!ledOn && prevLedOn) replayEvents.push(["LED", i, "LED turned off."]);
+    if (buzzerOn && !prevBuzzerOn) replayEvents.push(["BUZZ", i, "Buzzer turned on."]);
+    if (!buzzerOn && prevBuzzerOn) replayEvents.push(["BUZZ", i, "Buzzer turned off."]);
+    if (buttonPressed && !prevButtonPressed) replayEvents.push(["BTN", i, "Button pressed; buzzer mute is active."]);
+    if (!buttonPressed && prevButtonPressed) replayEvents.push(["BTN", i, "Button released."]);
+  }
+  $("events").innerHTML = replayEvents.length ? replayEvents.map(([kind, i, text]) => \`<li data-frame-index="\${i}"><strong>\${kind}</strong> frame \${i + 1}: \${text}</li>\`).join("") : "<li>No transitions detected.</li>";
+}
+function render() {
+  const frame = frames[index] || {};
+  const request = valueOf(frame,"requested_output");
+  const safe = valueOf(frame,"safe_output");
+  const ledOn = valueOf(frame,"led") > 0.03;
+  const buzzerOn = valueOf(frame,"buzzer") > 0.03;
+  const buttonPressed = frame.button_pressed === true;
+  $("pot").textContent = fmt(valueOf(frame,"pot_raw"));
+  $("request").textContent = fmt(request);
+  $("safe").textContent = fmt(safe);
+  $("led").textContent = fmt(valueOf(frame,"led"));
+  $("buzzer").textContent = fmt(valueOf(frame,"buzzer"));
+  $("buttonState").textContent = buttonPressed ? "down" : "up";
+  $("guard").textContent = isClamp(frame) ? "clamp" : "pass";
+  $("nodePot").classList.toggle("active", valueOf(frame,"pot_raw") > 0.02);
+  $("nodeGuard").classList.toggle("clamp", isClamp(frame));
+  $("nodeGuard").classList.toggle("active", !isClamp(frame));
+  $("nodeLed").classList.toggle("active", ledOn);
+  $("nodeBuzzer").classList.toggle("active", buzzerOn);
+  $("nodeButton").classList.toggle("active", buttonPressed);
+  $("nodeButton").classList.toggle("button-active", buttonPressed);
+  $("nodePotValue").textContent = fmt(valueOf(frame,"pot_raw"));
+  $("nodeGuardValue").textContent = isClamp(frame) ? "clamp" : "pass";
+  $("nodeLedValue").textContent = fmt(valueOf(frame,"led"));
+  $("nodeBuzzerValue").textContent = fmt(valueOf(frame,"buzzer"));
+  $("nodeButtonValue").textContent = buttonPressed ? "muting" : "up";
+  const margin = Math.max(0, request - safe);
+  $("caption").textContent = buttonPressed
+    ? \`Button pressed: the firmware reports buzzer mute active while the guard/LED path remains observable.\`
+    : isClamp(frame)
+    ? \`Guard clamped: request exceeded safe limit by \${fmt(margin)}. LED and buzzer are held at \${fmt(safe)}.\`
+    : ledOn && buzzerOn
+      ? \`Guard passing: safe output is \${fmt(safe)}, so LED and buzzer are active.\`
+      : "Guard passing: outputs are below the active threshold or returning to rest.";
+  $("position").textContent = \`frame \${index + 1} / \${frames.length}\`;
+  $("scrub").value = String(index);
+  draw();
+}
+function setIndex(next) { index = Math.max(0, Math.min(frames.length - 1, next)); render(); }
+$("play").addEventListener("click", () => {
+  if (timer) { clearInterval(timer); timer = null; $("play").textContent = "Play"; return; }
+  $("play").textContent = "Pause";
+  timer = setInterval(() => setIndex(index + 1 >= frames.length ? 0 : index + 1), 160);
+});
+$("prev").addEventListener("click", () => setIndex(index - 1));
+$("next").addEventListener("click", () => setIndex(index + 1));
+$("scrub").addEventListener("input", (event) => setIndex(Number(event.target.value)));
+$("events").addEventListener("click", (event) => {
+  const row = event.target.closest("[data-frame-index]");
+  if (row) setIndex(Number(row.dataset.frameIndex));
+});
+window.addEventListener("resize", draw);
+buildEvents();
+summarizeClamps();
+render();
+<\/script>
+</body>
+</html>`;
+    }
+
+    async function buildReplayHtml() {
+      const rows = rowsForDownload();
+      const replayWindow = replayExportWindow(rows);
+      const replayRows = replayWindow.frames.map((frame) => frame.raw ?? frame);
+      const integrity = await frameIntegrity(replayRows);
+      const payload = {
+        schema_version: "monogate-electronics.visualizer-replay-export.v0",
+        generated_at: new Date().toISOString(),
+        frames: replayRows,
+        replay_index: 0,
+        sample_baseline: sampleBaseline,
+        dashboard_visible: true,
+        source_note: "Standalone visualizer replay. Live serial, capture, mode, and export controls are disabled.",
+        raw_frame_count: rows.length,
+        replay_frame_count: replayWindow.frames.length,
+        trimmed_lead: replayWindow.trimmed_lead,
+        trimmed_tail: replayWindow.trimmed_tail,
+        frame_hash_sha256: integrity.sha256,
+        frame_checksum_fnv1a: integrity.checksum
+      };
+      let source = "";
+      try {
+        const res = await fetch("/visualizer", { cache: "no-store" });
+        source = await res.text();
+      } catch (error) {
+        return buildMiniReplayHtml();
+      }
+      const bootstrap = `<script>window.__MONOGATE_REPLAY_EXPORT__=${JSON.stringify(payload).replaceAll("</", "<\\/")};<\/script>\n`;
+      return source.replace("<body>", `<body>\n${bootstrap}`);
+    }
+
+    function download(name, content, type) {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = name;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadJsonl() {
+      const body = rowsForDownload().map((frame) => JSON.stringify(frame.raw ?? frame)).join("\n") + "\n";
+      download("esp32-arduino-visualizer.jsonl", body, "application/x-ndjson");
+      $("exportMenu").open = false;
+    }
+
+    function downloadCsv() {
+      const header = ["sample_index","timestamp_ms","dashboard_received_at","pot_raw","requested_output","safe_output","led","buzzer","button_pressed","button_action","guard_action","hardware_observed"];
+      const rows = rowsForDownload().map((frame) => header.map((key) => JSON.stringify(frame[key] ?? "")).join(","));
+      download("esp32-arduino-visualizer.csv", [header.join(","), ...rows].join("\n") + "\n", "text/csv");
+      $("exportMenu").open = false;
+    }
+
+    function downloadPng() {
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL("image/png");
+      link.download = "esp32-arduino-visualizer.png";
+      link.click();
+      $("exportMenu").open = false;
+    }
+
+    async function downloadReplayHtml() {
+      download("reflex-lab-01-replay.html", await buildReplayHtml(), "text/html");
+      $("exportMenu").open = false;
+    }
+
+    function downloadEvidencePacket() {
+      const packet = buildEvidencePacketStarter();
+      download("reflex-lab-01-evidence-packet-draft.json", JSON.stringify(packet, null, 2) + "\n", "application/json");
+      $("exportMenu").open = false;
+    }
+
+    $("modeLive").addEventListener("click", () => { setMode("live"); setLivePaused(false); loadLive(); });
+    $("diagnosticsLink").addEventListener("click", () => window.open("/live-board", "_self"));
+    $("headerPauseLive").addEventListener("click", () => {
+      if (mode !== "live") return;
+      setLivePaused(!livePaused);
+      render();
+    });
+    $("captureToggle").addEventListener("click", toggleCapture);
+    $("resetSession").addEventListener("click", resetLocalSession);
+    $("dashboardToggle").addEventListener("click", () => setDashboardVisible(!dashboardVisible));
+    $("modeReplay").addEventListener("click", loadReplay);
+    $("modeExample").addEventListener("click", loadExample);
+    $("playPause").addEventListener("click", togglePlayback);
+    $("prevFrame").addEventListener("click", () => showReplayFrame(replayIndex - 1));
+    $("nextFrame").addEventListener("click", () => showReplayFrame(replayIndex + 1));
+    $("jumpLog").addEventListener("click", jumpToSessionLog);
+    $("soundToggle").addEventListener("click", async () => {
+      audio ??= new AudioContext();
+      await audio.resume();
+      soundEnabled = !soundEnabled;
+      updateSoundButton();
+      soundStatePrimed = false;
+      if (soundEnabled) tone(640, 0.07, "sine", 0.06);
+    });
+    $("downloadJsonl").addEventListener("click", downloadJsonl);
+    $("downloadCsv").addEventListener("click", downloadCsv);
+    $("downloadPng").addEventListener("click", downloadPng);
+    $("downloadReplayHtml").addEventListener("click", downloadReplayHtml);
+    $("downloadEvidencePacket").addEventListener("click", downloadEvidencePacket);
+    $("sessionLog").addEventListener("click", (event) => {
+      const row = event.target.closest("[data-event-key]");
+      if (row) inspectSessionEvent(row.dataset.eventKey);
+    });
+    $("events").addEventListener("click", (event) => {
+      const row = event.target.closest("[data-event-key]");
+      if (row) inspectSessionEvent(row.dataset.eventKey);
+    });
+    $("sessionLog").addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      const row = event.target.closest("[data-event-key]");
+      if (!row) return;
+      event.preventDefault();
+      inspectSessionEvent(row.dataset.eventKey);
+    });
+    $("events").addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      const row = event.target.closest("[data-event-key]");
+      if (!row) return;
+      event.preventDefault();
+      inspectSessionEvent(row.dataset.eventKey);
+    });
+    document.querySelectorAll("[data-series]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const series = button.dataset.series;
+        seriesVisible[series] = !seriesVisible[series];
+        draw();
+      });
+    });
+    $("showRequestSignal").addEventListener("click", () => {
+      setRequestVisible(!seriesVisible.requested_output);
+    });
+    $("showAllSignals").addEventListener("click", () => {
+      const allSignalsVisible = Object.values(seriesVisible).every(Boolean);
+      setAllSignalsVisible(!allSignalsVisible);
+    });
+    $("captureFile").addEventListener("change", async (event) => {
+      if (window.__MONOGATE_REPLAY_EXPORT__) {
+        showNotice("empty", "Load JSONL requires the live dashboard page, not an exported replay.");
+        return;
+      }
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const text = await file.text();
+      frames = text.split("\\n").filter((line) => line.trim().startsWith("{")).map((line) => normalizeParsed(JSON.parse(line)));
+      replayIndex = Math.max(0, frames.length - 1);
+      setMode("replay");
+      $("status").textContent = "LOADED";
+      $("meta").textContent = `${frames.length} frames from file`;
+      render();
+    });
+
+    window.addEventListener("resize", resizeCanvas);
+    updateSoundButton();
+    resizeCanvas();
+    function startEmbeddedReplay() {
+      const payload = window.__MONOGATE_REPLAY_EXPORT__;
+      embeddedReplayPayload = payload;
+      replayIntegrity = { status: "checking", label: "checking embedded frame hash..." };
+      document.body.classList.add("replay-export");
+      frames = (payload.frames || []).map((frame) => normalizeParsed(frame));
+      replayIndex = Math.max(0, Math.min(frames.length - 1, payload.replay_index ?? frames.length - 1));
+      sampleBaseline = payload.sample_baseline;
+      dashboardVisible = payload.dashboard_visible !== false;
+      setMode("replay");
+      $("dashboardToggle").setAttribute("aria-pressed", String(dashboardVisible));
+      $("dashboardPanel").hidden = !dashboardVisible;
+      $("status").textContent = "REPLAY HTML";
+      $("status").classList.add("is-warn");
+      $("meta").textContent = payload.raw_frame_count && payload.raw_frame_count !== frames.length
+        ? `${frames.length} replay frames from ${payload.raw_frame_count} captured | offline`
+        : `${frames.length} embedded frames | offline replay`;
+      $("headerPauseLive").disabled = true;
+      $("headerPauseLive").classList.add("is-hidden");
+      $("captureToggle").disabled = true;
+      $("modeLive").disabled = true;
+      $("modeReplay").disabled = true;
+      $("modeExample").disabled = true;
+      render();
+      verifyEmbeddedReplayPayload(payload);
+    }
+    if (window.__MONOGATE_REPLAY_EXPORT__) {
+      startEmbeddedReplay();
+    } else {
+      loadLive();
+      setInterval(loadLive, 280);
+    }
+  </script>
+</body>
+</html>

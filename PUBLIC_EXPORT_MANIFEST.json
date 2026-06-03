@@ -1,0 +1,640 @@
+{
+  "schema_version": "monogate-electronics.public-curriculum-export.v0",
+  "generated_at": "2026-06-03T20:53:50.936046+00:00",
+  "source_repo": "monogate-electronics",
+  "public_repo": "monogate-edu",
+  "source_commit": "6a8361a1a400161017d0ba27ae826692bf103574",
+  "source_dirty": true,
+  "target_profile": "monogate-edu-electronics-topic-reflex-guard-course-001",
+  "included_courses": [
+    "001-reflex-guard"
+  ],
+  "private_path_policy": "allowlisted public course files only; private working folders are excluded",
+  "files": [
+    {
+      "path": ".github/workflows/validate-electronics.yml",
+      "bytes": 767,
+      "sha256": "fe2eb9d6100d87e31e1f60f54a9bb269bf441ade05481437f10914b29e97c6c2"
+    },
+    {
+      "path": "electronics/.gitignore",
+      "bytes": 119,
+      "sha256": "f882e85c7b1015a5df03d7449eba00da428e1898f8e103b5c1cbe265d0a0fabc"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/index.html",
+      "bytes": 316,
+      "sha256": "a676585124f4a1dfed14a2df7f5d6773c7a8aa71c286ce0d490b41b0d5d0dbe6"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/package-lock.json",
+      "bytes": 150945,
+      "sha256": "8563ad35eb98a2294f3b1b911c06897b9d0411062d0305c615057b39716a68cd"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/package.json",
+      "bytes": 1026,
+      "sha256": "f7fea5e33732d9c72cdbd5db3271b9ab27de5cb3835572a6780a155cb3ceb405"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/playwright.config.ts",
+      "bytes": 523,
+      "sha256": "9533125fb17813a0252f2e711d95df648d9f90c141b7ce9d05b2828b9e3286c7"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/public/courses/001-guarded-reflex-loops/hardware/bom.md",
+      "bytes": 1556,
+      "sha256": "1004bba6c1bba9b3cdd5f72e238b5723d8c3c5418f9b46a8cd3b866fc4407d7b"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/public/courses/001-guarded-reflex-loops/hardware/build-guide.md",
+      "bytes": 1449,
+      "sha256": "a04aadc81b962745a91c1194a999aa129788b51a956829a2b44e374051f6c35c"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/public/courses/001-guarded-reflex-loops/hardware/schematic.md",
+      "bytes": 1521,
+      "sha256": "157389f9e50fef438369c6e592363a75af607c0a1c3991d410e0899afc667197"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/public/courses/001-guarded-reflex-loops/lab-bundle/README.md",
+      "bytes": 1343,
+      "sha256": "fe08ae5c90fac5cfad153d783ab0d0d80f658352ec776ec42f311c954a5bf9d0"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/public/courses/001-guarded-reflex-loops/lab-bundle/start-reflex-dashboard.bat",
+      "bytes": 120,
+      "sha256": "490686082a597768bb687a8be9edd77658f6afab90bcbc87ccd0a732e1a91448"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/public/courses/001-guarded-reflex-loops/lab-bundle/start-reflex-dashboard.ps1",
+      "bytes": 1788,
+      "sha256": "dd1f8cfad14ddeea6bfa722f782ed2049f617ea8e5a58a08ff61cbbfef1c7c05"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/public/courses/001-guarded-reflex-loops/resources/reflexcourse/evidence-packet-guide.md",
+      "bytes": 3064,
+      "sha256": "2aa79f46dee701f1b9352042f7ddb52a8c184a1e0471eb9b8eaa5eb5ebfc7f80"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/public/courses/001-guarded-reflex-loops/resources/reflexcourse/lab-packet.md",
+      "bytes": 12213,
+      "sha256": "51089e49de436c0f7b8e658a4f493197cad09b2e9ecf669bb04597f736f24f46"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/public/courses/001-guarded-reflex-loops/resources/reflexcourse/quick-start.html",
+      "bytes": 5708,
+      "sha256": "92c5a21d553696730d1a75b5243f619ed803294576e8b6981711dcf03781be6e"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/public/courses/001-guarded-reflex-loops/resources/reflexcourse/quick-start.pdf",
+      "bytes": 112421,
+      "sha256": "35360c718675923c89e921f912eeca6114d03abc6302c7eea9d90feed849dee8"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/README.md",
+      "bytes": 1039,
+      "sha256": "4eeb2d4c97f126f1f727de30c5ad8f4d347dfd7341a386aa28111622a968eb84"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/scripts/live-relay.mjs",
+      "bytes": 2457,
+      "sha256": "37393bbc6b6bc57c742f2b479c54cbc73713bc6fd834e11460c601b55e33f4c0"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/scripts/live-serial-dashboard.py",
+      "bytes": 12541,
+      "sha256": "ac575ac0a3cc94c223a42df6748118f68af1f726e6401eb6e7095f035fb05a64"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/App.tsx",
+      "bytes": 9079,
+      "sha256": "b2472e34109bb4c54d91500c7b9f89490a6513270eacdc4c74a93ac850f129af"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/components/BoundaryLab.tsx",
+      "bytes": 8802,
+      "sha256": "cb437417ded152cd002e04dac42e6513044866166ef0bfdd9b48259d644b0623"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/components/CoursePanel.tsx",
+      "bytes": 14961,
+      "sha256": "d8475bb9c83a6ff9a2a044e249048fd5aa59ef59753f47ac36f6c8e581fc3605"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/components/DashboardPanel.tsx",
+      "bytes": 15380,
+      "sha256": "0f3e58c8b381738507abccad9be8b01e3c67a94e0eb263781c607ad65b4e7e1d"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/components/ElectronicsGlossary.tsx",
+      "bytes": 32238,
+      "sha256": "50d687ac755f48cd2b891629b9cb4bf15ade571307b7034d585cd8a85ecee38a"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/components/Esp32BreakoutBoard.tsx",
+      "bytes": 10721,
+      "sha256": "e3c75e634320cb749287ff60fb7f06f585673c27c15d80d3aefc4e472fcf76b5"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/components/GlossaryHint.tsx",
+      "bytes": 942,
+      "sha256": "f3a399eecefc6754fc49274fd71a4f842497612c2d93ed36c64b303157c9ae3c"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/components/InventoryPanel.tsx",
+      "bytes": 7402,
+      "sha256": "5e21484a628883ed4ccdaa9576c4f59fa4ea6f6672eb8eaea302a826b58b7b25"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/components/LabScene.tsx",
+      "bytes": 156859,
+      "sha256": "b7667320b5db5a0757102554c9120428c4c3cc9c8ebf471c1e9504543eb1152b"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/components/LandingPage.tsx",
+      "bytes": 49024,
+      "sha256": "24e7b4f3385e8e256a0f2f4ad774d758169d33a88edde8c387b07c21f8baf26f"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/components/OptimizationBoundaryLab.tsx",
+      "bytes": 20056,
+      "sha256": "5d8a453043aa978f72f3766649a19f2a94b28051e2d0c4f4cc1842e7c818495b"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/components/Panels.tsx",
+      "bytes": 10018,
+      "sha256": "aaaba124ee81b5922aac9c9094dc37220c165a4180ce790d95da7d7156d33661"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/components/PhysicalBuildPanel.tsx",
+      "bytes": 9907,
+      "sha256": "33309325ea397cc0afe0d0df550dbb7d44498db7f76cd5a7ccc9fdd055e140f3"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/components/SchematicPanel.tsx",
+      "bytes": 27949,
+      "sha256": "eceeb236b92ce7da438f2508b57e3602ae3290af7eb449fb9e62ec52c9b75b57"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/components/SimulatorBench.tsx",
+      "bytes": 109780,
+      "sha256": "02a6cf67dcc83c85add60a791840fb4eebb2ef02cfac53bf1652c5ff15bf8b3f"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/components/simulatorCourses.ts",
+      "bytes": 58403,
+      "sha256": "df07d0b53d54c97741f5becf8bc307a7b88dfda783834af25c7a22ea366b08f2"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/components/TrainerBoardParts.tsx",
+      "bytes": 22103,
+      "sha256": "4f92967de6520f20501c58a51f721b3283f94b535e3cf4d6a8df10a4be86725e"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/components/trainerPartCatalog.ts",
+      "bytes": 3052,
+      "sha256": "2e2ab51ca02e283497612cb1909e2cc52c1352e775de072b7111308f6ba83b25"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/engine/boundaryEngine.test.ts",
+      "bytes": 4449,
+      "sha256": "a34063d06ddf696d1ab9c38e4fd6d862edd4d96dbf7617b19506c73c60100770"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/engine/boundaryEngine.ts",
+      "bytes": 8366,
+      "sha256": "168219c06d0288957a760f4e4eabe8b465133806325bb16fd61cad85c3349351"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/engine/labEngine.test.ts",
+      "bytes": 3546,
+      "sha256": "bc58de214ae37f509c88364dd78fa5722a0d46f7e99204e384d4b3ce47fa0de9"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/engine/labEngine.ts",
+      "bytes": 17544,
+      "sha256": "6cd6bec03f560340595fcd4cbad243ddadb955c02d8ff400b52a5387cb81cf5c"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/engine/liveEvents.ts",
+      "bytes": 2380,
+      "sha256": "f3ea9d5e052428d5b1e9c2578c06ac39cd5f8de7a64ec7df26e6ffe5e927b25e"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/engine/optimizationBoundary.test.ts",
+      "bytes": 2839,
+      "sha256": "6008070114e08d681e23d0fd4e3082dd931b932ab50faeb0ee53eaf57ad7495b"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/engine/optimizationBoundary.ts",
+      "bytes": 7684,
+      "sha256": "2cb109c00d206703501914801eba60f08095fb592580363e70ac0650ab395441"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/engine/packet.ts",
+      "bytes": 1755,
+      "sha256": "e2716f837c23e95f59c42c7501077f36045edfc108c805f8f99d630806ba7a92"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/main.tsx",
+      "bytes": 265,
+      "sha256": "18cdd1457d16e3981a0331d8f0f7a711776585eeeb919125db1498746aa42ab2"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/store.ts",
+      "bytes": 7995,
+      "sha256": "9d17c13823b74689a16f97e49df7f9f9120833f8b3508920bc173ed9412aac86"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/styles.css",
+      "bytes": 167894,
+      "sha256": "1d5a5b01a4c0720a9bcd8349cf16d23e4618f8cf3dab6f759823ade6fa3489a2"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/tests/mvp.spec.ts",
+      "bytes": 69792,
+      "sha256": "6ba34805e1397695daab2f6bab03f8a88bcebf5b0ddad5a44c9fbe59f12330de"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/tsconfig.json",
+      "bytes": 622,
+      "sha256": "6fad774018d9d9172d0225683411a213d57011ec669f25076ab5d1b4bbf2fef8"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/vite.config.ts",
+      "bytes": 707,
+      "sha256": "8de6538da7c630813166629e0dfd8cf842d6153b539354080fb0af889c817415"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/vitest.config.ts",
+      "bytes": 182,
+      "sha256": "0e37c1139c03939b4637f80ee77568cb1e55534f609da44e43a97b597586b05c"
+    },
+    {
+      "path": "electronics/CONTRIBUTING.md",
+      "bytes": 475,
+      "sha256": "93e4724a3ee7fdcc65022577a56a168356620f3140ef3e3fd1340d6ecaa96bb0"
+    },
+    {
+      "path": "electronics/COURSE_INDEX.md",
+      "bytes": 1005,
+      "sha256": "3b35950c088da5388981946199697bb787f3bf1bf2f77f0b4c65f1a266099d3b"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/glossary.md",
+      "bytes": 3541,
+      "sha256": "13530c49753e117d3c75bfbdb4906d2b5c0c8374d94a0cf5d09d42a56051c77c"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/evidence/evidence-packet-template.json",
+      "bytes": 2000,
+      "sha256": "b5c1119136f2d32f17242b6ff095fdb077f0d0fcc305dd06a49cd76d2a545a77"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/evidence/VOLTAGE_DIVIDER_EVIDENCE_INTAKE.md",
+      "bytes": 4246,
+      "sha256": "4dba893f687ac5c3f9a0ef1425071c3694a6a072979939f1ee89f593a7808b25"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/firmware/README.md",
+      "bytes": 773,
+      "sha256": "4bded30e5039dda0f293ca7c6b1bf59c0841d531065aaca765fb8eada77fc0ca"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/hardware/bom.md",
+      "bytes": 1556,
+      "sha256": "1004bba6c1bba9b3cdd5f72e238b5723d8c3c5418f9b46a8cd3b866fc4407d7b"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/hardware/build-guide.md",
+      "bytes": 1449,
+      "sha256": "a04aadc81b962745a91c1194a999aa129788b51a956829a2b44e374051f6c35c"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/hardware/schematic.md",
+      "bytes": 1521,
+      "sha256": "157389f9e50fef438369c6e592363a75af607c0a1c3991d410e0899afc667197"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/lab-bundle/README.md",
+      "bytes": 1343,
+      "sha256": "fe08ae5c90fac5cfad153d783ab0d0d80f658352ec776ec42f311c954a5bf9d0"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/lab-bundle/start-reflex-dashboard.bat",
+      "bytes": 120,
+      "sha256": "490686082a597768bb687a8be9edd77658f6afab90bcbc87ccd0a732e1a91448"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/lab-bundle/start-reflex-dashboard.ps1",
+      "bytes": 1786,
+      "sha256": "b18b685e55107ce75916b452da848bd304fd62ec54cd17b4c2c21e65a48584b9"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/README.md",
+      "bytes": 919,
+      "sha256": "3791008d4ec30f514fbbc664f2278a6be3afdf99dc9c7802dc8cf4485055049b"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/RESOURCE_INDEX.md",
+      "bytes": 2734,
+      "sha256": "6ad89c4aa7e0cf548050ce63dbc4f28ad2b9ce295ebc4b02997fa2e41913666d"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/README.md",
+      "bytes": 369,
+      "sha256": "e48ced11318f9f46a53d0f4a204fe46e5a9664f4aaaf421093fe781398191601"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/evidence-packet-guide.md",
+      "bytes": 3064,
+      "sha256": "2aa79f46dee701f1b9352042f7ddb52a8c184a1e0471eb9b8eaa5eb5ebfc7f80"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/first-demo-runbook.md",
+      "bytes": 6514,
+      "sha256": "15a6abad4b5ba8f33f4e52c91f7ef8abcef38782211b34513e5426d05bbc5627"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/kernel-modes.md",
+      "bytes": 5139,
+      "sha256": "ea8c4d943583523e6b820394f58f6d3b4691c7d9dd00362252c0e95949500cad"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/lab-packet.md",
+      "bytes": 12213,
+      "sha256": "51089e49de436c0f7b8e658a4f493197cad09b2e9ecf669bb04597f736f24f46"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/quick-start.md",
+      "bytes": 2492,
+      "sha256": "ee1ad4074afa0eb667cfdd9b761d86878aa5246656677696c7f750a4f4bb1da8"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/quick-start.pdf",
+      "bytes": 112421,
+      "sha256": "35360c718675923c89e921f912eeca6114d03abc6302c7eea9d90feed849dee8"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/README.md",
+      "bytes": 1179,
+      "sha256": "87afba6f3f84af5d244ea71155fa4152489153a95ada958e2cda519d93ce38a5"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/video-shot-list.md",
+      "bytes": 1751,
+      "sha256": "12b2244d82a98acd135a02d52a8ebb7177e9b470831299be4fdc371c7f515bcd"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources.md",
+      "bytes": 1280,
+      "sha256": "7f4d79f84a5fd8c3160ae0b16b985b67212efdf8276c06b19169a6a830fa836a"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/simulation/README.md",
+      "bytes": 740,
+      "sha256": "640b894dfc4bd11ff5d3f15abf4344f47ef28703322619130b4ad88f59ba7c93"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/theory/short-theory.md",
+      "bytes": 1292,
+      "sha256": "7f1fdb14f20ef48d2bdf0c7a66d712c72673c2eff9e57e2d71a61909a6d2226e"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/troubleshooting.md",
+      "bytes": 1743,
+      "sha256": "5e1a5807afb0943affdca1d4168932872f69de48fcfbb248336e2afc32b1ec8b"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-02-trace-replay-evidence/README.md",
+      "bytes": 1816,
+      "sha256": "fc1e64511000896facdc03fae82b36263e638504a2eb42f649e7a8b40f170e7e"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/README.md",
+      "bytes": 924,
+      "sha256": "9d434271f2252f5e17e99f4202ae7d52aa1c6a8bb7a6bc21b847fc2d7e855152"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/release-checklist.md",
+      "bytes": 5198,
+      "sha256": "56c98f53457db986c4f476e3254d2d281f6090b34dbc51c9544e6f18d0198754"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/syllabus.md",
+      "bytes": 1774,
+      "sha256": "3bdb2464b8e647569510130a3d087cbd80a233c4a07bf376c841ccd44edbc264"
+    },
+    {
+      "path": "electronics/courses/README.md",
+      "bytes": 116,
+      "sha256": "ac1b0a2fed190a4a470e1267e2938c1af985f054f0c39460a827acb3121e95e8"
+    },
+    {
+      "path": "electronics/dashboards/esp32-arduino/dashboard.py",
+      "bytes": 35846,
+      "sha256": "f934aebcd108a20b2309164709cf1ad337b14417edd654efd5ea9612d0a529e4"
+    },
+    {
+      "path": "electronics/dashboards/esp32-arduino/README.md",
+      "bytes": 2545,
+      "sha256": "b1219b17391914bd4e1458499060865851b3ff6b62ad399205223aa812b9dfc7"
+    },
+    {
+      "path": "electronics/dashboards/esp32-arduino/visualizer.html",
+      "bytes": 128374,
+      "sha256": "2c71a51162ccc6a90e8a2da8ff7143b7b0a121f4fbebd2ba4319ebcd5fd262e7"
+    },
+    {
+      "path": "electronics/docs/course-design-standard.md",
+      "bytes": 5880,
+      "sha256": "9676113e831656548020ccb9fdae6d9e8a086a01ff80a601e3148495e417dfe6"
+    },
+    {
+      "path": "electronics/docs/course-lab-structure.md",
+      "bytes": 2228,
+      "sha256": "0969b7a430d8575f18527b130baa9cfaea948dc09725246ba64b2405a153cc25"
+    },
+    {
+      "path": "electronics/docs/evidence-grammar.md",
+      "bytes": 3943,
+      "sha256": "b5c4bd1256e9ddf62a7cf7a191b4d2904fbc60dff236c4ad556ad2378266331f"
+    },
+    {
+      "path": "electronics/docs/glossary.md",
+      "bytes": 13771,
+      "sha256": "50c0819496ddc75f46a1dc9b3e45aa481efcdcec74b5ef16268ffce796a8b2f0"
+    },
+    {
+      "path": "electronics/docs/starter-kernel-map.md",
+      "bytes": 5917,
+      "sha256": "19afa3494d52c149da597ca6f3f47ed3e81be0bf0f92f4651069679b81657a5c"
+    },
+    {
+      "path": "electronics/kernels/threshold_reflex_v0/dashboard/README.md",
+      "bytes": 327,
+      "sha256": "4e9ff1fbe49be36d485a414b833aeb1f64566a16f6be690a3b51e3deea169664"
+    },
+    {
+      "path": "electronics/kernels/threshold_reflex_v0/esp32/PIN_MAP.md",
+      "bytes": 767,
+      "sha256": "2f02296c70a49844cce8582421e14ac896bd3604e5c21506a9e2eea36168d649"
+    },
+    {
+      "path": "electronics/kernels/threshold_reflex_v0/esp32/threshold_reflex_v0/threshold_reflex_v0.ino",
+      "bytes": 4621,
+      "sha256": "b5580c2ceb7efce201647dab2a99ebe273dacd2e01d33e14f1d295e0e2cd3e69"
+    },
+    {
+      "path": "electronics/kernels/threshold_reflex_v0/evidence/README.md",
+      "bytes": 395,
+      "sha256": "8ccfdb499712d3d4c281ea846134a8489696197f12e51e35e37d6b115f86c5d0"
+    },
+    {
+      "path": "electronics/kernels/threshold_reflex_v0/fpga/README.md",
+      "bytes": 437,
+      "sha256": "e3b1e788cad49143fb562d1b0fbfb9526cde2b464119aef05e23a9add0e5d570"
+    },
+    {
+      "path": "electronics/kernels/threshold_reflex_v0/fpga/rtl/threshold_reflex_v0_stub.v",
+      "bytes": 299,
+      "sha256": "334b339caab4f2e7b5f5fcc681d5eb4247c39ff3dee12676d738868a381b02db"
+    },
+    {
+      "path": "electronics/kernels/threshold_reflex_v0/fpga/sim/README.md",
+      "bytes": 204,
+      "sha256": "c7134a80ccf1e28dc24b02ad228fa156e6b81b3e5b14f0e1be8a4f918cc655fd"
+    },
+    {
+      "path": "electronics/kernels/threshold_reflex_v0/kernel.eml",
+      "bytes": 1229,
+      "sha256": "82b4f8ad1120e37f9528e9346386e6d99c242ca2683a04865a24ddde7d1f2a85"
+    },
+    {
+      "path": "electronics/kernels/threshold_reflex_v0/kernel.json",
+      "bytes": 650,
+      "sha256": "a09e76a3da7d3da12f8187887a9c9b74f1117a9291f5e236f2321ffcd3afcd21"
+    },
+    {
+      "path": "electronics/kernels/threshold_reflex_v0/kernel.md",
+      "bytes": 1447,
+      "sha256": "dd60f1f89b2f8e83d26cda24552011a651bf0d9412f63440088346414e5e731d"
+    },
+    {
+      "path": "electronics/kernels/threshold_reflex_v0/README.md",
+      "bytes": 898,
+      "sha256": "5af4f0c5c97ab4f0198ce63d192bf72eba14d7593ceb7177a281fbb6960ad3cf"
+    },
+    {
+      "path": "electronics/kernels/threshold_reflex_v0/traces/golden_trace.jsonl",
+      "bytes": 2458,
+      "sha256": "17e2763933b8e7326b720f58c0d27cbdef8f01d5bd6a584a115f8263e033e8d7"
+    },
+    {
+      "path": "electronics/LICENSE",
+      "bytes": 205,
+      "sha256": "d10a675adee8f0c7c69b5eb45a42f10c24be6f798f2d2a36575d7d847bd922b9"
+    },
+    {
+      "path": "electronics/README.md",
+      "bytes": 1587,
+      "sha256": "ea9c7421ec2dfd020d4afbbd4f4dbdcf4c38db1aedead01f411419602fd8493a"
+    },
+    {
+      "path": "electronics/resources/README.md",
+      "bytes": 217,
+      "sha256": "79ed743b0682ceda3e27d437fbb783e271e55b4b0cbb1db3d892b5805608a832"
+    },
+    {
+      "path": "electronics/START_HERE.md",
+      "bytes": 1107,
+      "sha256": "30e48689724fed94d060a36809b09bd4f1867d2b3b91959c8cc50732c4d8a72e"
+    },
+    {
+      "path": "electronics/starter-bundle/dashboard-setup.md",
+      "bytes": 1352,
+      "sha256": "48a369b998782f08600e4a11e4e9e5ebd8aa421f04d3382685488535cb1437c6"
+    },
+    {
+      "path": "electronics/starter-bundle/evidence-basics.md",
+      "bytes": 453,
+      "sha256": "1947f9352a75d4ba5cfa2a2fd20ab881e7ff834b581fd7ad701852daeb52a55e"
+    },
+    {
+      "path": "electronics/starter-bundle/glossary.md",
+      "bytes": 13771,
+      "sha256": "50c0819496ddc75f46a1dc9b3e45aa481efcdcec74b5ef16268ffce796a8b2f0"
+    },
+    {
+      "path": "electronics/starter-bundle/hardware-requirements.md",
+      "bytes": 593,
+      "sha256": "e632b88e6abb271b6fb932eace84dbe9f1d2a53475b33149e828f5084e85748c"
+    },
+    {
+      "path": "electronics/starter-bundle/README.md",
+      "bytes": 674,
+      "sha256": "22b38db442fc6591fb0bd42e500e4bb4f75916e963e6916b0a38471cd7b0778d"
+    },
+    {
+      "path": "electronics/starter-bundle/software-requirements.md",
+      "bytes": 766,
+      "sha256": "b9399a0f25dd77d298b8ae53cfd02b29bd7a447f33223c65728d087d91b27c70"
+    },
+    {
+      "path": "electronics/starter-bundle/tools-setup.md",
+      "bytes": 464,
+      "sha256": "bbe945725f1de0bd203dae22cc1730ac9342cfc37bbeed2a6a89eb59cb9d08b8"
+    },
+    {
+      "path": "electronics/starter-bundle/trace-and-replay.md",
+      "bytes": 489,
+      "sha256": "66601298e84c95a35b294e55f321adccdcd675fed431e5696ec18e16fb2e93e3"
+    },
+    {
+      "path": "electronics/tools/make_packet.py",
+      "bytes": 1334,
+      "sha256": "e1be7be5f4da5e76207f9b876a28b891e22f094b250acd9529f319b1de06e565"
+    },
+    {
+      "path": "electronics/tools/replay_trace.py",
+      "bytes": 1401,
+      "sha256": "51e9bca4e020b6a7aa0cd90cd63cf3345a0f1a8f55b63cb007f2667460e4cfd8"
+    },
+    {
+      "path": "electronics/tools/scaffold_course_evidence.py",
+      "bytes": 8986,
+      "sha256": "63b36fc1acc47e7b5d1d223c89e7eed12a4527aff39cd4ed768ed14910e1d253"
+    },
+    {
+      "path": "electronics/tools/validate_course_evidence_packet.py",
+      "bytes": 7486,
+      "sha256": "b12edcbd102ba9820af1774145a30bea5c2b840d19ef992aead1e60104066439"
+    },
+    {
+      "path": "electronics/tools/validate_electronics_graph.py",
+      "bytes": 6923,
+      "sha256": "0964c90b17417dcbc1f292ffa4c77fbfbef110125db8470defc200ce47869df9"
+    },
+    {
+      "path": "electronics/tools/validate_evidence_grammar.py",
+      "bytes": 3146,
+      "sha256": "531a6ccbbfd9a21cd52b4f6610b6421b8fdb641c53ea38d4d94a4c8c60aad0ae"
+    },
+    {
+      "path": "electronics/tools/validate_kernel_spec.py",
+      "bytes": 4516,
+      "sha256": "528c24fe7f0aedb9319db946eb40dd46382aef7b379125c6eb5f23a6ec8fdb61"
+    },
+    {
+      "path": "electronics/tools/validate_trace.py",
+      "bytes": 3202,
+      "sha256": "0bfdc218271b380e3ea99d9cf1316d029c7d37e5c3b2d67321e07e0696c21fc8"
+    },
+    {
+      "path": "README.md",
+      "bytes": 611,
+      "sha256": "bd88e0fc68a11aeed1e11566281f7ead25c68b7774395ba0388f744791c14c77"
+    }
+  ]
+}

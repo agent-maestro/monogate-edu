@@ -1,0 +1,38 @@
+# Monogate Electronics EML kernel spec v0
+# kernel_id: threshold_reflex_v0
+# schema_version: monogate-electronics.eml-kernel.v0
+#
+# This is a portable symbolic/control specification for Course 001.
+# It is not firmware by itself. ESP32, FPGA, and Python implementations
+# should match this kernel's parameters, guard boundary, and trace behavior.
+
+param threshold = 0.55
+param width = 0.10
+param max_step = 0.20
+param safe_output_limit = 0.85
+param buzzer_on_level = 0.12
+param buzzer_off_level = 0.06
+
+input pot_raw in [0.0, 1.0]
+state previous_output in [0.0, 1.0]
+
+# Normalized threshold response:
+# centered = (pot_raw - threshold) / width
+# target = clamp(centered + 0.5, 0.0, 1.0)
+#
+# Reflex dynamics:
+# requested_output = rate_limit(previous_output, target, max_step)
+# safe_output = clamp(requested_output, 0.0, safe_output_limit)
+
+guard output_duty_margin:
+  if requested_output > safe_output_limit:
+    safe_output = safe_output_limit
+    guard_action = clamp_to_safe_output
+  else:
+    safe_output = requested_output
+    guard_action = pass_through
+
+outputs:
+  led = safe_output
+  buzzer = hysteresis(safe_output, on=buzzer_on_level, off=buzzer_off_level)
+  stepper = safe_output
