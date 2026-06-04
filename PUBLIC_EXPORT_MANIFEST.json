@@ -1,9 +1,9 @@
 {
   "schema_version": "monogate-electronics.public-curriculum-export.v0",
-  "generated_at": "2026-06-04T18:44:00.566399+00:00",
+  "generated_at": "2026-06-04T19:02:13.410825+00:00",
   "source_repo": "monogate-electronics",
   "public_repo": "monogate-edu",
-  "source_commit": "794d135d34ccb18bd53b78a3fc453363338ea632",
+  "source_commit": "84865152a6e0d839b9947c88ccea94796b2e803f",
   "source_dirty": false,
   "target_profile": "monogate-edu-electronics-esp32-launch-courses-001-005",
   "included_courses": [
@@ -184,7 +184,7 @@
     {
       "path": "electronics/apps/electronics-lab/src/components/SchematicPanel.tsx",
       "bytes": 29434,
-      "sha256": "b3772b7f6a14e698b65894b91d94ec40efe2a3b3e432740802a05190d23d9778"
+      "sha256": "e221181300e6beff523dc2b10e398c01a8f85b8d0ab9b66f07553ab8b84edf31"
     },
     {
       "path": "electronics/apps/electronics-lab/src/components/SimulatorBench.tsx",
@@ -263,8 +263,8 @@
     },
     {
       "path": "electronics/apps/electronics-lab/src/styles.css",
-      "bytes": 177528,
-      "sha256": "63721bc727c77f9013480aac9a82aff483f154f3a9d978ba315124acec349c33"
+      "bytes": 177614,
+      "sha256": "b8165317a939849e16f596d6e5826b0696431ad18dd67a03bcfd93521297f0a0"
     },
     {
       "path": "electronics/apps/electronics-lab/tests/mvp.spec.ts",

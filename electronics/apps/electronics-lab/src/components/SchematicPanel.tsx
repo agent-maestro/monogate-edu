@@ -185,7 +185,7 @@ function Node({ cx, cy, label, className = "" }: { cx: number; cy: number; label
 function ResistorSymbol({ x, y, label }: { x: number; y: number; label: string }) {
   return (
     <g className="schematic-symbol schematic-resistor">
-      <path d={`M${x} ${y} h18 l8 -14 l16 28 l16 -28 l16 28 l16 -28 l8 14 h24`} />
+      <path d={`M${x} ${y} h18 l8 -14 l16 28 l16 -28 l16 28 l16 -28 l8 14 h34`} />
       <text x={x + 40} y={y - 22}>
         {label}
       </text>
@@ -503,8 +503,8 @@ export function SchematicPanel({
             </g>
 
             <g className={classForBranch("pot-divider")}>
-              <WirePath d="M492 96 V218" />
-              <WirePath d="M492 338 V724" />
+              <WirePath d="M492 96 V236" />
+              <WirePath d="M492 320 V724" />
               <WirePath d="M546 284 H374 V368 H310" />
               <PotSymbol x={492} y={286} />
               <Node cx={492} cy={96} />
@@ -549,7 +549,7 @@ export function SchematicPanel({
             <g className={classForBranch("guarded-led")}>
               <WirePath d="M310 438 H405" />
               <ResistorSymbol x={405} y={438} label="330 ohm" />
-              <WirePath d="M527 438 H610" />
+              <WirePath d="M517 438 H610" />
               <LedSymbol x={610} y={438} level={schematicLedLevel} />
               <WirePath d="M700 438 H778 V724" />
               <Node cx={310} cy={438} />
@@ -563,7 +563,7 @@ export function SchematicPanel({
               <g className={classForBranch("buzzer-output")}>
                 <WirePath d="M310 510 H405" />
                 <ResistorSymbol x={405} y={510} label="1K" />
-                <WirePath d="M527 510 H635" />
+                <WirePath d="M517 510 H635" />
                 <PiezoSymbol x={635} y={510} active={buzzerActive} />
                 <WirePath d="M735 510 H834 V724" />
                 <Node cx={310} cy={510} />
