@@ -2447,7 +2447,7 @@ export function SimulatorBench({
         </button>
       </section>
       {courseCompletionVisible ? (
-        <section className="bench-completion-dock" aria-label="Course completion">
+        <section className={`bench-completion-dock${liveModeActive ? " is-live" : ""}`} aria-label="Course completion">
           <div>
             <span>{completionCopy.kicker}</span>
             <strong>{completionCopy.title}</strong>

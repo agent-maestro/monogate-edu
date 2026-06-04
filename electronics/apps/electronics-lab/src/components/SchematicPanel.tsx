@@ -31,6 +31,7 @@ type BranchAnalysis = CourseSchematicConfig["branches"][number] & {
 };
 
 type SchematicFocusId = "full" | "power-rails" | "pot-divider" | "ldr-divider" | "guarded-led" | "button-input" | "buzzer-output";
+type SchematicViewMode = "live" | "build";
 
 const branchDisplayLabels: Record<string, string> = {
   "power-rails": "Power rails",
@@ -300,6 +301,7 @@ export function SchematicPanel({
   const [checkPulse, setCheckPulse] = useState(false);
   const [activeSignal, setActiveSignal] = useState<string | null>(null);
   const [focusId, setFocusId] = useState<SchematicFocusId>("full");
+  const [viewMode, setViewMode] = useState<SchematicViewMode>(liveActive ? "live" : "build");
   const hasLdrDivider = config.branches.some((branch) => branch.id === "ldr-divider");
   const schematicMode = hasLdrDivider ? "analog" : config.kicker === "Environmental Guard" ? "environment" : "reflex";
   const hasButtonInput = config.branches.some((branch) => branch.id === "button-input");
@@ -335,6 +337,8 @@ export function SchematicPanel({
   const progressLabel = `${completedBranches.length}/${branches.length} Branches Connected`;
   const incompleteBranches = branches.filter((branch) => !branch.complete);
   const boardCheckState = completedBranches.length === branches.length ? "ready" : checkActive ? "incomplete" : "unchecked";
+  const buildCheckActive = viewMode === "build" && checkActive;
+  const liveVisualComplete = viewMode === "live" && (liveActive || completedBranches.length === branches.length);
   const boardCheckHeadline =
     boardCheckState === "ready"
       ? "Ready for USB"
@@ -347,6 +351,21 @@ export function SchematicPanel({
       : boardCheckState === "incomplete"
         ? `${progressLabel}. This is an incomplete build check, not a damage warning.`
         : "Press Check My Board to compare this schematic against the simulator wiring.";
+  const progressModeLabel = viewMode === "live" ? "Live circuit" : "Board check";
+  const progressModeState = viewMode === "live" ? "live" : boardCheckState;
+  const progressHeadline =
+    viewMode === "live"
+      ? liveActive
+        ? "Powered view running"
+        : "Powered view ready"
+      : boardCheckHeadline;
+  const progressSummary =
+    viewMode === "live"
+      ? liveActive
+        ? "Pot, button, LED, and buzzer values update here without running the board-check animation."
+        : "Stable full-build view. Use Build Check when you want the schematic to compare against simulator wiring."
+      : statusSummary;
+  const progressFootnote = viewMode === "live" ? "Branch colors stay stable in live view." : focusConfig.summary;
 
   useEffect(() => {
     if (!checkPulse) return undefined;
@@ -360,14 +379,21 @@ export function SchematicPanel({
     return () => window.clearTimeout(timer);
   }, [activeSignal]);
 
+  useEffect(() => {
+    if (liveActive) {
+      setViewMode("live");
+    }
+  }, [liveActive]);
+
   function runBoardCheck() {
+    setViewMode("build");
     setCheckActive(true);
     setCheckPulse(true);
   }
 
   function classForBranch(id: string) {
     const branch = branchById.get(id);
-    const status = branch?.status ?? "missing";
+    const status = liveVisualComplete ? "connected" : (branch?.status ?? "missing");
     const focused = focusId !== "full" && focusId === id;
     return `schematic-circuit-branch is-${id} is-${status}${activeSignal === id ? " is-live-focus" : ""}${focused ? " is-focused" : ""}`;
   }
@@ -386,14 +412,33 @@ export function SchematicPanel({
     <section
       className={`schematic-panel${checkPulse ? " is-checking" : ""}`}
       aria-label={`${config.title} schematic`}
-      data-check-active={checkActive ? "true" : "false"}
+      data-check-active={buildCheckActive ? "true" : "false"}
       data-focus={focusId}
+      data-schematic-view={viewMode}
     >
       <header className="schematic-panel-header">
         <div className="schematic-title-block">
           <p>{config.kicker}</p>
           <h2>{config.title}</h2>
           <span>{config.description}</span>
+          <div className="schematic-view-tabs" aria-label="Schematic view mode">
+            <button
+              type="button"
+              className={viewMode === "live" ? "is-active" : ""}
+              aria-pressed={viewMode === "live"}
+              onClick={() => setViewMode("live")}
+            >
+              Live Circuit
+            </button>
+            <button
+              type="button"
+              className={viewMode === "build" ? "is-active" : ""}
+              aria-pressed={viewMode === "build"}
+              onClick={() => setViewMode("build")}
+            >
+              Build Check
+            </button>
+          </div>
           <div className="schematic-focus-tabs" aria-label="Schematic focus controls">
             {visibleFocusOptions.map((option) => (
               <button
@@ -651,11 +696,11 @@ export function SchematicPanel({
               </output>
             </section>
           </div>
-          <div className="schematic-progress-card" data-check-state={boardCheckState}>
-            <span>Board check</span>
-            <strong>{boardCheckHeadline}</strong>
-            <p>{statusSummary}</p>
-            {checkActive && incompleteBranches.length > 0 ? (
+          <div className="schematic-progress-card" data-check-state={progressModeState}>
+            <span>{progressModeLabel}</span>
+            <strong>{progressHeadline}</strong>
+            <p>{progressSummary}</p>
+            {buildCheckActive && incompleteBranches.length > 0 ? (
               <div className="schematic-next-branches" aria-label="Branches that still need attention">
                 <span>Needs attention</span>
                 {incompleteBranches.map((branch) => (
@@ -665,14 +710,17 @@ export function SchematicPanel({
                 ))}
               </div>
             ) : null}
-            <small>{focusConfig.summary}</small>
+            <small>{progressFootnote}</small>
           </div>
           <div className="schematic-branch-list">
             {visibleBranches.map((branch) => (
-              <article key={branch.id} className={`schematic-branch-card is-${branch.status}${activeSignal === branch.id ? " is-live-focus" : ""}`}>
+              <article
+                key={branch.id}
+                className={`schematic-branch-card is-${liveVisualComplete ? "connected" : branch.status}${activeSignal === branch.id ? " is-live-focus" : ""}`}
+              >
                 <div>
-                  <StatusIcon status={branch.status} />
-                  <span>{statusLabel(branch.status)}</span>
+                  <StatusIcon status={liveVisualComplete ? "connected" : branch.status} />
+                  <span>{statusLabel(liveVisualComplete ? "connected" : branch.status)}</span>
                 </div>
                 <strong>{branch.displayLabel}</strong>
                 <p>{branch.detail}</p>

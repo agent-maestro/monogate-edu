@@ -1693,6 +1693,7 @@ body {
   font-size: 13px;
 }
 
+.schematic-view-tabs,
 .schematic-focus-tabs {
   display: flex;
   flex-wrap: wrap;
@@ -1700,6 +1701,7 @@ body {
   margin-top: 8px;
 }
 
+.schematic-view-tabs button,
 .schematic-focus-tabs button {
   min-height: 30px;
   padding: 0 10px;
@@ -1713,12 +1715,20 @@ body {
   cursor: pointer;
 }
 
+.schematic-view-tabs button {
+  border-color: rgba(142, 224, 178, 0.22);
+  background: rgba(142, 224, 178, 0.06);
+}
+
+.schematic-view-tabs button:hover,
+.schematic-view-tabs button:focus-visible,
 .schematic-focus-tabs button:hover,
 .schematic-focus-tabs button:focus-visible {
   border-color: rgba(100, 205, 255, 0.5);
   outline: none;
 }
 
+.schematic-view-tabs button.is-active,
 .schematic-focus-tabs button.is-active {
   border-color: rgba(255, 242, 166, 0.58);
   background: rgba(255, 242, 166, 0.14);
@@ -2218,6 +2228,11 @@ body {
 .schematic-progress-card[data-check-state="ready"] {
   border-color: rgba(104, 224, 161, 0.45);
   box-shadow: inset 0 0 0 1px rgba(104, 224, 161, 0.1);
+}
+
+.schematic-progress-card[data-check-state="live"] {
+  border-color: rgba(117, 217, 255, 0.42);
+  box-shadow: inset 0 0 0 1px rgba(117, 217, 255, 0.1);
 }
 
 .schematic-progress-card span,
@@ -3106,6 +3121,23 @@ body {
   color: #c5d7d2;
   font-size: 12px;
   line-height: 1.35;
+}
+
+.bench-completion-dock.is-live {
+  width: min(430px, calc(100vw - 36px));
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  padding: 10px;
+  pointer-events: none;
+}
+
+.bench-completion-dock.is-live p {
+  display: none;
+}
+
+.bench-completion-dock.is-live .bench-completion-actions {
+  justify-content: flex-start;
+  pointer-events: auto;
 }
 
 .bench-completion-actions {
