@@ -2096,6 +2096,19 @@ body {
   stroke-width: 4;
 }
 
+.schematic-circuit-branch.is-pot-divider .schematic-pot .schematic-pot-terminal {
+  opacity: 1;
+  stroke-width: 4;
+}
+
+.schematic-circuit-branch.is-pot-divider .schematic-pot .is-pot-3v3-terminal {
+  stroke: #ff758a;
+}
+
+.schematic-circuit-branch.is-pot-divider .schematic-pot .is-pot-ground-terminal {
+  stroke: #8ee0b2;
+}
+
 .schematic-led-arrow {
   marker-end: url("#schematic-arrow");
   stroke-width: 2 !important;
@@ -2103,6 +2116,17 @@ body {
 
 .schematic-wiper {
   marker-end: url("#schematic-arrow");
+  stroke: #fff2a6 !important;
+  stroke-width: 4;
+  filter: url("#schematic-glow");
+}
+
+.schematic-wiper-knob,
+.schematic-wiper-contact {
+  fill: #fff2a6;
+  stroke: #fff2a6 !important;
+  stroke-width: 3;
+  filter: url("#schematic-glow");
 }
 
 .schematic-status-badge {
@@ -2248,6 +2272,10 @@ body {
 }
 
 .schematic-circuit-branch.is-live-focus .schematic-wire.is-pot-supply,
+.schematic-circuit-branch.is-live-focus .schematic-pot .schematic-pot-terminal,
+.schematic-circuit-branch.is-live-focus .schematic-pot .schematic-wiper,
+.schematic-circuit-branch.is-live-focus .schematic-pot .schematic-wiper-knob,
+.schematic-circuit-branch.is-live-focus .schematic-pot .schematic-wiper-contact,
 .schematic-circuit-branch.is-live-focus .schematic-node.is-pot-3v3-node,
 .schematic-circuit-branch.is-live-focus .schematic-node.is-pot-ground-node {
   animation: none;
@@ -2255,12 +2283,20 @@ body {
   opacity: 1;
 }
 
+.schematic-circuit-branch.is-live-focus .schematic-pot .schematic-wiper,
+.schematic-circuit-branch.is-live-focus .schematic-pot .schematic-wiper-knob,
+.schematic-circuit-branch.is-live-focus .schematic-pot .schematic-wiper-contact {
+  stroke: #fff2a6;
+}
+
 .schematic-circuit-branch.is-live-focus .schematic-wire.is-pot-3v3-wire,
+.schematic-circuit-branch.is-live-focus .schematic-pot .is-pot-3v3-terminal,
 .schematic-circuit-branch.is-live-focus .schematic-node.is-pot-3v3-node {
   stroke: #ff758a;
 }
 
 .schematic-circuit-branch.is-live-focus .schematic-wire.is-pot-ground-wire,
+.schematic-circuit-branch.is-live-focus .schematic-pot .is-pot-ground-terminal,
 .schematic-circuit-branch.is-live-focus .schematic-node.is-pot-ground-node {
   stroke: #8ee0b2;
 }

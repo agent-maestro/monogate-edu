@@ -219,14 +219,20 @@ function LedSymbol({ x, y, level = 0 }: { x: number; y: number; level?: number }
   );
 }
 
-function PotSymbol({ x, y }: { x: number; y: number }) {
+function PotSymbol({ x, y, value }: { x: number; y: number; value: number }) {
+  const topContactY = y - 42;
+  const bottomContactY = y + 34;
+  const contactY = bottomContactY - clamp01(value) * (bottomContactY - topContactY);
+  const knobY = contactY - 18;
+
   return (
     <g className="schematic-symbol schematic-pot">
-      <path d={`M${x} ${y - 68} v18`} />
+      <path className="schematic-pot-terminal is-pot-3v3-terminal" d={`M${x} ${y - 68} V${topContactY}`} />
       <path d={`M${x - 12} ${y - 50} l24 12 l-24 12 l24 12 l-24 12 l24 12 l-24 12 l24 12`} />
-      <path d={`M${x} ${y + 34} v18`} />
-      <path className="schematic-wiper" d={`M${x + 54} ${y - 2} l-38 20`} />
-      <circle cx={x + 54} cy={y - 2} r="4" />
+      <path className="schematic-pot-terminal is-pot-ground-terminal" d={`M${x} ${bottomContactY} V${y + 52}`} />
+      <path className="schematic-wiper" d={`M${x + 64} ${knobY} L${x + 16} ${contactY}`} />
+      <circle className="schematic-wiper-knob" cx={x + 64} cy={knobY} r="5" />
+      <circle className="schematic-wiper-contact" cx={x + 16} cy={contactY} r="4" />
       <text x={x - 62} y={y - 72}>
         10K POT
       </text>
@@ -568,7 +574,7 @@ export function SchematicPanel({
               <WirePath className="is-pot-supply is-pot-3v3-wire" d="M492 96 V236" />
               <WirePath className="is-pot-supply is-pot-ground-wire" d="M492 320 V724" />
               <WirePath d="M546 284 H374 V368 H310" />
-              <PotSymbol x={492} y={286} />
+              <PotSymbol x={492} y={286} value={potValue} />
               <Node cx={492} cy={236} className="is-pot-3v3-node" />
               <Node cx={492} cy={320} className="is-pot-ground-node" />
               <Node cx={492} cy={96} />
