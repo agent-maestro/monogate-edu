@@ -2020,6 +2020,20 @@ body {
   stroke: rgba(255, 232, 153, 0.88);
 }
 
+.schematic-circuit-branch.is-pot-divider .schematic-wire.is-pot-3v3-wire,
+.schematic-circuit-branch.is-pot-divider .schematic-node.is-pot-3v3-node {
+  opacity: 1;
+  stroke: #ff758a;
+  stroke-width: 4;
+}
+
+.schematic-circuit-branch.is-pot-divider .schematic-wire.is-pot-ground-wire,
+.schematic-circuit-branch.is-pot-divider .schematic-node.is-pot-ground-node {
+  opacity: 1;
+  stroke: #8ee0b2;
+  stroke-width: 4;
+}
+
 .schematic-led-arrow {
   marker-end: url("#schematic-arrow");
   stroke-width: 2 !important;
@@ -2169,6 +2183,24 @@ body {
   stroke: #fff2a6;
   filter: url("#schematic-glow");
   animation: schematic-live-pulse 0.9s ease-out;
+}
+
+.schematic-circuit-branch.is-live-focus .schematic-wire.is-pot-supply,
+.schematic-circuit-branch.is-live-focus .schematic-node.is-pot-3v3-node,
+.schematic-circuit-branch.is-live-focus .schematic-node.is-pot-ground-node {
+  animation: none;
+  filter: url("#schematic-glow");
+  opacity: 1;
+}
+
+.schematic-circuit-branch.is-live-focus .schematic-wire.is-pot-3v3-wire,
+.schematic-circuit-branch.is-live-focus .schematic-node.is-pot-3v3-node {
+  stroke: #ff758a;
+}
+
+.schematic-circuit-branch.is-live-focus .schematic-wire.is-pot-ground-wire,
+.schematic-circuit-branch.is-live-focus .schematic-node.is-pot-ground-node {
+  stroke: #8ee0b2;
 }
 
 .schematic-branch-card.is-live-focus {

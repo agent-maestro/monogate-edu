@@ -548,10 +548,12 @@ export function SchematicPanel({
             </g>
 
             <g className={classForBranch("pot-divider")}>
-              <WirePath d="M492 96 V236" />
-              <WirePath d="M492 320 V724" />
+              <WirePath className="is-pot-supply is-pot-3v3-wire" d="M492 96 V236" />
+              <WirePath className="is-pot-supply is-pot-ground-wire" d="M492 320 V724" />
               <WirePath d="M546 284 H374 V368 H310" />
               <PotSymbol x={492} y={286} />
+              <Node cx={492} cy={236} className="is-pot-3v3-node" />
+              <Node cx={492} cy={320} className="is-pot-ground-node" />
               <Node cx={492} cy={96} />
               <Node cx={492} cy={724} />
               <Node cx={310} cy={368} />
