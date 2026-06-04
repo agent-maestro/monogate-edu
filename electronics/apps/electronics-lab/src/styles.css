@@ -2121,7 +2121,7 @@ body {
   filter: url("#schematic-glow");
 }
 
-.schematic-wiper-knob,
+.schematic-wiper-pivot,
 .schematic-wiper-contact {
   fill: #fff2a6;
   stroke: #fff2a6 !important;
@@ -2274,7 +2274,7 @@ body {
 .schematic-circuit-branch.is-live-focus .schematic-wire.is-pot-supply,
 .schematic-circuit-branch.is-live-focus .schematic-pot .schematic-pot-terminal,
 .schematic-circuit-branch.is-live-focus .schematic-pot .schematic-wiper,
-.schematic-circuit-branch.is-live-focus .schematic-pot .schematic-wiper-knob,
+.schematic-circuit-branch.is-live-focus .schematic-pot .schematic-wiper-pivot,
 .schematic-circuit-branch.is-live-focus .schematic-pot .schematic-wiper-contact,
 .schematic-circuit-branch.is-live-focus .schematic-node.is-pot-3v3-node,
 .schematic-circuit-branch.is-live-focus .schematic-node.is-pot-ground-node {
@@ -2284,7 +2284,7 @@ body {
 }
 
 .schematic-circuit-branch.is-live-focus .schematic-pot .schematic-wiper,
-.schematic-circuit-branch.is-live-focus .schematic-pot .schematic-wiper-knob,
+.schematic-circuit-branch.is-live-focus .schematic-pot .schematic-wiper-pivot,
 .schematic-circuit-branch.is-live-focus .schematic-pot .schematic-wiper-contact {
   stroke: #fff2a6;
 }
@@ -3357,7 +3357,9 @@ body {
 }
 
 .bench-completion-dock.is-live {
-  width: min(430px, calc(100vw - 36px));
+  top: auto;
+  bottom: 100px;
+  width: min(420px, calc(100vw - 36px));
   grid-template-columns: minmax(0, 1fr);
   gap: 8px;
   padding: 10px;
@@ -8717,6 +8719,11 @@ button.other-system-course-card {
     gap: 10px;
     padding: 10px;
     z-index: 15;
+  }
+
+  .bench-completion-dock.is-live {
+    top: auto;
+    bottom: 88px;
   }
 
   .bench-completion-actions {
