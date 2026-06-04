@@ -95,6 +95,10 @@ Nice-to-have for later demos, not needed today:
 
 Before touching wires, get the computer ready. This usually takes 10-20 minutes the first time.
 
+Use the [Reflex Lab 01 Computer Setup Guide](setup-guide.md) for the full
+Windows | Mac path, preferred browser notes, serial-port examples, and
+troubleshooting.
+
 ### 1. Install Arduino IDE 2.x
 
 Download Arduino IDE from:
@@ -105,6 +109,10 @@ https://www.arduino.cc/en/software
 
 Install it normally.
 
+Preferred browser for the dashboard path: Chrome or Edge. Safari is fine for
+reading docs, but it is not the supported path for direct browser serial
+features.
+
 ### 2. Add ESP32 Board Support
 
 1. Open Arduino IDE.
@@ -112,7 +120,7 @@ Install it normally.
 3. In `Additional boards manager URLs`, paste:
 
 ```text
-https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+https://espressif.github.io/arduino-esp32/package_esp32_index.json
 ```
 
 4. Go to `Tools` -> `Board` -> `Boards Manager`.
@@ -140,6 +148,17 @@ Tools -> Port
 ```
 
 If no port appears, try another USB cable first.
+
+Typical ports:
+
+```text
+Windows: COM3, COM6, COM7
+Mac: /dev/cu.usbserial-*, /dev/cu.SLAB_USBtoUART, /dev/cu.wchusbserial*
+```
+
+Mac instructions follow the standard ESP32/macOS workflow and are ready for
+students. Mark the Mac bench path as not yet Monogate bench-verified until a
+tester records a full Mac upload and dashboard run.
 
 ### Optional: Python Trace Tools
 

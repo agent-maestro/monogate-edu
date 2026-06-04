@@ -1,9 +1,9 @@
 {
   "schema_version": "monogate-electronics.public-curriculum-export.v0",
-  "generated_at": "2026-06-04T19:02:13.410825+00:00",
+  "generated_at": "2026-06-04T19:26:06.674601+00:00",
   "source_repo": "monogate-electronics",
   "public_repo": "monogate-edu",
-  "source_commit": "84865152a6e0d839b9947c88ccea94796b2e803f",
+  "source_commit": "c92996757d4e8939c1e8c609f61d53ca495a8ee1",
   "source_dirty": false,
   "target_profile": "monogate-edu-electronics-esp32-launch-courses-001-005",
   "included_courses": [
@@ -178,8 +178,8 @@
     },
     {
       "path": "electronics/apps/electronics-lab/src/components/PhysicalBuildPanel.tsx",
-      "bytes": 9907,
-      "sha256": "33309325ea397cc0afe0d0df550dbb7d44498db7f76cd5a7ccc9fdd055e140f3"
+      "bytes": 10377,
+      "sha256": "b031873646b61e6a3c4e0d42d4c43f98ad7eaffe67eda1ee54abc30d5af8f1c1"
     },
     {
       "path": "electronics/apps/electronics-lab/src/components/SchematicPanel.tsx",
@@ -338,8 +338,8 @@
     },
     {
       "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/lab-bundle/README.md",
-      "bytes": 1343,
-      "sha256": "fe08ae5c90fac5cfad153d783ab0d0d80f658352ec776ec42f311c954a5bf9d0"
+      "bytes": 2135,
+      "sha256": "06af026769c4e8b63a271c4a31761f2d383b89c29730f6b32ac5845241944b36"
     },
     {
       "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/lab-bundle/start-reflex-dashboard.bat",
@@ -358,8 +358,8 @@
     },
     {
       "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/RESOURCE_INDEX.md",
-      "bytes": 2734,
-      "sha256": "6ad89c4aa7e0cf548050ce63dbc4f28ad2b9ce295ebc4b02997fa2e41913666d"
+      "bytes": 2855,
+      "sha256": "aed07553b7f318a77e7f1e6307d892fad5395daa476e307b62eb759357fff170"
     },
     {
       "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/README.md",
@@ -383,13 +383,13 @@
     },
     {
       "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/lab-packet.md",
-      "bytes": 12351,
-      "sha256": "a2b47b360e6ae51947fd334dd11344007099bafbb878f4aa244962efbde0d7d5"
+      "bytes": 13002,
+      "sha256": "c0b6d1f6d25c5bbf355882095c8483d110184d21ce61e34733415d12d3bee28b"
     },
     {
       "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/quick-start.md",
-      "bytes": 2492,
-      "sha256": "ee1ad4074afa0eb667cfdd9b761d86878aa5246656677696c7f750a4f4bb1da8"
+      "bytes": 3095,
+      "sha256": "9ed576d46665b2e89dc27278b26b9adf4d565258b7382e11f8183411bd1ff244"
     },
     {
       "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/quick-start.pdf",
@@ -398,8 +398,13 @@
     },
     {
       "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/README.md",
-      "bytes": 1179,
-      "sha256": "87afba6f3f84af5d244ea71155fa4152489153a95ada958e2cda519d93ce38a5"
+      "bytes": 1305,
+      "sha256": "9db6bbd76ca5131b341db2bab5cba554d16848ee485fdc6dd1c2fa38cfebc1e5"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/setup-guide.md",
+      "bytes": 7332,
+      "sha256": "2051e023a70b59d4d99758ccbe4328f1f9499f5de629fb93ed07ee05dd0cd63e"
     },
     {
       "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/video-shot-list.md",
@@ -408,8 +413,8 @@
     },
     {
       "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources.md",
-      "bytes": 1280,
-      "sha256": "7f4d79f84a5fd8c3160ae0b16b985b67212efdf8276c06b19169a6a830fa836a"
+      "bytes": 1345,
+      "sha256": "51e22ef0fb5f58efefa7befa56024f086d17cea5179bc64768e526cd33110b09"
     },
     {
       "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/simulation/README.md",

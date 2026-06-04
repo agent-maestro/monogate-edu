@@ -70,6 +70,14 @@ export function PhysicalBuildPanel({
                 </span>
                 <Download aria-hidden="true" />
               </a>
+              <a href="/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/setup-guide.md" target="_blank" rel="noreferrer">
+                <FileText aria-hidden="true" />
+                <span>
+                  <strong>Computer Setup Guide</strong>
+                  <em>Windows | Mac install, browser, serial port, and dashboard help</em>
+                </span>
+                <ArrowRight aria-hidden="true" />
+              </a>
               <a href="/courses/001-reflex-guard/hardware/bom.md" target="_blank" rel="noreferrer">
                 <FileText aria-hidden="true" />
                 <span>

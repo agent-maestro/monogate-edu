@@ -17,6 +17,10 @@ Build the first demo with:
 - jumper wires;
 - USB data cable.
 
+Before wiring, follow the [Computer Setup Guide](setup-guide.md). It has the
+Windows | Mac install path, preferred browser notes, ESP32 port examples, and
+dashboard troubleshooting.
+
 ## The Loop
 
 ```text
@@ -53,6 +57,9 @@ the same disciplined input/output layout without changing the evidence model.
 
 ## Run It
 
+Preferred browser: Chrome or Edge. Safari is fine for reading the course docs,
+but Chrome or Edge is the supported dashboard path.
+
 Validate before hardware:
 
 ```powershell
@@ -69,6 +76,11 @@ arduino-cli monitor -p COM3 -c baudrate=115200
 ```
 
 Replace `COM3` with your ESP32 port.
+
+On Mac, the ESP32 port usually looks like `/dev/cu.usbserial-*`,
+`/dev/cu.SLAB_USBtoUART`, or `/dev/cu.wchusbserial*`. Use the `cu` port and the
+same `115200` baud rate. The Mac path follows the standard ESP32/macOS workflow
+and is pending a Monogate bench-verified Mac run.
 
 ## Safety
 
