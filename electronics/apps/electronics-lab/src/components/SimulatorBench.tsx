@@ -2319,6 +2319,12 @@ export function SimulatorBench({
         ? `${partLabelFor(activePart, config.parts?.labels)} selected`
         : "No part selected";
 
+  useEffect(() => {
+    if (liveModeActive) {
+      setCompletionDismissed(false);
+    }
+  }, [liveModeActive]);
+
   return (
     <main
       className={`app-shell${benchMode ? " is-mobile-bench-mode" : ""}${schematicOpen ? " is-schematic-open" : ""}`}
@@ -2447,23 +2453,31 @@ export function SimulatorBench({
         </button>
       </section>
       {courseCompletionVisible ? (
-        <section className={`bench-completion-dock${liveModeActive ? " is-live" : ""}`} aria-label="Course completion">
+        <section className={`bench-completion-dock${liveModeActive ? " is-live" : ""}`} aria-label={liveModeActive ? "Live experiment options" : "Course completion"}>
           <div>
             <span>{completionCopy.kicker}</span>
             <strong>{completionCopy.title}</strong>
             <p>{completionCopy.detail}</p>
           </div>
           <div className="bench-completion-actions">
-            {!liveModeActive ? (
+            {liveModeActive ? (
+              <span className="bench-live-experiment-pill" aria-current="true">
+                Experimenting now
+              </span>
+            ) : (
               <button type="button" className="is-primary" onClick={runPrimaryStageAction}>
                 Run setup
               </button>
+            )}
+            {!liveModeActive ? (
+              <button type="button" onClick={() => setCompletionDismissed(true)}>
+                Keep experimenting
+              </button>
             ) : null}
-            <button type="button" onClick={() => setCompletionDismissed(true)}>
-              Keep experimenting
-            </button>
             <button type="button" onClick={() => {
-              setCompletionDismissed(true);
+              if (!liveModeActive) {
+                setCompletionDismissed(true);
+              }
               setChecklistOpen(true);
             }}>
               Checklist
