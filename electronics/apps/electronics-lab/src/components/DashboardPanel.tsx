@@ -15,6 +15,25 @@ type LiveSignalPoint = {
   clampActive: boolean;
 };
 
+export type DashboardGhostPoint = Omit<LiveSignalPoint, "id"> & { id?: number };
+
+export type DashboardCockpitPhase =
+  | "bench_idle"
+  | "running"
+  | "bench_with_history"
+  | "bench_01b_unlocked"
+  | "running_with_history";
+
+export type DashboardCockpitTab = "schematic" | "checklist" | "trace" | "serial" | "evidence";
+export type DashboardCockpitMode = "guided" | "fast";
+
+export type DashboardCheckpointState = {
+  snapshotSaved: boolean;
+  usbDisconnected: boolean;
+  returnedToSchematic: boolean;
+  lab01bUnlocked: boolean;
+};
+
 type DashboardSignalSnapshot = {
   requestedOutput: number;
   safeOutput: number;
@@ -66,8 +85,17 @@ function linePoints(points: LiveSignalPoint[], key: keyof Pick<LiveSignalPoint, 
     .join(" ");
 }
 
-function LiveSignalGraph({ points, active }: { points: LiveSignalPoint[]; active: boolean }) {
+function LiveSignalGraph({
+  points,
+  ghostPoints = [],
+  active
+}: {
+  points: LiveSignalPoint[];
+  ghostPoints?: DashboardGhostPoint[];
+  active: boolean;
+}) {
   const visiblePoints = points.length > 0 ? points : [{ id: 0, potRaw: 0, requestedOutput: 0, safeOutput: 0, ledOutput: 0, buzzerOutput: 0, clampActive: false }];
+  const visibleGhostPoints = ghostPoints.map((point, index) => ({ ...point, id: point.id ?? index }));
   const showSensorTrace = visiblePoints.some((point) => typeof point.sensorInput === "number");
   const clampBands = visiblePoints
     .map((point, index) => ({ point, index }))
@@ -92,6 +120,12 @@ function LiveSignalGraph({ points, active }: { points: LiveSignalPoint[]; active
           const x = visiblePoints.length > 1 ? (index / (visiblePoints.length - 1)) * 300 : 0;
           return <rect key={`clamp-${index}`} className="clamp-band" x={Math.max(0, x - 1.8)} y="0" width="3.6" height="88" />;
         })}
+        {visibleGhostPoints.length > 0 ? (
+          <>
+            <polyline className="trace-line ghost request" points={linePoints(visibleGhostPoints, "requestedOutput")} />
+            <polyline className="trace-line ghost safe" points={linePoints(visibleGhostPoints, "safeOutput")} />
+          </>
+        ) : null}
         <polyline className="trace-line pot" points={linePoints(visiblePoints, "potRaw")} />
         <polyline className="trace-line request" points={linePoints(visiblePoints, "requestedOutput")} />
         <polyline className="trace-line safe" points={linePoints(visiblePoints, "safeOutput")} />
@@ -117,9 +151,21 @@ export function DashboardPanel({
   suggestedCommand: suggestedCommandOverride,
   variant = "full",
   liveActive = false,
+  cockpitPhase = "bench_idle",
+  cockpitMode = "guided",
+  cockpitTab = liveActive ? "trace" : "schematic",
+  checkpoint,
+  ghostTrace = [],
+  checklistSummary,
   buzzerOutput = 0,
   buttonPressed = false,
   signalSnapshot,
+  onCockpitTabChange,
+  onCockpitModeChange,
+  onOpenSchematic,
+  onOpenChecklist,
+  onFastRun,
+  onCheckpointStep,
   onCommand
 }: {
   onClose: () => void;
@@ -134,9 +180,26 @@ export function DashboardPanel({
   suggestedCommand?: string;
   variant?: "full" | "reflex-live-popup";
   liveActive?: boolean;
+  cockpitPhase?: DashboardCockpitPhase;
+  cockpitMode?: DashboardCockpitMode;
+  cockpitTab?: DashboardCockpitTab;
+  checkpoint?: DashboardCheckpointState;
+  ghostTrace?: DashboardGhostPoint[];
+  checklistSummary?: {
+    currentStep: string;
+    doneCount: number;
+    totalCount: number;
+    stage: string;
+  };
   buzzerOutput?: number;
   buttonPressed?: boolean;
   signalSnapshot?: DashboardSignalSnapshot;
+  onCockpitTabChange?: (tab: DashboardCockpitTab) => void;
+  onCockpitModeChange?: (mode: DashboardCockpitMode) => void;
+  onOpenSchematic?: () => void;
+  onOpenChecklist?: () => void;
+  onFastRun?: () => void;
+  onCheckpointStep?: (step: keyof DashboardCheckpointState) => void;
   onCommand?: (command: string) => void;
 }) {
   const lab = useLabStore((state) => state.lab);
@@ -169,6 +232,21 @@ export function DashboardPanel({
   const lastTerminalLine = displayedTerminal[displayedTerminal.length - 1];
   const dashboardClassName = variant === "reflex-live-popup" ? "dashboard-panel is-live-popup" : "dashboard-panel";
   const [signalHistory, setSignalHistory] = useState<LiveSignalPoint[]>([]);
+  const activeTab = cockpitTab;
+  const hasGhostTrace = ghostTrace.length > 0;
+  const checkpointState: DashboardCheckpointState = checkpoint ?? {
+    snapshotSaved: false,
+    usbDisconnected: false,
+    returnedToSchematic: false,
+    lab01bUnlocked: false
+  };
+  const phaseLabel: Record<DashboardCockpitPhase, string> = {
+    bench_idle: "Bench",
+    running: "Running",
+    bench_with_history: "Bench + history",
+    bench_01b_unlocked: "Lab 01B unlocked",
+    running_with_history: "Running + history"
+  };
 
   useEffect(() => {
     return subscribeLabEvents((event) => {
@@ -238,6 +316,98 @@ export function DashboardPanel({
 
       {variant === "reflex-live-popup" ? (
         <>
+          <section className="dashboard-cockpit" aria-label="Lab bench cockpit">
+            <div className="dashboard-cockpit-topline">
+              <span>{phaseLabel[cockpitPhase]}</span>
+              <div className="dashboard-mode-toggle" aria-label="Dashboard mode">
+                {(["guided", "fast"] as const).map((mode) => (
+                  <button
+                    key={mode}
+                    type="button"
+                    className={cockpitMode === mode ? "is-active" : ""}
+                    aria-pressed={cockpitMode === mode}
+                    onClick={() => onCockpitModeChange?.(mode)}
+                  >
+                    {mode}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <nav className="dashboard-tab-rail" aria-label="Lab cockpit tabs">
+              {(["schematic", "checklist", "trace", "serial", "evidence"] as const).map((tab) => (
+                <button
+                  key={tab}
+                  type="button"
+                  className={activeTab === tab ? "is-active" : ""}
+                  aria-pressed={activeTab === tab}
+                  onClick={() => onCockpitTabChange?.(tab)}
+                >
+                  {tab}
+                </button>
+              ))}
+            </nav>
+            {activeTab === "schematic" ? (
+              <div className="dashboard-cockpit-pane">
+                <strong>Full build schematic</strong>
+                <span>Use the schematic as the bench map. The graph will take over when valid frames arrive.</span>
+                <div className="dashboard-cockpit-actions">
+                  <button type="button" onClick={onOpenSchematic}>Open schematic</button>
+                  <button type="button" onClick={onOpenChecklist}>Checklist</button>
+                  {cockpitMode === "fast" ? <button type="button" onClick={onFastRun}>Run now</button> : null}
+                </div>
+              </div>
+            ) : null}
+            {activeTab === "checklist" ? (
+              <div className="dashboard-cockpit-pane">
+                <strong>{checklistSummary?.stage ?? "Build checklist"}</strong>
+                <span>
+                  {checklistSummary ? `${checklistSummary.doneCount}/${checklistSummary.totalCount} complete - ${checklistSummary.currentStep}` : "Open the live checklist and work the build in order."}
+                </span>
+                <div className="dashboard-cockpit-actions">
+                  <button type="button" onClick={onOpenChecklist}>Open checklist</button>
+                  {cockpitMode === "fast" ? <button type="button" onClick={onFastRun}>Run now</button> : null}
+                </div>
+                {cockpitPhase === "bench_with_history" ? (
+                  <ol className="checkpoint-list" aria-label="Lab 01A to Lab 01B checkpoint">
+                    {([
+                      ["snapshotSaved", "Save trace snapshot"],
+                      ["usbDisconnected", "Disconnect USB"],
+                      ["returnedToSchematic", "Return to schematic"],
+                      ["lab01bUnlocked", "Unlock Lab 01B"]
+                    ] as const).map(([id, label]) => (
+                      <li key={id}>
+                        <button
+                          type="button"
+                          className={checkpointState[id] ? "is-done" : ""}
+                          onClick={() => onCheckpointStep?.(id)}
+                        >
+                          {checkpointState[id] ? "done" : "mark"} {label}
+                        </button>
+                      </li>
+                    ))}
+                  </ol>
+                ) : null}
+              </div>
+            ) : null}
+            {activeTab === "trace" ? (
+              <div className="dashboard-cockpit-note">
+                {hasGhostTrace ? "01A ghost trace is visible under the live run." : liveActive ? "Live run is active." : "Trace will start on first valid frame or simulated USB run."}
+              </div>
+            ) : null}
+            {activeTab === "serial" ? (
+              <div className="dashboard-cockpit-note">
+                {lastTerminalLine?.text ?? "Serial output appears here when the simulated firmware starts."}
+              </div>
+            ) : null}
+            {activeTab === "evidence" ? (
+              <div className="dashboard-evidence-primer">
+                <span>packet fields: pot_raw, requested_output, safe_output, guard_action</span>
+                <span>guard actions: pass_through, clamp_to_safe_output</span>
+                <span>proof obligation: safe_output &lt;= safe_output_limit</span>
+                <span>proof_closed: false until MachLib/Lean proof is discharged</span>
+              </div>
+            ) : null}
+          </section>
           <section className={liveActive ? "reflex-live-window is-live" : "reflex-live-window"} aria-label="Reflex live dashboard">
             <div className="reflex-live-status">
               <span>{liveActive ? "USB live" : ready ? "USB ready" : "wire check"}</span>
@@ -264,7 +434,7 @@ export function DashboardPanel({
               </div>
               <i style={{ "--level": liveActive ? 1 - liveSafetyMargin / thresholdParams.safeOutputLimit : 0 } as CSSProperties} />
             </div>
-            <LiveSignalGraph points={signalHistory} active={liveActive} />
+            <LiveSignalGraph points={signalHistory} ghostPoints={ghostTrace} active={liveActive} />
             <div className="reflex-live-footer">
               <span>frames {frames.length}</span>
               <strong>{lastTerminalLine?.text ?? "waiting for terminal"}</strong>

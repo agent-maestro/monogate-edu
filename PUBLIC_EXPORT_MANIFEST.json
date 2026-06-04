@@ -1,9 +1,9 @@
 {
   "schema_version": "monogate-electronics.public-curriculum-export.v0",
-  "generated_at": "2026-06-04T03:02:56.146281+00:00",
+  "generated_at": "2026-06-04T04:08:45.560535+00:00",
   "source_repo": "monogate-electronics",
   "public_repo": "monogate-edu",
-  "source_commit": "f06a495f6666e3854b326ba983ac44c751067e91",
+  "source_commit": "95f375fcd48834ccf9584e2a5cc33d7d8987c1d3",
   "source_dirty": false,
   "target_profile": "monogate-edu-electronics-topic-reflex-guard-course-001",
   "included_courses": [
@@ -128,8 +128,8 @@
     },
     {
       "path": "electronics/apps/electronics-lab/src/components/DashboardPanel.tsx",
-      "bytes": 15380,
-      "sha256": "0f3e58c8b381738507abccad9be8b01e3c67a94e0eb263781c607ad65b4e7e1d"
+      "bytes": 22768,
+      "sha256": "ca7b2b443a5e631491d6bab6941afc11857605adc4f96aebcdcd34d1315d331f"
     },
     {
       "path": "electronics/apps/electronics-lab/src/components/ElectronicsGlossary.tsx",
@@ -183,8 +183,8 @@
     },
     {
       "path": "electronics/apps/electronics-lab/src/components/SimulatorBench.tsx",
-      "bytes": 109780,
-      "sha256": "02a6cf67dcc83c85add60a791840fb4eebb2ef02cfac53bf1652c5ff15bf8b3f"
+      "bytes": 117410,
+      "sha256": "5c057ec961c6fac4027c56e05cc88335c33b418ca04915a4f53bcfc354fd1fe6"
     },
     {
       "path": "electronics/apps/electronics-lab/src/components/simulatorCourses.ts",
@@ -258,8 +258,8 @@
     },
     {
       "path": "electronics/apps/electronics-lab/src/styles.css",
-      "bytes": 170595,
-      "sha256": "ec0e22234debc680581031d2427f5bec5d270046ddd38e5df2df93df5c885531"
+      "bytes": 173002,
+      "sha256": "5f625e0da55f5455825c64aef0fcc93a1853037e1ceabc3a8450e980d96d0405"
     },
     {
       "path": "electronics/apps/electronics-lab/tests/mvp.spec.ts",

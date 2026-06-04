@@ -7,7 +7,14 @@ import {
   type CourseHighlightTarget,
   type SupplyPinMap
 } from "./CoursePanel";
-import { DashboardPanel } from "./DashboardPanel";
+import {
+  DashboardPanel,
+  type DashboardCheckpointState,
+  type DashboardCockpitMode,
+  type DashboardCockpitPhase,
+  type DashboardCockpitTab,
+  type DashboardGhostPoint
+} from "./DashboardPanel";
 import { InventoryPanel } from "./InventoryPanel";
 import { LabScene, type CourseTraceMode } from "./LabScene";
 import { SchematicPanel } from "./SchematicPanel";
@@ -28,6 +35,7 @@ import {
   type AnalogDecisionResult,
   type FaultReport,
   type FaultId,
+  type TraceFrame,
   type WireId
 } from "../engine/labEngine";
 import {
@@ -71,6 +79,11 @@ type PersistedBenchState = {
   buzzerUnlocked?: boolean;
   boundaryMode?: BoundaryMode;
   releaseChecklistDone?: Record<string, boolean>;
+  cockpitPhase?: DashboardCockpitPhase;
+  cockpitMode?: DashboardCockpitMode;
+  cockpitTab?: DashboardCockpitTab;
+  ghostTrace?: DashboardGhostPoint[];
+  checkpoint?: DashboardCheckpointState;
   visual: VisualBenchState;
 };
 
@@ -175,7 +188,7 @@ function defaultPanelStates(config: SimulatorCourseConfig): Record<BenchPanelId,
   return {
     trainer: "open",
     inventory: "open",
-    dashboard: compact ? "minimized" : config.dashboard.variant === "reflex-live-popup" ? "hidden" : "open"
+    dashboard: compact ? "minimized" : "open"
   };
 }
 
@@ -231,6 +244,26 @@ function traceModeForStep(index: number): CourseTraceMode {
   if (index >= 2 && index <= 5) return "pot";
   if (index >= 6 && index <= 10) return "led";
   return "full";
+}
+
+function defaultCheckpointState(): DashboardCheckpointState {
+  return {
+    snapshotSaved: false,
+    usbDisconnected: false,
+    returnedToSchematic: false,
+    lab01bUnlocked: false
+  };
+}
+
+function ghostTraceFromFrames(frames: TraceFrame[]): DashboardGhostPoint[] {
+  return frames.map((frame) => ({
+    potRaw: frame.pot_raw,
+    requestedOutput: frame.outputs.requested_output,
+    safeOutput: frame.outputs.safe_output,
+    ledOutput: frame.outputs.led,
+    buzzerOutput: frame.outputs.buzzer,
+    clampActive: frame.guard.guard_action === "clamp_to_safe_output"
+  }));
 }
 
 function runLiveReflexPreview(potRaw: number) {
@@ -668,6 +701,11 @@ export function SimulatorBench({
   const [releaseChecklistDone, setReleaseChecklistDone] = useState<Record<string, boolean>>({});
   const [shareMessage, setShareMessage] = useState<string | null>(null);
   const [schematicOpen, setSchematicOpen] = useState(false);
+  const [cockpitPhase, setCockpitPhase] = useState<DashboardCockpitPhase>("bench_idle");
+  const [cockpitMode, setCockpitMode] = useState<DashboardCockpitMode>("guided");
+  const [cockpitTab, setCockpitTab] = useState<DashboardCockpitTab>("schematic");
+  const [ghostTrace, setGhostTrace] = useState<DashboardGhostPoint[]>([]);
+  const [checkpointState, setCheckpointState] = useState<DashboardCheckpointState>(() => defaultCheckpointState());
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [soundLevel, setSoundLevel] = useState<SoundLevel>("high");
   const [audioStatus, setAudioStatus] = useState<"off" | "ready" | "blocked">("off");
@@ -1100,6 +1138,20 @@ export function SimulatorBench({
       setTraceMode("idle");
       setCheckAnimationActive(false);
       if (usbInserted || firmwareUploaded) {
+        const nextGhostTrace = ghostTraceFromFrames(useLabStore.getState().frames);
+        if (nextGhostTrace.length > 0) {
+          setGhostTrace(nextGhostTrace);
+          setCockpitPhase("bench_with_history");
+          setCockpitTab("checklist");
+          setCheckpointState((current) => ({
+            ...current,
+            snapshotSaved: true,
+            usbDisconnected: true
+          }));
+        } else {
+          setCockpitPhase("bench_idle");
+          setCockpitTab("schematic");
+        }
         setUsbInserted(false);
         setFirmwareUploaded(false);
         setPinSetupOpen(false);
@@ -1276,6 +1328,11 @@ export function SimulatorBench({
     setButtonPressed(false);
     setLdrCoverAmount(shouldRestore ? persisted.ldrCoverAmount ?? 0 : 0);
     setReleaseChecklistDone(shouldRestore ? persisted.releaseChecklistDone ?? {} : {});
+    setCockpitPhase(shouldRestore ? persisted.cockpitPhase ?? (persisted.firmwareUploaded ? "running" : persisted.usbInserted ? "bench_idle" : "bench_idle") : "bench_idle");
+    setCockpitMode(shouldRestore ? persisted.cockpitMode ?? "guided" : "guided");
+    setCockpitTab(shouldRestore ? persisted.cockpitTab ?? (persisted.firmwareUploaded ? "trace" : "schematic") : "schematic");
+    setGhostTrace(shouldRestore ? persisted.ghostTrace ?? [] : []);
+    setCheckpointState(shouldRestore ? persisted.checkpoint ?? defaultCheckpointState() : defaultCheckpointState());
     setPinSetupOpen(false);
     setBenchMode(isCompactViewport());
     setChecklistOpen(false);
@@ -1316,6 +1373,11 @@ export function SimulatorBench({
         firmwareUploaded,
         boundaryMode,
         releaseChecklistDone,
+        cockpitPhase,
+        cockpitMode,
+        cockpitTab,
+        ghostTrace,
+        checkpoint: checkpointState,
         visual
       };
       window.localStorage.setItem(storageKeyForCourse(config.id), JSON.stringify(state));
@@ -1338,7 +1400,12 @@ export function SimulatorBench({
     potValue,
     releaseChecklistDone,
     usbInserted,
-    firmwareUploaded
+    firmwareUploaded,
+    cockpitPhase,
+    cockpitMode,
+    cockpitTab,
+    ghostTrace,
+    checkpointState
   ]);
 
   useEffect(() => {
@@ -1533,6 +1600,9 @@ export function SimulatorBench({
     const currentLab = useLabStore.getState().lab;
     setUsbInserted(true);
     setFirmwareUploaded(false);
+    setCockpitPhase(ghostTrace.length > 0 ? "bench_with_history" : "bench_idle");
+    setCockpitTab("serial");
+    setPanelState("dashboard", "open");
     setTraceMode("rails");
     setCheckAnimationActive(true);
 
@@ -1557,22 +1627,19 @@ export function SimulatorBench({
         : "USB inserted. Configure GPIO34, GPIO25, 3V3, and GND before running firmware."
     );
     setPinSetupOpen(true);
-    setPanelState("dashboard", "hidden");
+    setPanelState("dashboard", "open");
     window.setTimeout(() => {
       setTraceMode("idle");
       setCheckAnimationActive(false);
     }, 1400);
   }
 
-  function uploadSimulatedFirmware() {
-    if (!usbInserted || !courseWiringReady(useLabStore.getState().lab)) {
-      setBoardCheckState("blocked");
-      setBoardCheckMessage(buzzerStageVisible && !buzzerReady ? "Firmware upload blocked until Lab 01B wiring is complete." : config.checkMessages.usbBlocked);
-      return;
-    }
-
+  function startSimulatedDashboardRun() {
     setFirmwareUploaded(true);
     setPinSetupOpen(false);
+    setCockpitPhase(ghostTrace.length > 0 ? "running_with_history" : "running");
+    setCockpitTab("trace");
+    setPanelState("dashboard", "open");
     setTraceMode("full");
     setCheckAnimationActive(true);
 
@@ -1597,7 +1664,6 @@ export function SimulatorBench({
         )
       );
       setBoardCheckMessage(config.checkMessages.usbRunning);
-      setPanelState("dashboard", "open");
     } else if (isEnvironment) {
       setEnvironmentTerminal((current) =>
         append(
@@ -1609,20 +1675,46 @@ export function SimulatorBench({
         )
       );
       setBoardCheckMessage(config.checkMessages.usbRunning);
-      setPanelState("dashboard", "open");
     } else {
       runCommand("validate");
       window.setTimeout(() => runCommand("run"), 450);
       setBoardCheckMessage(
         buzzerReady ? "USB inserted. Simulated threshold_reflex_v0 is running with GPIO27 button and GPIO26 buzzer monitors." : config.checkMessages.usbRunning
       );
-      setPanelState("dashboard", "open");
     }
 
     window.setTimeout(() => {
       setTraceMode("idle");
       setCheckAnimationActive(false);
     }, 2200);
+  }
+
+  function uploadSimulatedFirmware() {
+    if (!usbInserted || !courseWiringReady(useLabStore.getState().lab)) {
+      setBoardCheckState("blocked");
+      setBoardCheckMessage(buzzerStageVisible && !buzzerReady ? "Firmware upload blocked until Lab 01B wiring is complete." : config.checkMessages.usbBlocked);
+      return;
+    }
+
+    startSimulatedDashboardRun();
+  }
+
+  function runFastDashboardPath() {
+    const ready = courseWiringReady(useLabStore.getState().lab);
+    setCockpitMode("fast");
+    setPanelState("dashboard", "open");
+    if (!ready) {
+      refreshCurrentInstruction();
+      setCockpitTab("checklist");
+      setBoardCheckState("blocked");
+      setBoardCheckMessage(buzzerStageVisible && !buzzerReady ? "Fast run blocked. Finish the Lab 01B button and buzzer paths first." : config.checkMessages.usbBlocked);
+      return;
+    }
+
+    setUsbInserted(true);
+    setBoardCheckState("passed");
+    setBoardCheckMessage("Fast Mode: wiring is ready. Starting the simulated dashboard run.");
+    startSimulatedDashboardRun();
   }
 
   function resetBench() {
@@ -1642,6 +1734,11 @@ export function SimulatorBench({
     setUsbInserted(false);
     setFirmwareUploaded(false);
     setLab01BReadyToStart(false);
+    setCockpitPhase("bench_idle");
+    setCockpitMode("guided");
+    setCockpitTab("schematic");
+    setGhostTrace([]);
+    setCheckpointState(defaultCheckpointState());
     setButtonPressed(false);
     setBuzzerUnlocked(false);
     setPinSetupOpen(false);
@@ -1683,9 +1780,13 @@ export function SimulatorBench({
     setFirmwareUploaded(false);
     setPinSetupOpen(false);
     setButtonPressed(false);
+    setCockpitPhase(ghostTrace.length > 0 ? "bench_with_history" : "bench_idle");
+    setCockpitTab(ghostTrace.length > 0 ? "checklist" : "schematic");
   }
 
   function disconnectUsbAfterRun() {
+    const nextGhostTrace = ghostTraceFromFrames(useLabStore.getState().frames);
+    if (nextGhostTrace.length > 0) setGhostTrace(nextGhostTrace);
     setUsbInserted(false);
     setFirmwareUploaded(false);
     setPinSetupOpen(false);
@@ -1693,11 +1794,20 @@ export function SimulatorBench({
     setButtonPressed(false);
     setBoardCheckState("idle");
     setBoardCheckMessage(buzzerStageVisible ? "USB disconnected. Lab 01B build is preserved." : "USB disconnected.");
+    setCockpitPhase(nextGhostTrace.length > 0 || ghostTrace.length > 0 ? "bench_with_history" : "bench_idle");
+    setCockpitTab(nextGhostTrace.length > 0 || ghostTrace.length > 0 ? "checklist" : "schematic");
+    setCheckpointState((current) => ({
+      ...current,
+      snapshotSaved: nextGhostTrace.length > 0 || current.snapshotSaved,
+      usbDisconnected: true
+    }));
     setTraceMode("idle");
     setCheckAnimationActive(false);
   }
 
   function disconnectUsbBeforeLab01B() {
+    const nextGhostTrace = ghostTraceFromFrames(useLabStore.getState().frames);
+    if (nextGhostTrace.length > 0) setGhostTrace(nextGhostTrace);
     setUsbInserted(false);
     setFirmwareUploaded(false);
     setPinSetupOpen(false);
@@ -1707,6 +1817,14 @@ export function SimulatorBench({
     setCourseInstruction("USB disconnected. Continue to Lab 01B when you are ready to add the button and buzzer parts.");
     setBoardCheckState("idle");
     setBoardCheckMessage("USB disconnected. Now click Continue to Lab 01B before adding the button and buzzer.");
+    setCockpitPhase(nextGhostTrace.length > 0 || ghostTrace.length > 0 ? "bench_with_history" : "bench_idle");
+    setCockpitTab("checklist");
+    setCheckpointState((current) => ({
+      ...current,
+      snapshotSaved: nextGhostTrace.length > 0 || current.snapshotSaved,
+      usbDisconnected: true
+    }));
+    setPanelState("dashboard", "open");
     setTraceMode("idle");
     setCheckAnimationActive(false);
   }
@@ -1717,10 +1835,18 @@ export function SimulatorBench({
     setPinSetupOpen(false);
     setLab01BReadyToStart(false);
     setBuzzerUnlocked(true);
+    setCockpitPhase("bench_01b_unlocked");
+    setCockpitTab("schematic");
+    setCheckpointState((current) => ({
+      ...current,
+      returnedToSchematic: true,
+      lab01bUnlocked: true
+    }));
     setButtonPressed(false);
     setActivePart(null);
     setJumperToolActive(false);
     setPanelState("inventory", "open");
+    setPanelState("dashboard", "open");
     setCourseStep(BASE_REFLEX_STEP_COUNT + 1);
     setCourseInstruction("Lab 01B: select the tactile button and place its two legs in two different rows.");
     setBoardCheckState("idle");
@@ -1748,6 +1874,11 @@ export function SimulatorBench({
       buzzerUnlocked,
       boundaryMode,
       releaseChecklistDone,
+      cockpitPhase,
+      cockpitMode,
+      cockpitTab,
+      ghostTrace,
+      checkpoint: checkpointState,
       visual: window.__mgeLab?.exportState() ?? {}
     };
   }
@@ -1767,6 +1898,11 @@ export function SimulatorBench({
     setLdrCoverAmount(state.ldrCoverAmount ?? 0);
     setEnvironmentSensorStale(Boolean(state.environmentSensorStale));
     setReleaseChecklistDone(state.releaseChecklistDone ?? {});
+    setCockpitPhase(state.cockpitPhase ?? (state.firmwareUploaded ? "running" : "bench_idle"));
+    setCockpitMode(state.cockpitMode ?? "guided");
+    setCockpitTab(state.cockpitTab ?? (state.firmwareUploaded ? "trace" : "schematic"));
+    setGhostTrace(state.ghostTrace ?? []);
+    setCheckpointState(state.checkpoint ?? defaultCheckpointState());
     setPinSetupOpen(false);
     if (state.boundaryMode) setBoundaryMode(state.boundaryMode);
     setBenchMode(isCompactViewport());
@@ -1816,6 +1952,29 @@ export function SimulatorBench({
       ...current,
       [id]: !current[id]
     }));
+  }
+
+  function handleCockpitTabChange(tab: DashboardCockpitTab) {
+    setCockpitTab(tab);
+    if (tab === "schematic") setSchematicOpen(true);
+    if (tab === "checklist") setChecklistOpen(true);
+  }
+
+  function markDashboardCheckpoint(step: keyof DashboardCheckpointState) {
+    if (step === "snapshotSaved") {
+      const nextGhostTrace = ghostTraceFromFrames(useLabStore.getState().frames);
+      if (nextGhostTrace.length > 0) setGhostTrace(nextGhostTrace);
+    }
+    if (step === "returnedToSchematic") {
+      setCockpitTab("schematic");
+      setSchematicOpen(true);
+    }
+    if (step === "lab01bUnlocked") {
+      setCheckpointState((current) => ({ ...current, [step]: true }));
+      startLab01B();
+      return;
+    }
+    setCheckpointState((current) => ({ ...current, [step]: true }));
   }
 
   function openPanelFromBenchMode(panel: BenchPanelId) {
@@ -2024,6 +2183,13 @@ export function SimulatorBench({
     { label: "buzz", value: buttonMuteActive ? "muted" : buzzerToneHz > 0 ? `${buzzerToneHz}Hz` : buzzerReady ? "silent" : "wire" },
     { label: "stale", value: environmentSensorStale ? "true" : "false" }
   ];
+  const nextChecklistStep = courseSteps.find((step) => !step.done(progressState));
+  const cockpitChecklistSummary = {
+    currentStep: nextChecklistStep?.shortInstruction ?? "Build complete",
+    doneCount: courseSteps.filter((step) => step.done(progressState)).length,
+    totalCount: courseSteps.length,
+    stage: buzzerStageVisible ? "Lab 01B checklist" : "Lab 01A checklist"
+  };
 
   const capstoneRows = isBoundary
     ? [
@@ -2500,6 +2666,24 @@ export function SimulatorBench({
               : undefined
           }
           onCommand={isBoundary ? runBoundaryCommand : isAnalog ? runAnalogCommand : isEnvironment ? runEnvironmentCommand : undefined}
+          cockpitPhase={cockpitPhase}
+          cockpitMode={cockpitMode}
+          cockpitTab={cockpitTab}
+          checkpoint={checkpointState}
+          ghostTrace={ghostTrace}
+          checklistSummary={cockpitChecklistSummary}
+          onCockpitTabChange={handleCockpitTabChange}
+          onCockpitModeChange={setCockpitMode}
+          onOpenSchematic={() => {
+            setCockpitTab("schematic");
+            setSchematicOpen(true);
+          }}
+          onOpenChecklist={() => {
+            setCockpitTab("checklist");
+            setChecklistOpen(true);
+          }}
+          onFastRun={runFastDashboardPath}
+          onCheckpointStep={markDashboardCheckpoint}
           onClose={() => {
             setMobileSheetPanel(null);
             setPanelState("dashboard", "hidden");

@@ -2771,11 +2771,111 @@ body {
 .dashboard-panel.is-live-popup .dashboard-terminal-compact,
 .dashboard-panel.is-live-popup .dashboard-terminal-compact *,
 .dashboard-panel.is-live-popup .dashboard-command-row,
+.dashboard-panel.is-live-popup .dashboard-cockpit,
+.dashboard-panel.is-live-popup .dashboard-cockpit *,
 .dashboard-panel.is-live-popup input,
 .dashboard-panel.is-live-popup summary,
 .dashboard-panel.is-live-popup .panel-drag-handle,
 .dashboard-panel.is-live-popup .panel-resize-handle {
   pointer-events: auto;
+}
+
+.dashboard-cockpit {
+  display: grid;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid rgba(216, 232, 228, 0.12);
+  border-radius: 6px;
+  background: rgba(5, 11, 13, 0.32);
+}
+
+.dashboard-cockpit-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.dashboard-cockpit-topline > span {
+  min-width: 0;
+  color: #fff2a6;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.dashboard-mode-toggle,
+.dashboard-tab-rail,
+.dashboard-cockpit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.dashboard-mode-toggle button,
+.dashboard-tab-rail button,
+.dashboard-cockpit-actions button,
+.checkpoint-list button {
+  min-height: 28px;
+  padding: 0 8px;
+  border: 1px solid rgba(216, 232, 228, 0.14);
+  border-radius: 6px;
+  background: rgba(216, 232, 228, 0.07);
+  color: #dbe8e4;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.dashboard-mode-toggle button.is-active,
+.dashboard-tab-rail button.is-active,
+.checkpoint-list button.is-done {
+  border-color: rgba(255, 242, 166, 0.52);
+  background: rgba(255, 242, 166, 0.12);
+  color: #fff2a6;
+}
+
+.dashboard-cockpit-pane,
+.dashboard-cockpit-note,
+.dashboard-evidence-primer {
+  min-width: 0;
+  display: grid;
+  gap: 7px;
+  padding: 8px;
+  border-radius: 6px;
+  background: rgba(216, 232, 228, 0.055);
+}
+
+.dashboard-cockpit-pane strong {
+  color: #edf7f4;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.dashboard-cockpit-pane span,
+.dashboard-cockpit-note,
+.dashboard-evidence-primer span {
+  color: #b9c9c5;
+  font-size: 11px;
+  line-height: 1.32;
+  overflow-wrap: anywhere;
+}
+
+.checkpoint-list {
+  margin: 2px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  list-style: none;
+}
+
+.checkpoint-list button {
+  width: 100%;
+  justify-content: center;
 }
 
 .bench-stage-actions {
@@ -3721,6 +3821,13 @@ body {
   vector-effect: non-scaling-stroke;
 }
 
+.reflex-live-graph .trace-line.ghost {
+  stroke-width: 3;
+  stroke-dasharray: 1 7;
+  opacity: 0.2;
+  filter: none;
+}
+
 .reflex-live-graph .trace-line.pot {
   stroke: #66d9ff;
   opacity: 0.8;
@@ -3752,6 +3859,14 @@ body {
 .reflex-live-graph .trace-line.buzzer {
   stroke: #a893ff;
   opacity: 0.7;
+}
+
+.reflex-live-graph .trace-line.ghost.request,
+.reflex-live-graph .trace-line.ghost.safe {
+  stroke-width: 3;
+  stroke-dasharray: 1 7;
+  opacity: 0.2;
+  filter: none;
 }
 
 .reflex-live-graph .trace-dot.safe {
