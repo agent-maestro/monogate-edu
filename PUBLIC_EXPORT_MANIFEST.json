@@ -1,13 +1,18 @@
 {
   "schema_version": "monogate-electronics.public-curriculum-export.v0",
-  "generated_at": "2026-06-04T04:08:45.560535+00:00",
+  "generated_at": "2026-06-04T04:38:48.055752+00:00",
   "source_repo": "monogate-electronics",
   "public_repo": "monogate-edu",
-  "source_commit": "95f375fcd48834ccf9584e2a5cc33d7d8987c1d3",
+  "source_commit": "7b7b69260830bc03e32c4d0fccd509f93f3dcf5c",
   "source_dirty": false,
-  "target_profile": "monogate-edu-electronics-topic-reflex-guard-course-001",
+  "target_profile": "monogate-edu-electronics-esp32-launch-courses-001-005",
   "included_courses": [
-    "001-reflex-guard"
+    "esp32/001-reflex-guard",
+    "esp32/002-analog-decisions",
+    "esp32/003-environmental-guard-node",
+    "esp32/004-light-systems",
+    "esp32/005-multi-input-fusion",
+    "courses/001-reflex-guard"
   ],
   "private_path_policy": "allowlisted public course files only; private working folders are excluded",
   "files": [
@@ -288,8 +293,8 @@
     },
     {
       "path": "electronics/COURSE_INDEX.md",
-      "bytes": 1005,
-      "sha256": "3b35950c088da5388981946199697bb787f3bf1bf2f77f0b4c65f1a266099d3b"
+      "bytes": 1065,
+      "sha256": "3f19c63c81f664b7a6138652ce5e0c4143d9ef82bba0ce2bc790cfb261b438dd"
     },
     {
       "path": "electronics/courses/001-reflex-guard/eml-intro.md",
@@ -443,8 +448,8 @@
     },
     {
       "path": "electronics/courses/README.md",
-      "bytes": 116,
-      "sha256": "ac1b0a2fed190a4a470e1267e2938c1af985f054f0c39460a827acb3121e95e8"
+      "bytes": 209,
+      "sha256": "a10a2b182d6170446b5f4de2b940fac19e69007b3bcd13583bc747d87231c911"
     },
     {
       "path": "electronics/dashboards/esp32-arduino/dashboard.py",
@@ -485,6 +490,111 @@
       "path": "electronics/docs/starter-kernel-map.md",
       "bytes": 5018,
       "sha256": "45a65eeb676beef1cc7e5c8b2b41cda942771ad3d2b487b1348031fe39ecf1d0"
+    },
+    {
+      "path": "electronics/esp32/course-pattern.md",
+      "bytes": 1592,
+      "sha256": "249ac404297afa81578c2ea014cbfa61f4dd66f6d718aaecdeaa9ff65b05236d"
+    },
+    {
+      "path": "electronics/esp32/COURSE_INDEX.md",
+      "bytes": 1240,
+      "sha256": "9e5d71238598fdc76c051b99c81cd5f1b1708d7ed97f170cbb8ac31f74eabb94"
+    },
+    {
+      "path": "electronics/esp32/courses/001-reflex-guard/README.md",
+      "bytes": 1010,
+      "sha256": "25fb5e700ab6cd5222e0e75f798ccee40bea4215c3caba21bd66249bdae1c360"
+    },
+    {
+      "path": "electronics/esp32/courses/002-analog-decisions/lab-01-core-analog-response/README.md",
+      "bytes": 421,
+      "sha256": "a4a3c1505f890ba703645aaba2998fa22d7dd3fc6e99ee408afbf7b18e6dd5ec"
+    },
+    {
+      "path": "electronics/esp32/courses/002-analog-decisions/lab-02-deadband-evidence/README.md",
+      "bytes": 339,
+      "sha256": "0a27fab784e9d781f9a487fc1e0e15f6a8456b8d22022ddc900f546960a20823"
+    },
+    {
+      "path": "electronics/esp32/courses/002-analog-decisions/lab-03-upgrade-led-strip/README.md",
+      "bytes": 263,
+      "sha256": "3ec1442b75774ea34f86f27f24d0286404f0e0fa4290681c6dc75ffed4017878"
+    },
+    {
+      "path": "electronics/esp32/courses/002-analog-decisions/README.md",
+      "bytes": 1269,
+      "sha256": "28124b8071b37b115de9e479e969627d702e7f13d6cb17ef483a1bba5b96ccb4"
+    },
+    {
+      "path": "electronics/esp32/courses/003-environmental-guard-node/lab-01-core-environment-proxy/README.md",
+      "bytes": 256,
+      "sha256": "19398c7fa958486b0116dcaf724730a9ce3a8ab52282332d4a1c139c012a5b9d"
+    },
+    {
+      "path": "electronics/esp32/courses/003-environmental-guard-node/lab-02-stale-data-guard/README.md",
+      "bytes": 178,
+      "sha256": "5a882575d393e587cbce85dcd308159901d1a2803d38450b6e23495085cc34d1"
+    },
+    {
+      "path": "electronics/esp32/courses/003-environmental-guard-node/lab-03-upgrade-oled-led-meter/README.md",
+      "bytes": 177,
+      "sha256": "e9b79bbafcf56806499f7ab30b1bd19205e1f9739bb4c506bdf2ba1901736e31"
+    },
+    {
+      "path": "electronics/esp32/courses/003-environmental-guard-node/README.md",
+      "bytes": 1061,
+      "sha256": "5b12bd7718e51cf0d78e75669d2b1c95358630ea6236fd5d00d03677b31e065a"
+    },
+    {
+      "path": "electronics/esp32/courses/004-light-systems/lab-01-core-led-strip-budget/README.md",
+      "bytes": 218,
+      "sha256": "f99c1b9acf8ba8e01797a0ec0ce9bf56d81ec1f5a90710baba1e94b57f9c505e"
+    },
+    {
+      "path": "electronics/esp32/courses/004-light-systems/lab-02-matrix-simulation/README.md",
+      "bytes": 169,
+      "sha256": "a5d5b53603a0f1122bf7573ca24e4feb90cb1a6c03eb1deec3a9529e23439cb4"
+    },
+    {
+      "path": "electronics/esp32/courses/004-light-systems/lab-03-power-budget-evidence/README.md",
+      "bytes": 229,
+      "sha256": "dc7bc218280d97d854dfd8869bf21d1c7d0b1888a64a25eab0df4a6219d05541"
+    },
+    {
+      "path": "electronics/esp32/courses/004-light-systems/README.md",
+      "bytes": 976,
+      "sha256": "e475a4ab3da4a9a8529af4ae4ebf4a469a34195e28d3b23702cc97deda6d449d"
+    },
+    {
+      "path": "electronics/esp32/courses/005-multi-input-fusion/lab-01-core-input-fusion/README.md",
+      "bytes": 222,
+      "sha256": "b50255a6fb1097fd334fd6b41631c89aa8d640e7dcbc5dba369803052a207b10"
+    },
+    {
+      "path": "electronics/esp32/courses/005-multi-input-fusion/lab-02-priority-guard/README.md",
+      "bytes": 213,
+      "sha256": "9124697c9569fb8b8139a3e0962c848c640e0ce76780a775c1bc11d9df2fa685"
+    },
+    {
+      "path": "electronics/esp32/courses/005-multi-input-fusion/lab-03-upgrade-multi-output/README.md",
+      "bytes": 177,
+      "sha256": "54c22efd72994787c0e51adc610b5ce7fce6f354d59bcdadc46b8f5ec9a3d263"
+    },
+    {
+      "path": "electronics/esp32/courses/005-multi-input-fusion/README.md",
+      "bytes": 953,
+      "sha256": "34f0197af02fa0e75ad13adfb731e622bd72e310c16fdc4922f8546295b785a9"
+    },
+    {
+      "path": "electronics/esp32/courses/README.md",
+      "bytes": 379,
+      "sha256": "0a842e59132dde9f819d01fcf7c8b04b6884010dce3bd7c18b28515cd0277fab"
+    },
+    {
+      "path": "electronics/esp32/README.md",
+      "bytes": 1992,
+      "sha256": "09ca971086c599df1e818a470b581df2d18c6b3c1acc8923b3053f31d0cf0f2b"
     },
     {
       "path": "electronics/kernels/threshold_reflex_v0/cpp/fixtures/threshold_reflex_v0_native_fixture.cpp",
@@ -568,8 +678,8 @@
     },
     {
       "path": "electronics/README.md",
-      "bytes": 1587,
-      "sha256": "ea9c7421ec2dfd020d4afbbd4f4dbdcf4c38db1aedead01f411419602fd8493a"
+      "bytes": 1676,
+      "sha256": "fed128f971ad8098196c4e85983163db4219400186f8dfdf2829f1f4cd739a60"
     },
     {
       "path": "electronics/resources/README.md",
@@ -578,8 +688,8 @@
     },
     {
       "path": "electronics/START_HERE.md",
-      "bytes": 1107,
-      "sha256": "30e48689724fed94d060a36809b09bd4f1867d2b3b91959c8cc50732c4d8a72e"
+      "bytes": 1090,
+      "sha256": "8179ffbf6611fa76bedf62b897638b3256bff34fb219753e336dd2896967e821"
     },
     {
       "path": "electronics/starter-bundle/dashboard-setup.md",

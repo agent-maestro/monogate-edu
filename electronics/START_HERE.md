@@ -18,7 +18,7 @@ If you already know the shared workflow, go straight to the
 [Course Index](COURSE_INDEX.md).
 
 If you are beginning with hardware, start with
-[001 Reflex Guard](courses/001-reflex-guard/README.md).
+[ESP32 Launch Track](esp32/README.md).
 
 ## What You Need First
 
