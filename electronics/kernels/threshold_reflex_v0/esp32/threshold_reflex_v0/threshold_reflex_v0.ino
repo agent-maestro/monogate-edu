@@ -1,4 +1,7 @@
 #include <Arduino.h>
+#include "../../cpp/threshold_reflex_v0.hpp"
+
+namespace kernel = monogate_electronics::threshold_reflex_v0;
 
 constexpr int PIN_POT_ADC = 34;
 constexpr int PIN_LED_PWM = 25;
@@ -10,12 +13,8 @@ constexpr int BUZZER_FREQ_HZ = 2200;
 constexpr bool ENABLE_BUZZER = true;
 constexpr float BUZZER_ON_LEVEL = 0.12f;
 constexpr float BUZZER_OFF_LEVEL = 0.06f;
-constexpr float THRESHOLD = 0.55f;
-constexpr float WIDTH = 0.10f;
-constexpr float MAX_STEP = 0.20f;
-constexpr float SAFE_LIMIT = 0.85f;
 
-float previous_output = 0.0f;
+kernel::State kernel_state{0.0f};
 bool buzzer_on = false;
 uint32_t sample_index = 0;
 unsigned long next_sample_ms = 0;
@@ -64,27 +63,23 @@ void loop() {
 
   const float pot_raw = clampFloat(static_cast<float>(analogRead(PIN_POT_ADC)) / ADC_MAX, 0.0f, 1.0f);
   const bool button_pressed = digitalRead(PIN_BUTTON_INPUT) == LOW;
-  const float centered = (pot_raw - THRESHOLD) / WIDTH;
-  const float target = clampFloat(centered + 0.5f, 0.0f, 1.0f);
-  const float step = clampFloat(target - previous_output, -MAX_STEP, MAX_STEP);
-  const float requested_output = clampFloat(previous_output + step, 0.0f, 1.0f);
-  const float safe_output = clampFloat(requested_output, 0.0f, SAFE_LIMIT);
-  const char* action = safe_output < requested_output ? "clamp_to_safe_output" : "pass_through";
+  const kernel::Output output = kernel::step(&kernel_state, pot_raw, ENABLE_BUZZER);
+
   if (ENABLE_BUZZER) {
-    if (!buzzer_on && safe_output >= BUZZER_ON_LEVEL) {
+    if (!buzzer_on && output.safe_output >= BUZZER_ON_LEVEL) {
       buzzer_on = true;
-    } else if (buzzer_on && safe_output <= BUZZER_OFF_LEVEL) {
+    } else if (buzzer_on && output.safe_output <= BUZZER_OFF_LEVEL) {
       buzzer_on = false;
     }
   } else {
     buzzer_on = false;
   }
+
   const bool buzzer_audible = buzzer_on && !button_pressed;
   const float buzzer_output = buzzer_audible ? 1.0f : 0.0f;
   const char* button_action = button_pressed ? "mute_buzzer" : "none";
-  previous_output = safe_output;
 
-  analogWrite(PIN_LED_PWM, static_cast<int>(safe_output * PWM_MAX));
+  analogWrite(PIN_LED_PWM, static_cast<int>(output.led * PWM_MAX));
   if (ENABLE_BUZZER) {
     ledcWrite(PIN_BUZZER_PWM, buzzer_audible ? PWM_MAX / 2 : 0);
   }
@@ -116,12 +111,12 @@ void loop() {
       button_pressed ? "true" : "false",
       button_action,
       button_pressed ? "true" : "false",
-      requested_output,
-      safe_output,
-      safe_output,
+      output.requested_output,
+      output.safe_output,
+      output.led,
       buzzer_output,
-      action,
-      requested_output,
-      safe_output,
-      clampFloat(SAFE_LIMIT - safe_output, 0.0f, 1.0f));
+      output.guard_action,
+      output.requested_output,
+      output.safe_output,
+      output.safety_margin);
 }

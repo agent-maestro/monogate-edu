@@ -1,0 +1,67 @@
+{
+  "schema_version": "monogate-electronics.public-evidence-bridge.v0",
+  "date": "2026-05-27",
+  "status": "pass",
+  "boundary": "These packets are simulated evidence. They validate model, replay, and guard behavior. They are not hardware observations.",
+  "entries": [
+    {
+      "kernel": "rc_transient_v0",
+      "title": "RC transient",
+      "course": "courses/006-ee-math-kernels/lesson-01-rc-transient-model.md",
+      "evidence_packet": "evidence/ee_math_kernels/rc_transient_v0_simulated_packet_2026_05_27/evidence_packet.json",
+      "frames": 8,
+      "guard_actions": {
+        "pass_through": 8
+      },
+      "validator_status": "pass",
+      "replay_status": "pass",
+      "claim_flags": {
+        "simulated": true,
+        "hardware_observed": false,
+        "live_serial_capture_performed": false,
+        "certified_safety_claim": false,
+        "production_controller_claim": false
+      }
+    },
+    {
+      "kernel": "voltage_divider_v0",
+      "title": "Voltage divider",
+      "course": "courses/006-ee-math-kernels/lesson-02-voltage-divider.md",
+      "evidence_packet": "evidence/ee_math_kernels/voltage_divider_v0_simulated_packet_2026_05_27/evidence_packet.json",
+      "frames": 6,
+      "guard_actions": {
+        "pass_through": 5,
+        "out_of_model_bounds": 1
+      },
+      "validator_status": "pass",
+      "replay_status": "pass",
+      "claim_flags": {
+        "simulated": true,
+        "hardware_observed": false,
+        "live_serial_capture_performed": false,
+        "certified_safety_claim": false,
+        "production_controller_claim": false
+      }
+    },
+    {
+      "kernel": "logic_guard_v0",
+      "title": "Logic guard",
+      "course": "courses/006-ee-math-kernels/lesson-03-boolean-interlock.md",
+      "evidence_packet": "evidence/ee_math_kernels/logic_guard_v0_simulated_packet_2026_05_27/evidence_packet.json",
+      "frames": 8,
+      "guard_actions": {
+        "pass_through": 5,
+        "interlock_block": 3
+      },
+      "validator_status": "pass",
+      "replay_status": "pass",
+      "claim_flags": {
+        "simulated": true,
+        "hardware_observed": false,
+        "live_serial_capture_performed": false,
+        "certified_safety_claim": false,
+        "production_controller_claim": false
+      }
+    }
+  ]
+}

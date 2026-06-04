@@ -19,6 +19,11 @@ test("landing page presents the Reflex Course hardware gateway", async ({ page }
   await expect(landing).toContainText("Choose your hardware path");
   await expect(landing).toContainText("ESP32 / Arduino");
   await expect(landing).toContainText("FPGA / Arty A7");
+  await expect(landing).toContainText("Simulated Evidence Packets");
+  await expect(landing).toContainText("RC transient");
+  await expect(landing).toContainText("Voltage divider");
+  await expect(landing).toContainText("Logic guard");
+  await expect(landing).toContainText("hardware_observed: false");
   await expect(landing).not.toContainText("Other Systems");
   await expect(page.getByRole("button", { name: /Quick Start/ })).toBeVisible();
   await expect(page.getByRole("link", { name: /Source/ })).toBeVisible();
@@ -1580,4 +1585,3 @@ test("frying a shared net shows refresh action", async ({ page }, testInfo) => {
   await page.getByRole("button", { name: "Refresh board" }).click();
   await expect(page.getByText("Board is fried.")).toHaveCount(0);
 });
-

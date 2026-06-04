@@ -10,6 +10,7 @@ import {
   X
 } from "lucide-react";
 import { useMemo, useState, type CSSProperties } from "react";
+import { evidenceBridge } from "../data/evidenceBridge";
 
 export type LandingTarget =
   | "electronics"
@@ -217,6 +218,8 @@ export function LandingPage({ onNavigate }: { onNavigate: (target: LandingTarget
           </button>
 
         </section>
+
+        <SimulatedEvidencePackets />
       </section>
       {quickStartOpen ? (
         <div className="quick-start-backdrop" role="presentation" onClick={() => setQuickStartOpen(false)}>
@@ -352,6 +355,60 @@ export function LandingPage({ onNavigate }: { onNavigate: (target: LandingTarget
   );
 }
 
+function SimulatedEvidencePackets() {
+  return (
+    <section className="evidence-packets-section" aria-label="Simulated Evidence Packets">
+      <div className="evidence-packets-header">
+        <div>
+          <p>Evidence bridge</p>
+          <h2>Simulated Evidence Packets</h2>
+        </div>
+        <span>{evidenceBridge.boundary}</span>
+      </div>
+
+      <div className="evidence-packet-grid">
+        {evidenceBridge.entries.map((entry) => (
+          <article className="evidence-packet-card" key={entry.kernel}>
+            <div className="evidence-packet-title">
+              <ShieldCheck aria-hidden="true" />
+              <div>
+                <h3>{entry.title}</h3>
+                <span>{entry.kernel}</span>
+              </div>
+            </div>
+            <dl className="evidence-packet-metrics">
+              <div>
+                <dt>frames</dt>
+                <dd>{entry.frames}</dd>
+              </div>
+              <div>
+                <dt>validator</dt>
+                <dd>{entry.validatorStatus}</dd>
+              </div>
+              <div>
+                <dt>replay</dt>
+                <dd>{entry.replayStatus}</dd>
+              </div>
+            </dl>
+            <div className="evidence-guard-actions" aria-label={`${entry.title} guard actions`}>
+              {Object.entries(entry.guardActions).map(([action, count]) => (
+                <span key={action}>
+                  {action}: {count}
+                </span>
+              ))}
+            </div>
+            <div className="evidence-claim-flags" aria-label={`${entry.title} claim flags`}>
+              <span>simulated: {String(entry.claimFlags.simulated)}</span>
+              <span>hardware_observed: {String(entry.claimFlags.hardware_observed)}</span>
+              <span>live_serial_capture_performed: {String(entry.claimFlags.live_serial_capture_performed)}</span>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function Esp32CourseLanding({
   onNavigate,
   onBack
@@ -393,6 +450,9 @@ export function Esp32CourseLanding({
               <button type="button" onClick={() => onNavigate("reflexGuard")}>
                 Preview <ArrowRight aria-hidden="true" />
               </button>
+              <a href="/learn/eml/intro">
+                EML Intro <ArrowRight aria-hidden="true" />
+              </a>
               <button type="button" onClick={() => onNavigate("lab")}>
                 Simulator <ArrowRight aria-hidden="true" />
               </button>
@@ -529,6 +589,15 @@ export function ReflexGuardCourseSelect({
           </article>
           <article className="course-mode-card lab-choice-card">
             <FileText aria-hidden="true" />
+            <p>after Lab 01</p>
+            <h2>EML Intro</h2>
+            <span>Write the guard function, inspect the C adapter shape, and see the proof obligation.</span>
+            <a href="/learn/eml/intro">
+              Open lesson <ArrowRight aria-hidden="true" />
+            </a>
+          </article>
+          <article className="course-mode-card lab-choice-card">
+            <BookOpen aria-hidden="true" />
             <p>course terms</p>
             <h2>Glossary</h2>
             <span>Review pin names, packet fields, evidence terms, and beginner-friendly circuit language.</span>

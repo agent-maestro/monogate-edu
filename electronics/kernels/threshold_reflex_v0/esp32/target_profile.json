@@ -1,0 +1,78 @@
+{
+  "schema_version": "monogate-electronics.target-profile.v0",
+  "profile_id": "arduino_esp32_threshold_reflex_v0",
+  "status": "hand_authored_adapter",
+  "kernel_id": "threshold_reflex_v0",
+  "target_family": "arduino_esp32",
+  "language_profile": {
+    "language": "c++",
+    "adapter_format": "arduino_ino",
+    "framework": "arduino_core_esp32"
+  },
+  "source_files": {
+    "kernel_manifest": "../kernel.json",
+    "portable_kernel_header": "../cpp/threshold_reflex_v0.hpp",
+    "native_fixture": "../cpp/fixtures/threshold_reflex_v0_native_fixture.cpp",
+    "adapter": "threshold_reflex_v0/threshold_reflex_v0.ino",
+    "golden_trace": "../traces/golden_trace.jsonl"
+  },
+  "implementation_status": {
+    "portable_kernel_extracted": true,
+    "adapter_calls_portable_kernel": true,
+    "native_fixture_present": true,
+    "hardware_action_performed": false
+  },
+  "board_contract": {
+    "board_family": "esp32_devkit",
+    "adc_pin": 34,
+    "led_pwm_pin": 25,
+    "optional_buzzer_pwm_pin": 26,
+    "serial_baud": 115200,
+    "sample_period_ms": 20,
+    "adc_resolution_bits": 12,
+    "pwm_resolution_bits": 8
+  },
+  "kernel_parameters": {
+    "threshold": 0.55,
+    "width": 0.1,
+    "max_step": 0.2,
+    "safe_output_limit": 0.85,
+    "buzzer_on_level": 0.12,
+    "buzzer_off_level": 0.06
+  },
+  "trace_contract": {
+    "schema_version": "monogate-electronics.trace-frame.v0",
+    "required_outputs": [
+      "requested_output",
+      "safe_output",
+      "led",
+      "buzzer",
+      "stepper"
+    ],
+    "guard_actions": [
+      "pass_through",
+      "clamp_to_safe_output"
+    ],
+    "validator": "tools/validate_trace.py",
+    "replay": "tools/replay_trace.py",
+    "target_profile_validator": "tools/validate_target_profile.py",
+    "native_fixture_runner": "tools/run_threshold_reflex_native_fixture.py"
+  },
+  "claim_flags": {
+    "hardware_observed": false,
+    "esp32_flash_performed": false,
+    "live_serial_capture_performed": false,
+    "compiler_generated_adapter": false,
+    "generated_code_correctness_claim": false,
+    "certified_safety_claim": false,
+    "production_controller_claim": false,
+    "runtime_performance_claim": false,
+    "public_hardware_readiness_claim": false
+  },
+  "next_steps": [
+    "promote portable C/C++ kernel header to generated/reviewed output",
+    "capture native fixture output in HW-A1 evidence packet",
+    "add explicit-approval serial capture tooling",
+    "promote to hardware-observed only after live trace capture and packet validation"
+  ]
+}

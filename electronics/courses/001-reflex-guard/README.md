@@ -15,6 +15,7 @@ potentiometer + button -> threshold_reflex_v0 -> guard -> LED/buzzer -> replay -
 
 - [Syllabus](syllabus.md)
 - [Release Checklist](release-checklist.md)
+- [EML Intro: Your First Guard Kernel](eml-intro.md)
 - [Course 001 Glossary](glossary.md)
 - [Starter Bundle](../../starter-bundle/README.md)
 - [Living Glossary](../../docs/glossary.md)

@@ -25,6 +25,9 @@ The guard clamps output to `0.85`.
 
 - `kernel.json`: machine-readable teaching spec.
 - `kernel.md`: human explanation.
+- `cpp/threshold_reflex_v0.hpp`: portable C/C++ kernel logic.
+- `cpp/fixtures/threshold_reflex_v0_native_fixture.cpp`: laptop-only fixture for
+  the portable kernel.
 - `traces/golden_trace.jsonl`: replayable example trace.
 - `esp32/`: starter firmware and pin map.
 - `fpga/`: FPGA-oriented notes and stubs.

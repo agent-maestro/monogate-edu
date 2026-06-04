@@ -1,10 +1,10 @@
 {
   "schema_version": "monogate-electronics.public-curriculum-export.v0",
-  "generated_at": "2026-06-03T20:53:50.936046+00:00",
+  "generated_at": "2026-06-04T03:02:56.146281+00:00",
   "source_repo": "monogate-electronics",
   "public_repo": "monogate-edu",
-  "source_commit": "6a8361a1a400161017d0ba27ae826692bf103574",
-  "source_dirty": true,
+  "source_commit": "f06a495f6666e3854b326ba983ac44c751067e91",
+  "source_dirty": false,
   "target_profile": "monogate-edu-electronics-topic-reflex-guard-course-001",
   "included_courses": [
     "001-reflex-guard"
@@ -92,6 +92,11 @@
       "sha256": "35360c718675923c89e921f912eeca6114d03abc6302c7eea9d90feed849dee8"
     },
     {
+      "path": "electronics/apps/electronics-lab/public/evidence/evidence_bridge_2026_05_27.json",
+      "bytes": 2353,
+      "sha256": "7ec254c8711f206ddccecd28487152a3e3d4f8cfb4b0ec62c361bbb068ec4d5e"
+    },
+    {
       "path": "electronics/apps/electronics-lab/README.md",
       "bytes": 1039,
       "sha256": "4eeb2d4c97f126f1f727de30c5ad8f4d347dfd7341a386aa28111622a968eb84"
@@ -153,8 +158,8 @@
     },
     {
       "path": "electronics/apps/electronics-lab/src/components/LandingPage.tsx",
-      "bytes": 49024,
-      "sha256": "24e7b4f3385e8e256a0f2f4ad774d758169d33a88edde8c387b07c21f8baf26f"
+      "bytes": 51693,
+      "sha256": "78f427a7612a2de07460c5c556a388f39b2a20f948d2ade0e6cf92e087d74942"
     },
     {
       "path": "electronics/apps/electronics-lab/src/components/OptimizationBoundaryLab.tsx",
@@ -195,6 +200,11 @@
       "path": "electronics/apps/electronics-lab/src/components/trainerPartCatalog.ts",
       "bytes": 3052,
       "sha256": "2e2ab51ca02e283497612cb1909e2cc52c1352e775de072b7111308f6ba83b25"
+    },
+    {
+      "path": "electronics/apps/electronics-lab/src/data/evidenceBridge.ts",
+      "bytes": 2602,
+      "sha256": "b15b7aa149b250fa5cd9efa42591d3e5ed1cc1d2da3be4f93c9c92530a1939ef"
     },
     {
       "path": "electronics/apps/electronics-lab/src/engine/boundaryEngine.test.ts",
@@ -248,13 +258,13 @@
     },
     {
       "path": "electronics/apps/electronics-lab/src/styles.css",
-      "bytes": 167894,
-      "sha256": "1d5a5b01a4c0720a9bcd8349cf16d23e4618f8cf3dab6f759823ade6fa3489a2"
+      "bytes": 170595,
+      "sha256": "ec0e22234debc680581031d2427f5bec5d270046ddd38e5df2df93df5c885531"
     },
     {
       "path": "electronics/apps/electronics-lab/tests/mvp.spec.ts",
-      "bytes": 69792,
-      "sha256": "6ba34805e1397695daab2f6bab03f8a88bcebf5b0ddad5a44c9fbe59f12330de"
+      "bytes": 70098,
+      "sha256": "cddf2f14800baab0ce03268b2150a258411928688f6f0fcfe26e74a0f20f137a"
     },
     {
       "path": "electronics/apps/electronics-lab/tsconfig.json",
@@ -280,6 +290,11 @@
       "path": "electronics/COURSE_INDEX.md",
       "bytes": 1005,
       "sha256": "3b35950c088da5388981946199697bb787f3bf1bf2f77f0b4c65f1a266099d3b"
+    },
+    {
+      "path": "electronics/courses/001-reflex-guard/eml-intro.md",
+      "bytes": 5441,
+      "sha256": "f0bda8186465be826293a2c6fe5f35bf980f33924ceea25e191441af0593a960"
     },
     {
       "path": "electronics/courses/001-reflex-guard/glossary.md",
@@ -363,8 +378,8 @@
     },
     {
       "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/lab-packet.md",
-      "bytes": 12213,
-      "sha256": "51089e49de436c0f7b8e658a4f493197cad09b2e9ecf669bb04597f736f24f46"
+      "bytes": 12351,
+      "sha256": "a2b47b360e6ae51947fd334dd11344007099bafbb878f4aa244962efbde0d7d5"
     },
     {
       "path": "electronics/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/quick-start.md",
@@ -413,8 +428,8 @@
     },
     {
       "path": "electronics/courses/001-reflex-guard/README.md",
-      "bytes": 924,
-      "sha256": "9d434271f2252f5e17e99f4202ae7d52aa1c6a8bb7a6bc21b847fc2d7e855152"
+      "bytes": 978,
+      "sha256": "26391b68a244c14a9720cb8322ef0576e3350e102e9b79d93b7951fa9ed79893"
     },
     {
       "path": "electronics/courses/001-reflex-guard/release-checklist.md",
@@ -458,8 +473,8 @@
     },
     {
       "path": "electronics/docs/evidence-grammar.md",
-      "bytes": 3943,
-      "sha256": "b5c4bd1256e9ddf62a7cf7a191b4d2904fbc60dff236c4ad556ad2378266331f"
+      "bytes": 2293,
+      "sha256": "ac9df8fe67f3a962a787ee6a64e74f801d68ea033f6ae3f4d22345a8c2696de8"
     },
     {
       "path": "electronics/docs/glossary.md",
@@ -468,8 +483,18 @@
     },
     {
       "path": "electronics/docs/starter-kernel-map.md",
-      "bytes": 5917,
-      "sha256": "19afa3494d52c149da597ca6f3f47ed3e81be0bf0f92f4651069679b81657a5c"
+      "bytes": 5018,
+      "sha256": "45a65eeb676beef1cc7e5c8b2b41cda942771ad3d2b487b1348031fe39ecf1d0"
+    },
+    {
+      "path": "electronics/kernels/threshold_reflex_v0/cpp/fixtures/threshold_reflex_v0_native_fixture.cpp",
+      "bytes": 2300,
+      "sha256": "7912c12a69434ef493f15b93d1a3ffa814dfc8c749fb6cc5b6905a23e049734d"
+    },
+    {
+      "path": "electronics/kernels/threshold_reflex_v0/cpp/threshold_reflex_v0.hpp",
+      "bytes": 1666,
+      "sha256": "67fae98594cce2beab232b370dc6d62495b32a4eb82d1334c93b5c028c0d5610"
     },
     {
       "path": "electronics/kernels/threshold_reflex_v0/dashboard/README.md",
@@ -482,9 +507,14 @@
       "sha256": "2f02296c70a49844cce8582421e14ac896bd3604e5c21506a9e2eea36168d649"
     },
     {
+      "path": "electronics/kernels/threshold_reflex_v0/esp32/target_profile.json",
+      "bytes": 2590,
+      "sha256": "fb1658e1753835ba2ab8516008000ef67a1ebebe4e11f979a08826aae88a9c81"
+    },
+    {
       "path": "electronics/kernels/threshold_reflex_v0/esp32/threshold_reflex_v0/threshold_reflex_v0.ino",
-      "bytes": 4621,
-      "sha256": "b5580c2ceb7efce201647dab2a99ebe273dacd2e01d33e14f1d295e0e2cd3e69"
+      "bytes": 4217,
+      "sha256": "efb5b9c3d5493e7b0cb2ce06b369f6d32216d7d26e0d55e407e0981208925d38"
     },
     {
       "path": "electronics/kernels/threshold_reflex_v0/evidence/README.md",
@@ -523,8 +553,8 @@
     },
     {
       "path": "electronics/kernels/threshold_reflex_v0/README.md",
-      "bytes": 898,
-      "sha256": "5af4f0c5c97ab4f0198ce63d192bf72eba14d7593ceb7177a281fbb6960ad3cf"
+      "bytes": 1067,
+      "sha256": "98d92e5045cc6d0c0207d9502634a17a2dfd7091b2b34f83cf49e422a29a4c4e"
     },
     {
       "path": "electronics/kernels/threshold_reflex_v0/traces/golden_trace.jsonl",
@@ -533,8 +563,8 @@
     },
     {
       "path": "electronics/LICENSE",
-      "bytes": 205,
-      "sha256": "d10a675adee8f0c7c69b5eb45a42f10c24be6f798f2d2a36575d7d847bd922b9"
+      "bytes": 208,
+      "sha256": "44f6702ec4763b56990df93e29ea343a58a2a70b4d72c84e0d63af6eb7372a74"
     },
     {
       "path": "electronics/README.md",
@@ -618,13 +648,13 @@
     },
     {
       "path": "electronics/tools/validate_evidence_grammar.py",
-      "bytes": 3146,
-      "sha256": "531a6ccbbfd9a21cd52b4f6610b6421b8fdb641c53ea38d4d94a4c8c60aad0ae"
+      "bytes": 6124,
+      "sha256": "6bbed0ea2205a6b45d3754ab42e42616b2a52c3bc8a3d5f8a77028e57c8d2b6f"
     },
     {
       "path": "electronics/tools/validate_kernel_spec.py",
-      "bytes": 4516,
-      "sha256": "528c24fe7f0aedb9319db946eb40dd46382aef7b379125c6eb5f23a6ec8fdb61"
+      "bytes": 4717,
+      "sha256": "1ff85f578c48d87e6e5ad4c81923b923d0e9fe47a1afc8170ba8fb23d726944f"
     },
     {
       "path": "electronics/tools/validate_trace.py",

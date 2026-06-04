@@ -72,17 +72,24 @@ def validate(kernel_dir: Path) -> list[str]:
         errors.append("kernel.eml schema_version mismatch")
 
     json_params = kernel.get("parameters", {})
-    for name, value in eml_params.items():
-        if name not in json_params:
-            errors.append(f"kernel.json missing parameter {name}")
+    if not isinstance(json_params, dict):
+        errors.append("kernel.json parameters must be an object")
+        json_params = {}
+    for name, value in json_params.items():
+        if not isinstance(value, int | float):
             continue
-        if not close_enough(value, float(json_params[name])):
-            errors.append(f"parameter mismatch: {name}")
-    for name in json_params:
         if name not in eml_params:
             errors.append(f"kernel.eml missing param {name}")
+            continue
+        if not close_enough(eml_params[name], float(value)):
+            errors.append(f"parameter mismatch: {name}")
+    for name in eml_params:
+        if name not in json_params:
+            errors.append(f"kernel.json missing parameter {name}")
 
     actions = set(kernel.get("guard", {}).get("actions", []))
+    if not actions:
+        errors.append("kernel.json missing guard actions")
     for action in actions:
         if action not in eml_text:
             errors.append(f"kernel.eml missing guard action {action}")
@@ -90,10 +97,8 @@ def validate(kernel_dir: Path) -> list[str]:
     safe_limit = eml_params.get("safe_output_limit")
     if safe_limit is not None:
         for frame in frames:
-            outputs = frame.get("outputs", {})
-            guard = frame.get("guard", {})
-            safe_output = float(outputs.get("safe_output", outputs.get("alert_safe", -1.0)))
-            guard_safe_output = float(guard.get("safe_output", -1.0))
+            safe_output = float(frame.get("outputs", {}).get("safe_output", -1.0))
+            guard_safe_output = float(frame.get("guard", {}).get("safe_output", -1.0))
             if safe_output > safe_limit + 1e-9:
                 errors.append(f"frame {frame.get('sample_index')}: safe_output exceeds EML safe_output_limit")
             if guard_safe_output > safe_limit + 1e-9:

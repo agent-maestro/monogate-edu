@@ -6,7 +6,8 @@
 
 **Status:** Ready for your bench
 
-**Goal:** Prove the full Monogate loop on real hardware in one fun session
+**Goal:** Run the Monogate loop on a safe trainer-board circuit and produce a
+trace that can be validated and replayed
 
 ## Welcome!
 
@@ -16,13 +17,13 @@ Today you're going to build a tiny but powerful circuit that shows the real
 magic of Monogate:
 
 ```text
-One clean EML kernel -> makes a real guard decision -> drives LED/button/buzzer I/O -> leaves a trace anyone can check
+One clean EML kernel -> makes a guarded decision -> drives LED/button/buzzer I/O -> leaves a trace anyone can check
 ```
 
 By the end you'll have:
 
 - A working breadboard circuit
-- Live EML-controlled behavior you can see and tweak
+- Live kernel-controlled behavior you can see and tweak
 - A verifiable trace you can replay and share
 - A claim-bounded evidence packet starter
 
@@ -53,8 +54,8 @@ In Lab 01B, you add a button and buzzer. The button mutes the buzzer while the L
 By the end of this lab you will be able to:
 
 - Wire a safe ESP32 + potentiometer + LED/button/buzzer circuit on a breadboard
-- Understand how an EML kernel, `threshold_reflex_v0`, controls real hardware
-- Capture and replay a live trace that proves the guard clamp worked
+- Understand how `threshold_reflex_v0` controls visible breadboard outputs
+- Capture and replay a live trace that shows whether the guard clamp fired
 - Explain the Monogate way: input -> EML kernel -> guard decision -> visible output -> verifiable evidence
 
 ## Safety First
@@ -381,8 +382,8 @@ What you should see:
 - When the guarded output is high enough, the buzzer turns on
 - When the math would ask for too much output, the guard clamp kicks in
 
-This clamp is the star of the show. It is the EML kernel protecting the
-hardware.
+This clamp is the star of the show. It is the kernel limiting the requested
+output before the trainer-board adapter drives the LED.
 
 The first demo path is:
 
@@ -466,8 +467,8 @@ Unplug instantly if any stop condition appears.
 
 ## You Did It!
 
-You just ran real EML math on physical hardware and proved it with a verifiable
-trace.
+You just ran a guarded kernel through a physical trainer-board adapter and
+created a trace that can be validated and replayed.
 
 This is the Monogate way.
 
