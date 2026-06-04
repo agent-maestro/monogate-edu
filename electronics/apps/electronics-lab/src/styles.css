@@ -860,6 +860,79 @@ body {
   height: 18px;
 }
 
+.physical-setup-card {
+  min-width: 0;
+  padding: 18px;
+  display: grid;
+  gap: 16px;
+  border: 1px solid rgba(142, 224, 178, 0.28);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(16, 60, 52, 0.8), rgba(20, 28, 31, 0.92)),
+    rgba(20, 28, 31, 0.9);
+}
+
+.physical-setup-heading {
+  display: grid;
+  gap: 6px;
+}
+
+.physical-setup-heading p {
+  margin: 0;
+  color: #8ee0b2;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.physical-setup-heading h2 {
+  margin: 0;
+  color: #f5fbf8;
+  font-size: clamp(22px, 3vw, 32px);
+  line-height: 1.08;
+}
+
+.physical-setup-heading span {
+  max-width: 840px;
+  color: #c6d5d2;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.physical-setup-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.physical-setup-grid article {
+  min-width: 0;
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+  border: 1px solid rgba(217, 247, 255, 0.13);
+  border-radius: 8px;
+  background: rgba(217, 247, 255, 0.055);
+}
+
+.physical-setup-grid strong {
+  color: #fff2a6;
+  font-size: 15px;
+}
+
+.physical-setup-grid ul {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 7px;
+}
+
+.physical-setup-grid li {
+  color: #c7d8d5;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
 .physical-layout {
   display: grid;
   grid-template-columns: 0.82fr 1fr;
@@ -8400,6 +8473,7 @@ button.other-system-course-card {
   .roadmap-grid,
   .physical-download-card,
   .physical-layout,
+  .physical-setup-grid,
   .physical-steps ol,
   .resource-list,
   .physical-page-header {

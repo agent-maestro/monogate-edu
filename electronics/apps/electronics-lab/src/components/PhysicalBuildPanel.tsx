@@ -50,6 +50,42 @@ export function PhysicalBuildPanel({
           </div>
         </section>
 
+        <section className="physical-setup-card" aria-label="Windows and Mac setup guide">
+          <div className="physical-setup-heading">
+            <p>Computer setup</p>
+            <h2>Windows | Mac install path</h2>
+            <span>
+              Use Chrome or Edge for the dashboard path. Safari is fine for reading docs, but Chrome or Edge is the supported serial workflow.
+            </span>
+          </div>
+          <div className="physical-setup-grid">
+            <article>
+              <strong>Windows</strong>
+              <ul>
+                <li>Install Arduino IDE 2.x and the `esp32 by Espressif Systems` board package.</li>
+                <li>Select the ESP32 port shown as `COM3`, `COM6`, or similar.</li>
+                <li>Use the dashboard launcher when you want the local serial dashboard.</li>
+              </ul>
+            </article>
+            <article>
+              <strong>Mac</strong>
+              <ul>
+                <li>Install Arduino IDE 2.x and the `esp32 by Espressif Systems` board package.</li>
+                <li>Select the ESP32 port shown as `/dev/cu.usbserial-*`, `/dev/cu.SLAB_USBtoUART`, or `/dev/cu.wchusbserial*`.</li>
+                <li>Run the dashboard manually with `python3`; the Mac path follows the standard ESP32/macOS workflow.</li>
+              </ul>
+            </article>
+          </div>
+          <div className="physical-download-actions">
+            <a href="/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/setup-guide.md" target="_blank" rel="noreferrer">
+              <FileText aria-hidden="true" /> Full setup guide
+            </a>
+            <a href="/courses/001-reflex-guard/lab-bundle/README.md" target="_blank" rel="noreferrer">
+              <FileText aria-hidden="true" /> Dashboard notes
+            </a>
+          </div>
+        </section>
+
         <div className="physical-layout">
           <section className="physical-card physical-resources">
             <h2>Resources</h2>
