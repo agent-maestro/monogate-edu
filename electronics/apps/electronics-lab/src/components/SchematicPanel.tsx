@@ -46,7 +46,7 @@ const schematicFocusOptions: { id: SchematicFocusId; label: string; viewBox: str
     id: "full",
     label: "Full Circuit",
     viewBox: "-40 -30 1180 840",
-    summary: "All branches visible."
+    summary: "All branch paths visible."
   },
   {
     id: "power-rails",
@@ -165,14 +165,14 @@ function StatusIcon({ status }: { status: BranchStatus }) {
   return <XCircle aria-hidden="true" />;
 }
 
-function WirePath({ d }: { d: string }) {
-  return <path className="schematic-wire" d={d} />;
+function WirePath({ d, className = "" }: { d: string; className?: string }) {
+  return <path className={`schematic-wire${className ? ` ${className}` : ""}`} d={d} />;
 }
 
-function Node({ cx, cy, label }: { cx: number; cy: number; label?: string }) {
+function Node({ cx, cy, label, className = "" }: { cx: number; cy: number; label?: string; className?: string }) {
   return (
     <>
-      <circle className="schematic-node" cx={cx} cy={cy} r="5" />
+      <circle className={`schematic-node${className ? ` ${className}` : ""}`} cx={cx} cy={cy} r="5" />
       {label ? (
         <text className="schematic-node-label" x={cx + 10} y={cy + 4}>
           {label}
@@ -256,8 +256,8 @@ function ButtonSymbol({ x, y, pressed = false }: { x: number; y: number; pressed
       <path d={`M${x + 56} ${y} h42`} />
       <circle cx={x + 36} cy={y} r="4" />
       <circle cx={x + 56} cy={y} r="4" />
-      <path className="schematic-button-armature is-open" d={`M${x + 38} ${y - 16} l36 -18`} />
-      <path className="schematic-button-armature is-closed" d={`M${x + 38} ${y - 5} L${x + 56} ${y}`} />
+      <path className="schematic-button-armature is-open" d={`M${x + 39} ${y - 9} L${x + 56} ${y - 23}`} />
+      <path className="schematic-button-armature is-closed" d={`M${x + 39} ${y - 4} L${x + 56} ${y}`} />
       <text x={x + 6} y={y + 42}>
         PUSH BUTTON
       </text>
@@ -440,7 +440,7 @@ export function SchematicPanel({
               {config.kicker} - {config.title}
             </text>
             <text className="schematic-page-note" x="38" y="66">
-              Symbol view: ESP32 source, shared ground, protected analog signals.
+              Symbol view: breadboard jumpers are condensed into circuit branch paths.
             </text>
 
             <g className="schematic-rail is-3v3">
@@ -490,10 +490,10 @@ export function SchematicPanel({
             </g>
 
             <g className={classForBranch("power-rails")}>
-              <WirePath d="M310 240 H350 V96" />
-              <WirePath d="M310 302 H332 V724" />
-              <Node cx={350} cy={96} label="3V3" />
-              <Node cx={332} cy={724} label="GND" />
+              <WirePath className="is-power-wire" d="M310 240 H350 V96" />
+              <WirePath className="is-ground-wire" d="M310 302 H332 V724" />
+              <Node cx={350} cy={96} label="3V3" className="is-power-node" />
+              <Node cx={332} cy={724} label="GND" className="is-ground-node" />
               <rect className="schematic-status-badge" x="382" y="118" width="124" height="38" rx="7" />
               <text className="schematic-status-label" x="396" y="142">
                 Power rails
@@ -634,7 +634,7 @@ export function SchematicPanel({
                 <button type="button" className={buttonPressed ? "is-pressed" : ""} aria-pressed={buttonPressed} onClick={toggleButton}>
                   Push Button
                 </button>
-                <p>{buttonPressed ? "GPIO27 is pulled low; buzzer mute is active." : "GPIO27 is held high by the internal pull-up."}</p>
+                <p>{buttonPressed ? "GPIO27 is pulled low; firmware mutes only the buzzer branch." : "GPIO27 is held high; firmware may allow buzzer output when the guard requests it."}</p>
               </section>
             ) : null}
             <section className="schematic-control-card is-output-monitor">
