@@ -1930,6 +1930,13 @@ body {
   stroke: #8ee0b2;
 }
 
+.schematic-circuit-branch:not(.is-power-rails) .schematic-wire,
+.schematic-circuit-branch:not(.is-power-rails) .schematic-symbol path,
+.schematic-circuit-branch:not(.is-power-rails) .schematic-symbol circle,
+.schematic-circuit-branch:not(.is-power-rails) .schematic-node {
+  stroke: rgba(255, 232, 153, 0.88);
+}
+
 .schematic-led-arrow {
   marker-end: url("#schematic-arrow");
   stroke-width: 2 !important;
@@ -2041,6 +2048,13 @@ body {
   stroke: #8ee0b2;
   stroke-dasharray: none;
   filter: url("#schematic-glow");
+}
+
+[data-check-active="true"] .schematic-circuit-branch.is-connected:not(.is-power-rails) .schematic-wire,
+[data-check-active="true"] .schematic-circuit-branch.is-connected:not(.is-power-rails) .schematic-symbol path,
+[data-check-active="true"] .schematic-circuit-branch.is-connected:not(.is-power-rails) .schematic-symbol circle,
+[data-check-active="true"] .schematic-circuit-branch.is-connected:not(.is-power-rails) .schematic-node {
+  stroke: #fff2a6;
 }
 
 [data-check-active="true"] .schematic-circuit-branch.is-power-rails.is-connected .schematic-wire,

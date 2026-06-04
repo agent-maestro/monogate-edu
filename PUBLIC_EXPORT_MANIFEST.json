@@ -1,9 +1,9 @@
 {
   "schema_version": "monogate-electronics.public-curriculum-export.v0",
-  "generated_at": "2026-06-04T18:24:01.882198+00:00",
+  "generated_at": "2026-06-04T18:30:59.759212+00:00",
   "source_repo": "monogate-electronics",
   "public_repo": "monogate-edu",
-  "source_commit": "86d7864731577c5d1532f1cb2b37934d36b33e6a",
+  "source_commit": "bc7c195cb217970cfa3c71763b0ca2e11256f8d1",
   "source_dirty": false,
   "target_profile": "monogate-edu-electronics-esp32-launch-courses-001-005",
   "included_courses": [
@@ -263,8 +263,8 @@
     },
     {
       "path": "electronics/apps/electronics-lab/src/styles.css",
-      "bytes": 177016,
-      "sha256": "81822a650285ca6eb22331c0eb33a87eb2d719f342f6050ca2e9241fc6db8525"
+      "bytes": 177798,
+      "sha256": "8ef1a59c42d174c189f20bd52331bb8f3da71b6271d8afe6952d8e3b587ad3a9"
     },
     {
       "path": "electronics/apps/electronics-lab/tests/mvp.spec.ts",
