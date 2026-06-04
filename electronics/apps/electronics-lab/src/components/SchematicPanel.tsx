@@ -256,7 +256,8 @@ function ButtonSymbol({ x, y, pressed = false }: { x: number; y: number; pressed
       <path d={`M${x + 56} ${y} h42`} />
       <circle cx={x + 36} cy={y} r="4" />
       <circle cx={x + 56} cy={y} r="4" />
-      <path className="schematic-button-armature" d={pressed ? `M${x + 38} ${y - 5} L${x + 56} ${y}` : `M${x + 38} ${y - 16} l36 -18`} />
+      <path className="schematic-button-armature is-open" d={`M${x + 38} ${y - 16} l36 -18`} />
+      <path className="schematic-button-armature is-closed" d={`M${x + 38} ${y - 5} L${x + 56} ${y}`} />
       <text x={x + 6} y={y + 42}>
         PUSH BUTTON
       </text>
@@ -398,7 +399,7 @@ export function SchematicPanel({
           </div>
         </div>
         <div className="schematic-header-actions">
-          <button type="button" className="schematic-check-button" onClick={runBoardCheck}>
+          <button type="button" className={`schematic-check-button${checkPulse ? " is-running" : ""}`} onClick={runBoardCheck}>
             <PlayCircle aria-hidden="true" />
             Check My Board
           </button>

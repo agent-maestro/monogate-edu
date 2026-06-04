@@ -1625,14 +1625,15 @@ body {
 .schematic-panel {
   position: absolute;
   left: 50%;
-  top: 54px;
+  top: 42px;
   z-index: 40;
-  width: min(1460px, calc(100vw - 24px));
-  max-height: calc(100vh - 74px);
+  width: min(1520px, calc(100vw - 48px));
+  height: min(820px, calc(100vh - 84px));
+  max-height: calc(100vh - 84px);
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
-  gap: 16px;
-  padding: 18px;
+  gap: 12px;
+  padding: 16px;
   border: 1px solid rgba(100, 205, 255, 0.36);
   border-radius: 8px;
   background:
@@ -1643,6 +1644,7 @@ body {
   color: #e9fbff;
   transform: translateX(-50%);
   pointer-events: auto;
+  overflow: hidden;
 }
 
 .app-shell.is-schematic-open .bench-status-panel,
@@ -1652,15 +1654,15 @@ body {
 }
 
 .schematic-panel.is-checking {
-  animation: schematic-panel-check 0.9s ease-out;
+  animation: schematic-panel-check 0.6s ease-out;
 }
 
 .schematic-panel-header {
   display: flex;
   align-items: start;
   justify-content: space-between;
-  gap: 20px;
-  padding-bottom: 14px;
+  gap: 16px;
+  padding-bottom: 10px;
   border-bottom: 1px solid rgba(151, 225, 255, 0.16);
 }
 
@@ -1681,7 +1683,7 @@ body {
 .schematic-panel-header h2 {
   margin: 3px 0 2px;
   color: #fff2a6;
-  font-size: clamp(24px, 3vw, 34px);
+  font-size: clamp(22px, 2.5vw, 30px);
   line-height: 1;
   letter-spacing: 0;
 }
@@ -1753,6 +1755,11 @@ body {
   box-shadow: 0 0 22px rgba(142, 224, 178, 0.18), inset 0 0 16px rgba(142, 224, 178, 0.1);
 }
 
+.schematic-check-button.is-running {
+  transform: translateY(1px);
+  box-shadow: 0 0 34px rgba(142, 224, 178, 0.28), inset 0 0 22px rgba(142, 224, 178, 0.16);
+}
+
 .schematic-close-button {
   width: 38px;
   padding: 0;
@@ -1766,12 +1773,14 @@ body {
 .schematic-workspace {
   min-height: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(340px, 380px);
-  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 330px);
+  gap: 12px;
+  overflow: hidden;
 }
 
 .schematic-blueprint {
-  min-height: min(74vh, 700px);
+  min-height: 0;
+  height: 100%;
   overflow: hidden;
   border: 1px solid rgba(100, 205, 255, 0.25);
   border-radius: 8px;
@@ -1785,7 +1794,7 @@ body {
   display: block;
   width: 100%;
   height: 100%;
-  min-height: min(74vh, 700px);
+  min-height: 0;
   font-family: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
 }
 
@@ -1983,12 +1992,24 @@ body {
 }
 
 .schematic-button-armature {
-  transition: stroke 140ms ease, filter 140ms ease;
+  transition: opacity 160ms ease, stroke 160ms ease, filter 160ms ease;
+}
+
+.schematic-button-armature.is-closed {
+  opacity: 0;
 }
 
 .schematic-button-symbol.is-pressed .schematic-button-armature {
   stroke: #fff2a6;
   filter: url("#schematic-glow");
+}
+
+.schematic-button-symbol.is-pressed .schematic-button-armature.is-open {
+  opacity: 0;
+}
+
+.schematic-button-symbol.is-pressed .schematic-button-armature.is-closed {
+  opacity: 1;
 }
 
 .schematic-piezo.is-buzzing .schematic-piezo-wave {
@@ -2049,19 +2070,21 @@ body {
   box-shadow: inset 0 0 18px rgba(255, 242, 166, 0.08), 0 0 18px rgba(255, 242, 166, 0.12);
 }
 
-.schematic-panel[data-check-active="true"] .schematic-blueprint[data-live="true"] .schematic-circuit-branch.is-connected .schematic-wire,
 .schematic-blueprint[data-live="true"] .schematic-circuit-branch.is-connected .schematic-wire {
-  animation: schematic-flow 1.4s linear infinite;
+  stroke-width: 3.5;
 }
 
 .schematic-status-sidebar {
+  min-width: 0;
   min-height: 0;
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr) auto;
   gap: 10px;
+  overflow: hidden;
 }
 
 .schematic-live-controls {
+  min-width: 0;
   display: grid;
   gap: 8px;
 }
@@ -2077,12 +2100,14 @@ body {
 }
 
 .schematic-control-card {
+  min-width: 0;
   display: grid;
   gap: 7px;
   padding: 10px;
 }
 
 .schematic-control-heading {
+  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2100,7 +2125,11 @@ body {
 .schematic-control-heading strong {
   color: #fff2a6;
   font-size: 13px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .schematic-control-card input {
@@ -4709,12 +4738,12 @@ body {
 .bench-status-panel {
   position: absolute;
   left: 50%;
-  top: 238px;
-  bottom: auto;
+  top: auto;
+  bottom: 164px;
   z-index: 9;
   width: min(300px, calc(100vw - 36px));
   transform: translateX(-50%);
-  padding: 9px 11px;
+  padding: 7px 10px;
   border: 1px solid rgba(142, 224, 178, 0.28);
   border-radius: 8px;
   background: rgba(15, 21, 24, 0.78);
@@ -4749,12 +4778,12 @@ body {
   position: absolute;
   left: 50%;
   right: auto;
-  top: 326px;
+  top: 188px;
   bottom: auto;
   z-index: 9;
   min-width: 118px;
   transform: translateX(-50%);
-  display: grid;
+  display: none;
   gap: 2px;
   padding: 9px 11px;
   border: 1px solid rgba(255, 242, 166, 0.5);
@@ -4767,9 +4796,10 @@ body {
 
 .tap-target-helper::before {
   content: "";
-  width: 50px;
-  height: 50px;
-  margin: 0 auto 3px;
+  display: none;
+  width: 0;
+  height: 0;
+  margin: 0;
   border: 3px solid rgba(255, 242, 166, 0.72);
   border-radius: 50%;
   background:
