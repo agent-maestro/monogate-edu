@@ -185,7 +185,7 @@ function Node({ cx, cy, label, className = "" }: { cx: number; cy: number; label
 function ResistorSymbol({ x, y, label }: { x: number; y: number; label: string }) {
   return (
     <g className="schematic-symbol schematic-resistor">
-      <path d={`M${x} ${y} h18 l8 -14 l16 28 l16 -28 l16 28 l16 -28 l8 14 h18`} />
+      <path d={`M${x} ${y} h18 l8 -14 l16 28 l16 -28 l16 28 l16 -28 l8 14 h24`} />
       <text x={x + 40} y={y - 22}>
         {label}
       </text>
@@ -256,8 +256,10 @@ function ButtonSymbol({ x, y, pressed = false }: { x: number; y: number; pressed
       <path d={`M${x + 56} ${y} h42`} />
       <circle cx={x + 36} cy={y} r="4" />
       <circle cx={x + 56} cy={y} r="4" />
-      <path className="schematic-button-armature is-open" d={`M${x + 39} ${y - 9} L${x + 56} ${y - 23}`} />
-      <path className="schematic-button-armature is-closed" d={`M${x + 39} ${y - 4} L${x + 56} ${y}`} />
+      <path
+        className={`schematic-button-armature${pressed ? " is-closed" : " is-open"}`}
+        d={pressed ? `M${x + 39} ${y - 3} L${x + 56} ${y}` : `M${x + 39} ${y - 8} L${x + 56} ${y - 18}`}
+      />
       <text x={x + 6} y={y + 42}>
         PUSH BUTTON
       </text>
@@ -501,8 +503,8 @@ export function SchematicPanel({
             </g>
 
             <g className={classForBranch("pot-divider")}>
-              <WirePath d="M492 96 V202" />
-              <WirePath d="M492 356 V724" />
+              <WirePath d="M492 96 V218" />
+              <WirePath d="M492 338 V724" />
               <WirePath d="M546 284 H374 V368 H310" />
               <PotSymbol x={492} y={286} />
               <Node cx={492} cy={96} />

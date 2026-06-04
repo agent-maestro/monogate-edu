@@ -2010,24 +2010,12 @@ body {
 
 .schematic-button-armature {
   stroke-width: 4;
-  transition: opacity 120ms ease, stroke 120ms ease, filter 120ms ease;
-}
-
-.schematic-button-armature.is-closed {
-  opacity: 0;
+  transition: stroke 120ms ease, filter 120ms ease;
 }
 
 .schematic-button-symbol.is-pressed .schematic-button-armature {
   stroke: #fff2a6;
   filter: url("#schematic-glow");
-}
-
-.schematic-button-symbol.is-pressed .schematic-button-armature.is-open {
-  opacity: 0;
-}
-
-.schematic-button-symbol.is-pressed .schematic-button-armature.is-closed {
-  opacity: 1;
 }
 
 .schematic-piezo.is-buzzing .schematic-piezo-wave {
