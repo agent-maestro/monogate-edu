@@ -10,7 +10,7 @@ resource floor.
 | Syllabus / learning objectives | ready draft | [syllabus.md](syllabus.md) |
 | Bill of materials | ready draft | [hardware/bom.md](hardware/bom.md) |
 | Step-by-step build guide | active | [hardware/build-guide.md](hardware/build-guide.md), [Lab Packet](resources/reflexcourse/lab-packet.md) |
-| Computer setup guide | ready draft | [resources/reflexcourse/setup-guide.md](resources/reflexcourse/setup-guide.md) |
+| Computer setup guide | ready PDF | [resources/reflexcourse/setup-guide.pdf](resources/reflexcourse/setup-guide.pdf) |
 | Reference schematic | ready draft | [hardware/schematic.md](hardware/schematic.md) |
 | Working code / firmware / kernel files | implemented | [firmware/README.md](firmware/README.md), `kernels/threshold_reflex_v0/` |
 | Evidence packet template | implemented draft | [evidence/evidence-packet-template.json](evidence/evidence-packet-template.json), [Evidence Packet Guide](resources/reflexcourse/evidence-packet-guide.md) |

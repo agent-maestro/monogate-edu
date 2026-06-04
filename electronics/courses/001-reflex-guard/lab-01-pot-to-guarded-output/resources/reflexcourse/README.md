@@ -12,7 +12,7 @@ Canonical resources for the first Monogate Electronics hardware course.
 ## Primary Learner Documents
 
 - [Quick Start](quick-start.md) - front-door guide for the first EML hardware demo.
-- [Computer Setup Guide](setup-guide.md) - Windows | Mac install, browser, serial-port, dashboard, and troubleshooting path.
+- [Computer Setup Guide](setup-guide.pdf) - Windows | Mac install, browser, serial-port, dashboard, and troubleshooting path.
 - [Lab Packet](lab-packet.md) - Reflex Lab 01 packet for the breadboard Reflex Course build.
 - [First Demo Runbook](first-demo-runbook.md) - operator-style runbook for the first physical demo.
 - [Kernel Modes](kernel-modes.md) - how Reflex Course maps to reusable EML kernel modes.

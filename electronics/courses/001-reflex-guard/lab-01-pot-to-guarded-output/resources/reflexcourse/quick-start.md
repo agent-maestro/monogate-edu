@@ -17,7 +17,7 @@ Build the first demo with:
 - jumper wires;
 - USB data cable.
 
-Before wiring, follow the [Computer Setup Guide](setup-guide.md). It has the
+Before wiring, follow the [Computer Setup Guide](setup-guide.pdf). It has the
 Windows | Mac install path, preferred browser notes, ESP32 port examples, and
 dashboard troubleshooting.
 

@@ -95,7 +95,7 @@ Nice-to-have for later demos, not needed today:
 
 Before touching wires, get the computer ready. This usually takes 10-20 minutes the first time.
 
-Use the [Reflex Lab 01 Computer Setup Guide](setup-guide.md) for the full
+Use the [Reflex Lab 01 Computer Setup Guide](setup-guide.pdf) for the full
 Windows | Mac path, preferred browser notes, serial-port examples, and
 troubleshooting.
 

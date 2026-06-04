@@ -8,7 +8,7 @@
 - [Reference Schematic](hardware/schematic.md)
 - [Build Guide](hardware/build-guide.md)
 - [Lab Packet](resources/reflexcourse/lab-packet.md)
-- [Computer Setup Guide](resources/reflexcourse/setup-guide.md)
+- [Computer Setup Guide](resources/reflexcourse/setup-guide.pdf)
 - [Evidence Packet Guide](resources/reflexcourse/evidence-packet-guide.md)
 - [Troubleshooting](troubleshooting.md)
 - [Short Theory](theory/short-theory.md)

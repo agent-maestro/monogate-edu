@@ -77,7 +77,7 @@ export function PhysicalBuildPanel({
             </article>
           </div>
           <div className="physical-download-actions">
-            <a href="/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/setup-guide.md" target="_blank" rel="noreferrer">
+            <a href="/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/setup-guide.pdf" target="_blank" rel="noreferrer">
               <FileText aria-hidden="true" /> Full setup guide
             </a>
             <a href="/courses/001-reflex-guard/lab-bundle/README.md" target="_blank" rel="noreferrer">
@@ -106,7 +106,7 @@ export function PhysicalBuildPanel({
                 </span>
                 <Download aria-hidden="true" />
               </a>
-              <a href="/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/setup-guide.md" target="_blank" rel="noreferrer">
+              <a href="/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/setup-guide.pdf" target="_blank" rel="noreferrer">
                 <FileText aria-hidden="true" />
                 <span>
                   <strong>Computer Setup Guide</strong>
