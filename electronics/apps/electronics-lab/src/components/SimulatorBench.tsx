@@ -1448,6 +1448,20 @@ export function SimulatorBench({
     setJumperToolActive(true);
   }, []);
 
+  const enterBuildMode = useCallback(() => {
+    setRemoveMode(false);
+    setBoardCheckState("idle");
+    setBoardCheckMessage("Build mode restored. Sync for latest instruction.");
+  }, []);
+
+  const enterRemoveMode = useCallback(() => {
+    setActivePart(null);
+    setJumperToolActive(false);
+    setRemoveMode(true);
+    setBoardCheckState("idle");
+    setBoardCheckMessage("Remove mode: click placed leads or jumper endpoints. Return to Build mode, then sync for latest instruction.");
+  }, []);
+
   const handleCircuitWireStateChange = useCallback(
     (visualWires: Partial<Record<WireId, boolean>>) => {
       syncVisualWires(visualWires);
@@ -1750,18 +1764,6 @@ export function SimulatorBench({
     setAnalogTerminal(analogHello(config));
     setEnvironmentTerminal(environmentHello(config));
     setCompletionDismissed(false);
-  }
-
-  function toggleRemoveMode() {
-    setActivePart(null);
-    setJumperToolActive(false);
-    setRemoveMode(false);
-    setRemoveMode((current) => {
-      const next = !current;
-      setBoardCheckState("idle");
-      setBoardCheckMessage(next ? "Remove mode: click placed leads or jumper endpoints. Return to Build mode, then sync for latest instruction." : "Build mode restored. Sync for latest instruction.");
-      return next;
-    });
   }
 
   function undoLastBenchChange() {
@@ -2360,6 +2362,11 @@ export function SimulatorBench({
           {soundEnabled ? <Volume2 aria-hidden="true" /> : <VolumeX aria-hidden="true" />}
           {soundEnabled ? "Sound on" : "Enable sound"}
         </button>
+        {removeMode ? (
+          <button type="button" className="build-mode-exit-button" onClick={enterBuildMode}>
+            Build mode
+          </button>
+        ) : null}
         {soundEnabled || audioStatus === "blocked" ? (
           <div className="sound-level-control" aria-label="Sound volume">
             {(["low", "medium", "high"] as const).map((level) => (
@@ -2736,8 +2743,11 @@ export function SimulatorBench({
             </dl>
           </div>
           <div className="capstone-actions">
-            <button type="button" className={removeMode ? "is-active" : ""} onClick={toggleRemoveMode}>
-              {removeMode ? "Build mode" : config.capstone.removeButton}
+            <button type="button" className={removeMode ? "" : "is-active"} onClick={enterBuildMode}>
+              Build mode
+            </button>
+            <button type="button" className={removeMode ? "is-active" : ""} onClick={enterRemoveMode}>
+              {config.capstone.removeButton}
             </button>
             <button type="button" onClick={undoLastBenchChange}>
               <Undo2 aria-hidden="true" /> Undo last
@@ -2762,6 +2772,7 @@ export function SimulatorBench({
           placedPartIds={placedPartIds}
           availablePartIds={availablePartIds}
           activePinMap={activePinMap}
+          componentPinMap={componentPinMap}
           jumperColor={jumperColor}
           jumperToolActive={jumperToolActive}
           potValue={potValue}

@@ -1,5 +1,6 @@
 import type { CSSProperties, PointerEventHandler } from "react";
 import { Minimize2, X } from "lucide-react";
+import type { ComponentPinMap } from "./CoursePanel";
 import {
   partInventoryLabelFor,
   partLabelFor,
@@ -25,6 +26,7 @@ export function InventoryPanel({
   placedPartIds,
   availablePartIds,
   activePinMap,
+  componentPinMap,
   jumperColor,
   jumperToolActive,
   potValue,
@@ -62,6 +64,7 @@ export function InventoryPanel({
   placedPartIds: Set<TrainerPartId>;
   availablePartIds?: Set<TrainerPartId>;
   activePinMap: Record<string, string>;
+  componentPinMap: ComponentPinMap;
   jumperColor: string;
   jumperToolActive: boolean;
   potValue: number;
@@ -86,6 +89,13 @@ export function InventoryPanel({
   onDragStart?: PointerEventHandler<HTMLButtonElement>;
   onResizeStart?: PointerEventHandler<HTMLButtonElement>;
 }) {
+  const mappedParts = trainerParts
+    .filter((part) => availablePartIds?.has(part.id) !== false)
+    .filter((part) => {
+      const pins = componentPinMap[part.id];
+      return pins && Object.values(pins).some((label) => label !== "not placed");
+    });
+
   return (
     <aside className="inventory-panel" style={style} aria-label={ariaLabel}>
       {onDragStart ? (
@@ -105,6 +115,28 @@ export function InventoryPanel({
         <p className="inventory-kicker">{kicker}</p>
         <h1>{title}</h1>
       </div>
+      <section className="component-placement-map" aria-label="Component hole map">
+        <strong>Component hole map</strong>
+        {mappedParts.length > 0 ? (
+          <div className="component-placement-list">
+            {mappedParts.map((part) => (
+              <article key={part.id}>
+                <h2>{partLabelFor(part.id, partLabels)}</h2>
+                <dl>
+                  {trainerPartLeads[part.id].map((lead) => (
+                    <div key={lead.id} className={componentPinMap[part.id][lead.id] === "not placed" ? "is-empty" : ""}>
+                      <dt>{partLeadLabelFor(part.id, lead.id, partLabels)}</dt>
+                      <dd>{componentPinMap[part.id][lead.id]}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <span>No component leads placed yet.</span>
+        )}
+      </section>
       <ul>
         {kitItems.map((item) => (
           <li className="inventory-kit-item" key={item}>{item}</li>

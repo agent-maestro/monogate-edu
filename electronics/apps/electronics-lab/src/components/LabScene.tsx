@@ -672,7 +672,6 @@ function BoardPickSurface({
 }
 
 function signalRoleForNet(circuitSnapshot: CircuitSnapshot, netId: string, traceMode: CourseTraceMode): Extract<TraceRole, "adc" | "output"> | null {
-  if (traceMode === "idle") return null;
   if (
     circuitSnapshot.connected(netId, "esp32:gpio34") ||
     circuitSnapshot.connected(netId, "esp32:gpio35") ||
@@ -680,7 +679,7 @@ function signalRoleForNet(circuitSnapshot: CircuitSnapshot, netId: string, trace
     (circuitSnapshot.nets.potWiper && circuitSnapshot.connected(netId, circuitSnapshot.nets.potWiper)) ||
     (circuitSnapshot.nets.ldrSense && circuitSnapshot.connected(netId, circuitSnapshot.nets.ldrSense))
   ) {
-    return traceRoleEnabled("adc", traceMode) ? "adc" : null;
+    return traceMode === "idle" || traceRoleEnabled("adc", traceMode) ? "adc" : null;
   }
 
   if (
@@ -690,7 +689,7 @@ function signalRoleForNet(circuitSnapshot: CircuitSnapshot, netId: string, trace
     (circuitSnapshot.nets.resistorRight && circuitSnapshot.connected(netId, circuitSnapshot.nets.resistorRight)) ||
     (circuitSnapshot.nets.buzzerResistorGpio && circuitSnapshot.connected(netId, circuitSnapshot.nets.buzzerResistorGpio))
   ) {
-    return traceRoleEnabled("output", traceMode) ? "output" : null;
+    return traceMode === "idle" || traceRoleEnabled("output", traceMode) ? "output" : null;
   }
 
   return null;
