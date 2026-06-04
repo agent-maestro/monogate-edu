@@ -1,5 +1,5 @@
 import { Html, OrbitControls, PerspectiveCamera, Text } from "@react-three/drei";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, type ThreeEvent, useFrame, useThree } from "@react-three/fiber";
 import { RotateCcw, ZoomIn, ZoomOut } from "lucide-react";
 import { type TouchEvent as ReactTouchEvent, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
@@ -530,11 +530,18 @@ function BoardHole({
           event.stopPropagation();
           onConnect(hole);
         }}
-        onPointerOver={() => {
+        onPointerMove={(event) => {
+          event.stopPropagation();
           document.body.style.cursor = armed ? "crosshair" : "default";
           onHover(hole);
         }}
-        onPointerOut={() => {
+        onPointerOver={(event) => {
+          event.stopPropagation();
+          document.body.style.cursor = armed ? "crosshair" : "default";
+          onHover(hole);
+        }}
+        onPointerOut={(event) => {
+          event.stopPropagation();
           document.body.style.cursor = "default";
           onHover(null);
         }}
@@ -619,6 +626,12 @@ function nearestBoardHole(point: THREE.Vector3): HolePoint | null {
   return nearestDistance <= 0.082 ? nearest : null;
 }
 
+function boardLocalPointerPoint(event: ThreeEvent<PointerEvent>): THREE.Vector3 {
+  const point = event.point.clone();
+  event.object.parent?.worldToLocal(point);
+  return point;
+}
+
 function BoardPickSurface({
   armed,
   fried,
@@ -637,12 +650,12 @@ function BoardPickSurface({
       position={[0, 0.192, 0]}
       rotation={[-Math.PI / 2, 0, 0]}
       onPointerMove={(event) => {
-        const nearest = nearestBoardHole(event.point);
+        const nearest = nearestBoardHole(boardLocalPointerPoint(event));
         document.body.style.cursor = nearest ? "crosshair" : "default";
         onHoverHole(nearest);
       }}
       onPointerDown={(event) => {
-        const nearest = nearestBoardHole(event.point);
+        const nearest = nearestBoardHole(boardLocalPointerPoint(event));
         if (!nearest) return;
         event.stopPropagation();
         onConnect(nearest);
@@ -969,11 +982,18 @@ function Esp32PadHitTarget({
           event.stopPropagation();
           onConnect(hole);
         }}
-        onPointerOver={() => {
+        onPointerMove={(event) => {
+          event.stopPropagation();
           document.body.style.cursor = occupiedHovered ? "not-allowed" : armed ? "crosshair" : "default";
           onHover(hole);
         }}
-        onPointerOut={() => {
+        onPointerOver={(event) => {
+          event.stopPropagation();
+          document.body.style.cursor = occupiedHovered ? "not-allowed" : armed ? "crosshair" : "default";
+          onHover(hole);
+        }}
+        onPointerOut={(event) => {
+          event.stopPropagation();
           document.body.style.cursor = "default";
           onHover(null);
         }}
