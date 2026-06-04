@@ -331,11 +331,19 @@ export function SchematicPanel({
   const visibleFocusOptions = schematicFocusOptions.filter((option) => option.id === "full" || branchById.has(option.id));
   const focusConfig = visibleFocusOptions.find((option) => option.id === focusId) ?? visibleFocusOptions[0] ?? schematicFocusOptions[0];
   const progressLabel = `${completedBranches.length}/${branches.length} Branches Connected`;
+  const incompleteBranches = branches.filter((branch) => !branch.complete);
+  const boardCheckState = completedBranches.length === branches.length ? "ready" : checkActive ? "incomplete" : "unchecked";
+  const boardCheckHeadline =
+    boardCheckState === "ready"
+      ? "Ready for USB"
+      : boardCheckState === "incomplete"
+        ? "Not broken - keep building"
+        : "Board check not run";
   const statusSummary =
-    completedBranches.length === branches.length
-      ? "Full circuit checks out."
-      : checkActive
-        ? "Review highlighted branches before inserting USB."
+    boardCheckState === "ready"
+      ? `${progressLabel}. Schematic matches the simulator wiring.`
+      : boardCheckState === "incomplete"
+        ? `${progressLabel}. This is an incomplete build check, not a damage warning.`
         : "Press Check My Board to compare this schematic against the simulator wiring.";
 
   useEffect(() => {
@@ -641,10 +649,20 @@ export function SchematicPanel({
               </output>
             </section>
           </div>
-          <div className="schematic-progress-card">
+          <div className="schematic-progress-card" data-check-state={boardCheckState}>
             <span>Board check</span>
-            <strong>{progressLabel}</strong>
+            <strong>{boardCheckHeadline}</strong>
             <p>{statusSummary}</p>
+            {checkActive && incompleteBranches.length > 0 ? (
+              <div className="schematic-next-branches" aria-label="Branches that still need attention">
+                <span>Needs attention</span>
+                {incompleteBranches.map((branch) => (
+                  <mark key={branch.id} className={`is-${branch.status}`}>
+                    {branch.displayLabel}: {branch.status === "partial" ? "partially wired" : "not detected"}
+                  </mark>
+                ))}
+              </div>
+            ) : null}
             <small>{focusConfig.summary}</small>
           </div>
           <div className="schematic-branch-list">

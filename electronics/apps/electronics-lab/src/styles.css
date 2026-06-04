@@ -2179,8 +2179,18 @@ body {
 
 .schematic-progress-card {
   display: grid;
-  gap: 5px;
+  gap: 7px;
   padding: 12px;
+}
+
+.schematic-progress-card[data-check-state="incomplete"] {
+  border-color: rgba(255, 214, 99, 0.45);
+  box-shadow: inset 0 0 0 1px rgba(255, 214, 99, 0.1);
+}
+
+.schematic-progress-card[data-check-state="ready"] {
+  border-color: rgba(104, 224, 161, 0.45);
+  box-shadow: inset 0 0 0 1px rgba(104, 224, 161, 0.1);
 }
 
 .schematic-progress-card span,
@@ -2212,6 +2222,33 @@ body {
 .schematic-progress-card small {
   color: #8ee0b2;
   font-weight: 850;
+}
+
+.schematic-next-branches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.schematic-next-branches span {
+  flex: 0 0 100%;
+}
+
+.schematic-next-branches mark {
+  border: 1px solid rgba(255, 214, 99, 0.35);
+  border-radius: 6px;
+  background: rgba(255, 214, 99, 0.08);
+  color: #fff2a6;
+  font-size: 11px;
+  font-weight: 850;
+  line-height: 1.2;
+  padding: 5px 7px;
+}
+
+.schematic-next-branches mark.is-missing {
+  border-color: rgba(255, 93, 129, 0.38);
+  background: rgba(255, 93, 129, 0.08);
+  color: #ffd1da;
 }
 
 .schematic-branch-list {
