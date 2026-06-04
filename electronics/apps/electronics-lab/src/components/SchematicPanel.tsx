@@ -2,7 +2,7 @@ import { AlertTriangle, CheckCircle2, CircleDashed, PlayCircle, X, XCircle } fro
 import { useEffect, useMemo, useState } from "react";
 import type { TrainerPartId } from "./trainerPartCatalog";
 import type { CourseSchematicConfig } from "./simulatorCourses";
-import { analogDecisionParams, thresholdParams, type WireId } from "../engine/labEngine";
+import { analogDecisionParams, runAnalogDecision, runThresholdReflexSteady, thresholdParams, type WireId } from "../engine/labEngine";
 
 type SchematicPanelProps = {
   config: CourseSchematicConfig;
@@ -308,10 +308,26 @@ export function SchematicPanel({
   const hasBuzzerOutput = config.branches.some((branch) => branch.id === "buzzer-output");
   const schematicLdrValue = ldrValue ?? potValue;
   const adcVoltage = potValue * 3.3;
+  const reflexGuardPreview = runThresholdReflexSteady(potValue);
+  const analogGuardPreview = runAnalogDecision(schematicLdrValue, true);
   const previewOutput = schematicMode === "environment" ? safeOutput : hasLdrDivider ? analogDecisionPreviewOutput(schematicLdrValue) : guardedSteadyOutput(potValue);
   const schematicLedLevel = liveActive ? Math.max(ledOutput, safeOutput) : Math.max(ledOutput, previewOutput);
   const schematicBuzzerLevel = hasBuzzerOutput && !buttonPressed ? Math.max(buzzerOutput, Math.max(0, Math.min(1, (schematicLedLevel - 0.55) / 0.3))) : 0;
   const buzzerActive = schematicBuzzerLevel > 0.02;
+  const requestedLoad =
+    schematicMode === "analog"
+      ? analogGuardPreview.requestedOutput
+      : schematicMode === "environment"
+        ? Math.max(safeOutput, schematicLedLevel)
+        : reflexGuardPreview.requestedOutput;
+  const loadLimit = schematicMode === "analog" ? analogDecisionParams.safeOutputLimit : thresholdParams.safeOutputLimit;
+  const guardClampActive =
+    schematicMode === "analog"
+      ? analogGuardPreview.guardAction === "clamp_to_safe_output" || requestedLoad > loadLimit
+      : schematicMode === "environment"
+        ? requestedLoad >= loadLimit && safeOutput >= loadLimit
+        : reflexGuardPreview.guardAction === "clamp_to_safe_output" || requestedLoad > loadLimit;
+  const clampOverRequest = Math.max(0, requestedLoad - loadLimit);
   const branches = useMemo<BranchAnalysis[]>(
     () =>
       config.branches.map((branch) => {
@@ -414,6 +430,7 @@ export function SchematicPanel({
       aria-label={`${config.title} schematic`}
       data-check-active={buildCheckActive ? "true" : "false"}
       data-focus={focusId}
+      data-guard-active={guardClampActive ? "true" : "false"}
       data-schematic-view={viewMode}
     >
       <header className="schematic-panel-header">
@@ -582,7 +599,7 @@ export function SchematicPanel({
               </g>
             ) : null}
 
-            <g className="schematic-guard-block">
+            <g className={`schematic-guard-block${guardClampActive ? " is-clamping" : ""}`}>
               <path className="schematic-logic-wire" d="M574 284 H676" markerEnd="url(#schematic-arrow)" />
               <rect x="680" y="240" width="150" height="88" rx="10" />
               <text x="710" y="276">
@@ -591,6 +608,14 @@ export function SchematicPanel({
               <text x="706" y="302">
                 GUARD
               </text>
+              {guardClampActive ? (
+                <>
+                  <rect className="schematic-guard-clamp-badge" x="696" y="336" width="120" height="32" rx="8" />
+                  <text className="schematic-guard-clamp-label" x="710" y="356">
+                    CLAMP ACTIVE
+                  </text>
+                </>
+              ) : null}
             </g>
 
             <g className={classForBranch("guarded-led")}>
@@ -634,13 +659,22 @@ export function SchematicPanel({
               </g>
             ) : null}
 
-            <g className="schematic-output-labels">
+            <g className={`schematic-output-labels${guardClampActive ? " is-clamping" : ""}`}>
               <path d="M830 284 H930 V438 H797" />
               {hasBuzzerOutput ? <path d="M830 298 H965 V510 H765" /> : null}
               <text x="852" y="268">
                 logical guard output
               </text>
             </g>
+            {guardClampActive ? (
+              <g className="schematic-clamp-callout">
+                <path d="M848 338 H1014" />
+                <rect x="864" y="320" width="156" height="40" rx="9" />
+                <text x="884" y="344">
+                  LOAD CLAMPED
+                </text>
+              </g>
+            ) : null}
           </svg>
         </div>
 
@@ -689,12 +723,19 @@ export function SchematicPanel({
             <section className="schematic-control-card is-output-monitor">
               <div className="schematic-control-heading">
                 <span>Live Output Monitor</span>
-                <strong>{buzzerActive ? "buzzing" : schematicLedLevel > 0.02 ? "lit" : "idle"}</strong>
+                <strong>{guardClampActive ? "clamped" : buzzerActive ? "buzzing" : schematicLedLevel > 0.02 ? "lit" : "idle"}</strong>
               </div>
-              <p>{hasBuzzerOutput ? "LED brightness follows the guarded output. Piezo waves animate only when the buzzer output is active." : "Decision LED brightness follows the guarded analog output preview."}</p>
+              <p>
+                {guardClampActive
+                  ? `Guard is active: requested ${requestedLoad.toFixed(2)} is held to safe limit ${loadLimit.toFixed(2)}.`
+                  : hasBuzzerOutput
+                    ? "LED brightness follows the guarded output. Piezo waves animate only when the buzzer output is active."
+                    : "Decision LED brightness follows the guarded analog output preview."}
+              </p>
               <output>
                 LED {schematicLedLevel.toFixed(2)}
                 {hasBuzzerOutput ? ` / buzzer ${schematicBuzzerLevel.toFixed(2)}` : ""}
+                {guardClampActive ? ` / clamp +${clampOverRequest.toFixed(2)}` : ""}
               </output>
             </section>
           </div>
