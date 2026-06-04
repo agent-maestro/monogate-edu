@@ -4709,7 +4709,9 @@ body {
 .bench-status-panel {
   position: absolute;
   left: 50%;
-  bottom: 18px;
+  top: 238px;
+  bottom: auto;
+  z-index: 9;
   width: min(300px, calc(100vw - 36px));
   transform: translateX(-50%);
   padding: 9px 11px;
@@ -4745,10 +4747,13 @@ body {
 
 .tap-target-helper {
   position: absolute;
-  right: 18px;
-  bottom: 72px;
-  z-index: 8;
+  left: 50%;
+  right: auto;
+  top: 326px;
+  bottom: auto;
+  z-index: 9;
   min-width: 118px;
+  transform: translateX(-50%);
   display: grid;
   gap: 2px;
   padding: 9px 11px;
@@ -8441,11 +8446,12 @@ button.other-system-course-card {
   }
 
   .tap-target-helper {
-    left: 10px;
+    left: 50%;
     right: auto;
-    top: 58px;
+    top: 84px;
     bottom: auto;
     min-width: 82px;
+    transform: translateX(-50%);
     padding: 7px 8px;
   }
 

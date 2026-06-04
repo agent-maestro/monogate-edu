@@ -103,14 +103,14 @@ const soundLevelGain: Record<SoundLevel, number> = {
 
 function defaultManagedPanelLayouts(): Record<BenchPanelId, ManagedPanelLayout> {
   return {
-    dashboard: { side: "left", y: 180, width: LIVE_DASHBOARD_MIN_WIDTH, height: LIVE_DASHBOARD_MIN_HEIGHT },
+    dashboard: { side: "left", y: 96, width: LIVE_DASHBOARD_MIN_WIDTH, height: LIVE_DASHBOARD_MIN_HEIGHT },
     inventory: { side: "right", y: 96, width: 360, height: 322 },
     trainer: { side: "right", y: 436, width: 360, height: TRAINER_PANEL_MIN_HEIGHT }
   };
 }
 
 function panelLayoutStorageKey(courseId: string): string {
-  return `electronics-lab:${courseId}:panel-layout:v1`;
+  return `electronics-lab:${courseId}:panel-layout:v2`;
 }
 
 function viewportSize() {

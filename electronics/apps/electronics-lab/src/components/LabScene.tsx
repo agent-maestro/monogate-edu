@@ -250,6 +250,8 @@ const MAX_CAMERA_ZOOM = 1.9;
 const CAMERA_ZOOM_STEP = 0.18;
 const MOBILE_STAGE_ROTATION: Vec3 = [0, Math.PI / 2, 0];
 const DESKTOP_STAGE_ROTATION: Vec3 = [0, 0, 0];
+const MOBILE_STAGE_OFFSET: Vec3 = [0, 0, 0];
+const DESKTOP_STAGE_OFFSET: Vec3 = [-0.28, 0, 0.24];
 
 function clampCameraZoom(nextZoom: number): number {
   return Math.max(MIN_CAMERA_ZOOM, Math.min(MAX_CAMERA_ZOOM, Number(nextZoom.toFixed(2))));
@@ -3946,6 +3948,10 @@ export function LabScene({
   const pinchStartDistanceRef = useRef<number | null>(null);
   const pinchStartZoomRef = useRef(cameraZoom);
   const stageRotation = mobileSceneLayout ? MOBILE_STAGE_ROTATION : DESKTOP_STAGE_ROTATION;
+  const stageOffset = mobileSceneLayout ? MOBILE_STAGE_OFFSET : DESKTOP_STAGE_OFFSET;
+  const padPosition: Vec3 = mobileSceneLayout
+    ? [0, -0.03, 0]
+    : [0.22 + stageOffset[0], -0.03, stageOffset[2]];
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 720px)");
@@ -4024,11 +4030,11 @@ export function LabScene({
       <ZoomControlPanel zoomLevel={cameraZoom} onZoomChange={setCameraZoom} />
       <ambientLight intensity={0.76} />
       <directionalLight position={[3.5, 5, 3]} intensity={1.5} castShadow />
-      <mesh receiveShadow position={mobileSceneLayout ? [0, -0.03, 0] : [0.22, -0.03, 0]}>
+      <mesh receiveShadow position={padPosition}>
         <boxGeometry args={mobileSceneLayout ? [4.4, 0.05, 6.6] : [6.9, 0.05, 3.95]} />
         <meshStandardMaterial color="#343a3e" roughness={0.72} />
       </mesh>
-      <group rotation={stageRotation}>
+      <group position={stageOffset} rotation={stageRotation}>
         <Breadboard
           activePart={activePart}
           highlightedPartId={highlightedPartId}
