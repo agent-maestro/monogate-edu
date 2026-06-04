@@ -5,6 +5,9 @@ import { reflexSimulatorCourse } from "./simulatorCourses";
 const physicalBuildSteps = reflexSimulatorCourse.coursePanel.steps;
 const publicEducationRepoUrl = "https://github.com/agent-maestro/monogate-edu";
 const publicEducationZipUrl = `${publicEducationRepoUrl}/archive/refs/heads/main.zip`;
+const reflexGuardResourceBase = "/electronics/esp32/reflex-guard/resources";
+const reflexGuardHardwareBase = "/electronics/esp32/reflex-guard/hardware";
+const reflexGuardLabBundleBase = "/electronics/esp32/reflex-guard/lab-bundle";
 
 export function PhysicalBuildPanel({
   onLaunchLab,
@@ -77,10 +80,10 @@ export function PhysicalBuildPanel({
             </article>
           </div>
           <div className="physical-download-actions">
-            <a href="/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/setup-guide.pdf" target="_blank" rel="noreferrer">
+            <a href={`${reflexGuardResourceBase}/setup-guide.pdf`} target="_blank" rel="noreferrer">
               <FileText aria-hidden="true" /> Full setup guide
             </a>
-            <a href="/courses/001-reflex-guard/lab-bundle/README.md" target="_blank" rel="noreferrer">
+            <a href={`${reflexGuardLabBundleBase}/README.md`} target="_blank" rel="noreferrer">
               <FileText aria-hidden="true" /> Dashboard notes
             </a>
           </div>
@@ -90,7 +93,7 @@ export function PhysicalBuildPanel({
           <section className="physical-card physical-resources">
             <h2>Resources</h2>
             <div className="resource-list">
-              <a href="/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/quick-start.pdf" target="_blank" rel="noreferrer">
+              <a href={`${reflexGuardResourceBase}/quick-start.pdf`} target="_blank" rel="noreferrer">
                 <FileText aria-hidden="true" />
                 <span>
                   <strong>Printable Quick Start</strong>
@@ -98,7 +101,7 @@ export function PhysicalBuildPanel({
                 </span>
                 <ArrowRight aria-hidden="true" />
               </a>
-              <a href="/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/lab-packet.md" download>
+              <a href={`${reflexGuardResourceBase}/lab-packet.md`} download>
                 <FileText aria-hidden="true" />
                 <span>
                   <strong>Reflex Lab 01 Lab Packet</strong>
@@ -106,7 +109,7 @@ export function PhysicalBuildPanel({
                 </span>
                 <Download aria-hidden="true" />
               </a>
-              <a href="/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/setup-guide.pdf" target="_blank" rel="noreferrer">
+              <a href={`${reflexGuardResourceBase}/setup-guide.pdf`} target="_blank" rel="noreferrer">
                 <FileText aria-hidden="true" />
                 <span>
                   <strong>Computer Setup Guide</strong>
@@ -114,7 +117,7 @@ export function PhysicalBuildPanel({
                 </span>
                 <ArrowRight aria-hidden="true" />
               </a>
-              <a href="/courses/001-reflex-guard/hardware/bom.md" target="_blank" rel="noreferrer">
+              <a href={`${reflexGuardHardwareBase}/bom.md`} target="_blank" rel="noreferrer">
                 <FileText aria-hidden="true" />
                 <span>
                   <strong>Bill Of Materials</strong>
@@ -122,7 +125,7 @@ export function PhysicalBuildPanel({
                 </span>
                 <ArrowRight aria-hidden="true" />
               </a>
-              <a href="/courses/001-reflex-guard/hardware/build-guide.md" target="_blank" rel="noreferrer">
+              <a href={`${reflexGuardHardwareBase}/build-guide.md`} target="_blank" rel="noreferrer">
                 <FileText aria-hidden="true" />
                 <span>
                   <strong>Build Guide</strong>
@@ -130,7 +133,7 @@ export function PhysicalBuildPanel({
                 </span>
                 <ArrowRight aria-hidden="true" />
               </a>
-              <a href="/courses/001-reflex-guard/hardware/schematic.md" target="_blank" rel="noreferrer">
+              <a href={`${reflexGuardHardwareBase}/schematic.md`} target="_blank" rel="noreferrer">
                 <FileText aria-hidden="true" />
                 <span>
                   <strong>Reference Schematic</strong>
@@ -138,7 +141,7 @@ export function PhysicalBuildPanel({
                 </span>
                 <ArrowRight aria-hidden="true" />
               </a>
-              <a href="/courses/001-reflex-guard/lab-01-pot-to-guarded-output/resources/reflexcourse/evidence-packet-guide.md" target="_blank" rel="noreferrer">
+              <a href={`${reflexGuardResourceBase}/evidence-packet-guide.md`} target="_blank" rel="noreferrer">
                 <FileText aria-hidden="true" />
                 <span>
                   <strong>Evidence Packet Guide</strong>
@@ -146,7 +149,7 @@ export function PhysicalBuildPanel({
                 </span>
                 <ArrowRight aria-hidden="true" />
               </a>
-              <a href="/courses/001-reflex-guard/lab-bundle/start-reflex-dashboard.bat" download>
+              <a href={`${reflexGuardLabBundleBase}/start-reflex-dashboard.bat`} download>
                 <Download aria-hidden="true" />
                 <span>
                   <strong>Dashboard Launcher</strong>
@@ -154,7 +157,7 @@ export function PhysicalBuildPanel({
                 </span>
                 <Download aria-hidden="true" />
               </a>
-              <a href="/courses/001-reflex-guard/lab-bundle/README.md" target="_blank" rel="noreferrer">
+              <a href={`${reflexGuardLabBundleBase}/README.md`} target="_blank" rel="noreferrer">
                 <FileText aria-hidden="true" />
                 <span>
                   <strong>Dashboard Bundle Notes</strong>
