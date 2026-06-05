@@ -1,21 +1,27 @@
 {
   "schema_version": "monogate-electronics.public-curriculum-export.v0",
-  "generated_at": "2026-06-04T23:15:16.609605+00:00",
+  "generated_at": "2026-06-05T02:02:40.007284+00:00",
   "source_repo": "monogate-electronics",
   "public_repo": "monogate-edu",
-  "source_commit": "36e5803e1bf76cf2dc15326e6e9af7fdf5ae71bd",
+  "source_commit": "ca82670e9398b2435284c5c46d16403c3380f064",
   "source_dirty": false,
-  "target_profile": "monogate-edu-electronics-esp32-launch-courses-001-005",
+  "target_profile": "monogate-edu-electronics-public-courses",
   "included_courses": [
     "esp32/001-reflex-guard",
     "esp32/002-analog-decisions",
     "esp32/003-environmental-guard-node",
     "esp32/004-light-systems",
     "esp32/005-multi-input-fusion",
+    "artya7/008-arty-a7-reflex-logic",
     "courses/001-reflex-guard"
   ],
   "private_path_policy": "allowlisted public course files only; private working folders are excluded",
   "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 14,
+      "sha256": "fdfa7b607b52326cb536a984c43634aaa9afd5fb2c3df583c525f68615a80fad"
+    },
     {
       "path": ".github/workflows/validate-electronics.yml",
       "bytes": 767,
@@ -118,8 +124,8 @@
     },
     {
       "path": "electronics/apps/electronics-lab/src/App.tsx",
-      "bytes": 9079,
-      "sha256": "b2472e34109bb4c54d91500c7b9f89490a6513270eacdc4c74a93ac850f129af"
+      "bytes": 9202,
+      "sha256": "402843f030065d1fd8513a579e6ccf28c3b1db62b46ead64f44fe209a78d92d8"
     },
     {
       "path": "electronics/apps/electronics-lab/src/components/BoundaryLab.tsx",
@@ -163,8 +169,8 @@
     },
     {
       "path": "electronics/apps/electronics-lab/src/components/LandingPage.tsx",
-      "bytes": 51693,
-      "sha256": "78f427a7612a2de07460c5c556a388f39b2a20f948d2ade0e6cf92e087d74942"
+      "bytes": 51788,
+      "sha256": "3e69659d3a582c605a05386705bdbf80bf241e9479dbfd331c4354c78f48b4a0"
     },
     {
       "path": "electronics/apps/electronics-lab/src/components/OptimizationBoundaryLab.tsx",
@@ -268,8 +274,8 @@
     },
     {
       "path": "electronics/apps/electronics-lab/tests/mvp.spec.ts",
-      "bytes": 70098,
-      "sha256": "cddf2f14800baab0ce03268b2150a258411928688f6f0fcfe26e74a0f20f137a"
+      "bytes": 70121,
+      "sha256": "571b5ea94af4c21abb86be254c9c4b7598e6359fca7649a752367ab76db2b81e"
     },
     {
       "path": "electronics/apps/electronics-lab/tsconfig.json",
@@ -285,6 +291,116 @@
       "path": "electronics/apps/electronics-lab/vitest.config.ts",
       "bytes": 182,
       "sha256": "0e37c1139c03939b4637f80ee77568cb1e55534f609da44e43a97b597586b05c"
+    },
+    {
+      "path": "electronics/artya7/boards/arty_a7/constraints/arty_a7_reflex.xdc",
+      "bytes": 2126,
+      "sha256": "fbaf1213e39bb679f87d463bb3e5b6a34ec3eba91fb114ff8124b5d7e9734cd9"
+    },
+    {
+      "path": "electronics/artya7/boards/arty_a7/PIN_MAP.md",
+      "bytes": 2182,
+      "sha256": "c44992cb9c7e2d043e23c10bc8de4d707eb1da998d2d8632e499017aefaf75e0"
+    },
+    {
+      "path": "electronics/artya7/boards/arty_a7/README.md",
+      "bytes": 328,
+      "sha256": "928a7cdcf75a713076e5cc2000bb486f58f319def319c119744ad403ac374af1"
+    },
+    {
+      "path": "electronics/artya7/boards/arty_a7/rtl/arty_a7_reflex_top.v",
+      "bytes": 4297,
+      "sha256": "2b600ff58097294afa36b676be9aef8347b4444af4c8f82b3b2c1fb36506aecb"
+    },
+    {
+      "path": "electronics/artya7/boards/arty_a7/rtl/debounce.v",
+      "bytes": 861,
+      "sha256": "9a791e60977574bb6354dbb43887c3f4e1d4f70590db79da9c7fbf763ad1c9e4"
+    },
+    {
+      "path": "electronics/artya7/boards/arty_a7/rtl/guard_clamp.v",
+      "bytes": 971,
+      "sha256": "f712300dcd731f6781dd5fa4a377ff5591393c5eaf1045d10444d15c57041569"
+    },
+    {
+      "path": "electronics/artya7/boards/arty_a7/rtl/json_frame_rom.v",
+      "bytes": 6649,
+      "sha256": "e00855a8ac1233c54f1255eac8d29ea55f0d0c661792546ae1beb539ea282800"
+    },
+    {
+      "path": "electronics/artya7/boards/arty_a7/rtl/reflex_kernel.v",
+      "bytes": 437,
+      "sha256": "bea5a8798b5dc226a4fc3318037d3028eb87eb09806bf33a7ca0732227b85bde"
+    },
+    {
+      "path": "electronics/artya7/boards/arty_a7/rtl/uart_tx.v",
+      "bytes": 1393,
+      "sha256": "81e1741d3378cd86393bed9c32289dc9f6bb6c49853576905f11a7c58e6167de"
+    },
+    {
+      "path": "electronics/artya7/boards/arty_a7/validation/sim/tb_guard_clamp.v",
+      "bytes": 1140,
+      "sha256": "3edf23bd19b60c0feb9642916355dec72f3fe3e7f0c3f684681d7acc59e14720"
+    },
+    {
+      "path": "electronics/artya7/boards/arty_a7/validation/sim/tb_reflex_kernel.v",
+      "bytes": 1185,
+      "sha256": "3a30d753818745b56eed7adf23f2583add74317a7909b2f34ed39d6a01e1d1e9"
+    },
+    {
+      "path": "electronics/artya7/boards/arty_a7/validation/simulate_fpga_reflex.py",
+      "bytes": 2786,
+      "sha256": "39f1603e9388579c06969058596d708b5e5c7504aaa75c1a6f12b2a3d2fb924d"
+    },
+    {
+      "path": "electronics/artya7/boards/arty_a7/validation/validate_fpga_frame.py",
+      "bytes": 1971,
+      "sha256": "bc3e2ebb110458728017f770df166e20a8a9080fb83d27d78afebc6805dc6fc2"
+    },
+    {
+      "path": "electronics/artya7/courses/008-arty-a7-reflex-logic/lab-01-simulated-switch-guard/README.md",
+      "bytes": 1202,
+      "sha256": "8128da8994a66e0a5cef1ac7bf8e40211ec42253517e41169a285fcc75792121"
+    },
+    {
+      "path": "electronics/artya7/courses/008-arty-a7-reflex-logic/lab-02-onboard-led-uart/README.md",
+      "bytes": 1400,
+      "sha256": "222a34bba02fb1866ce13a30ad31755a130aa5209ddd438d7df87085bb805add"
+    },
+    {
+      "path": "electronics/artya7/courses/008-arty-a7-reflex-logic/lab-03-pmod-upgrade-map/README.md",
+      "bytes": 1048,
+      "sha256": "42e23836a194c1951b37e9dd3f4972908908d0a5d1420ea817764634f3970a07"
+    },
+    {
+      "path": "electronics/artya7/courses/008-arty-a7-reflex-logic/README.md",
+      "bytes": 2920,
+      "sha256": "8763983e77f89dabbcac31028891f8d56a55cc814160b9ab66d0487a7604f9e4"
+    },
+    {
+      "path": "electronics/artya7/courses/008-arty-a7-reflex-logic/RELEASE_CHECKLIST.md",
+      "bytes": 1812,
+      "sha256": "cb5e7af111bd70e8e10826f0ac9233bfc1c184d61c231e3c1bb08ab2b2cc155a"
+    },
+    {
+      "path": "electronics/artya7/courses/008-arty-a7-reflex-logic/resources/inventory-map.md",
+      "bytes": 1677,
+      "sha256": "cd4a9b054fec893fba1b55f2090b32f6411c0ce44fd596b1d06132a63b37b84d"
+    },
+    {
+      "path": "electronics/artya7/courses/008-arty-a7-reflex-logic/syllabus.md",
+      "bytes": 1728,
+      "sha256": "041911680b415a316d249510739b81d131537d9a9145fe7b153f33d4b4fb9e7e"
+    },
+    {
+      "path": "electronics/artya7/courses/README.md",
+      "bytes": 87,
+      "sha256": "fdf90e96c37cb422ebfce1ba0bc22541862046a83aeb5328ea3a6726d97e7df1"
+    },
+    {
+      "path": "electronics/artya7/README.md",
+      "bytes": 662,
+      "sha256": "f93fab82f122ce62c476f9aff326f5eec45a3648869e86ee9738ee16f7ff353d"
     },
     {
       "path": "electronics/CONTRIBUTING.md",
@@ -498,8 +614,8 @@
     },
     {
       "path": "electronics/docs/starter-kernel-map.md",
-      "bytes": 5018,
-      "sha256": "45a65eeb676beef1cc7e5c8b2b41cda942771ad3d2b487b1348031fe39ecf1d0"
+      "bytes": 5543,
+      "sha256": "70e85b0f33025d0fb4d637dc2a9b447e69d2d65661ef72159c2ea96a219bcd75"
     },
     {
       "path": "electronics/esp32/course-pattern.md",
@@ -688,8 +804,8 @@
     },
     {
       "path": "electronics/README.md",
-      "bytes": 1676,
-      "sha256": "fed128f971ad8098196c4e85983163db4219400186f8dfdf2829f1f4cd739a60"
+      "bytes": 1766,
+      "sha256": "de4c9e0d55c470c25472b9a02514d51f65a3f21916ea2f171bd56f7257de0dec"
     },
     {
       "path": "electronics/resources/README.md",

@@ -62,7 +62,7 @@ const appRoutes: Record<LandingTarget, string> = {
   physical: "/electronics/esp32/reflex-guard/physical",
   glossary: "/electronics/glossary",
   courseGlossary: "/electronics/esp32/reflex-guard/glossary",
-  arty: "/electronics/arty-a7",
+  arty: "/electronics/artya7/courses",
   other: "/electronics/other",
   boundary: "/electronics/other/OptimizationBoundary",
   boundarySoftware: "/electronics/other/OptimizationBoundary/software",
@@ -98,7 +98,13 @@ function viewFromLocation(): AppView {
   if (routeKey === "/electronics/reflexcourse/glossary" || routeKey === "/electronics/esp32/reflex-guard/glossary") return "courseGlossary";
   if (routeKey === "/electronics/glossary") return "glossary";
   if (routeKey === "/electronics/reflexcourse" || routeKey === "/electronics/esp32/reflex-guard") return "reflexGuard";
-  if (routeKey === "/electronics/arty-a7") return "arty";
+  if (
+    routeKey === "/electronics/artya7" ||
+    routeKey === "/electronics/artya7/courses" ||
+    routeKey === "/electronics/arty-a7"
+  ) {
+    return "arty";
+  }
   if (routeKey === "/electronics/other" || routeKey === "/electronics/othersystems") return "other";
   if (
     routeKey === "/electronics/other/optimizationboundary/software" ||

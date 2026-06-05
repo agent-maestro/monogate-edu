@@ -73,7 +73,7 @@ test("hardware path cards are clickable", async ({ page }) => {
 
   await page.goto("/electronics");
   await page.getByRole("button", { name: "Preview FPGA / Arty A7 path" }).click();
-  await expect(page).toHaveURL(/\/electronics\/arty-a7$/);
+  await expect(page).toHaveURL(/\/electronics\/artya7\/courses$/);
 });
 
 test("electronics URLs can be opened directly", async ({ page }) => {
@@ -95,8 +95,8 @@ test("electronics URLs can be opened directly", async ({ page }) => {
   await page.goto("/electronics/esp32/boundary-hardware-demo");
   await expect(page.getByRole("main", { name: "Boundary Hardware Demo course preview" })).toContainText("Hardware feel");
 
-  await page.goto("/electronics/arty-a7");
-  await expect(page.getByRole("main", { name: "Arty A7 electronics roadmap" })).toContainText("EML Signal Weaver");
+  await page.goto("/electronics/artya7/courses");
+  await expect(page.getByRole("main", { name: "Arty A7 electronics courses" })).toContainText("008: Arty A7 Reflex Logic");
 
   await page.goto("/electronics/other");
   await expect(page.getByRole("main", { name: "Other Systems electronics courses" })).toContainText("Optimization Boundary");

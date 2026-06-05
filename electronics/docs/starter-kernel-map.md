@@ -13,7 +13,7 @@ sensor/input -> starter kernel -> guard -> physical output -> trace -> replay ->
 | --- | --- | --- | --- | --- | --- |
 | Reflex Lab Series | 01: Pot to Guarded LED | `threshold_reflex_v0` | Trainer Board v0: potentiometer, LED, resistor, ESP32 | active | Learn thresholding, rate limiting, clamping, and JSONL replay |
 | Reflex Lab Series | 02: Guarded Buzzer | `threshold_reflex_v0` extension | Trainer Board v0: piezo on GPIO26 | planned next | Add audible output only after LED safety is understood |
-| Forge Logic Series | Arty A7 / FPGA | TBD | Arty A7 and Pmods | roadmap | Move EML/Forge demos into verifiable FPGA signal projects |
+| Forge Logic Series | 008: Arty A7 Reflex Logic | `threshold_reflex_v0` FPGA adapter | Arty A7 onboard switches/buttons/LEDs, optional Pmods later | planning skeleton | Move the reflex loop into FPGA logic with fixed-point guard clamp, UART trace, and evidence |
 | Field Systems Series | Soundfield Kernels | `soundfield_energy_v0` | INMP441 microphone, 64x64 RGB matrix | active scaffold | Map sound features into guarded visual output |
 | Field Systems Series | Environmental Guard Node | `environment_guard_v0` | BME280 sensor, SSD1306 OLED, LED, piezo | active scaffold | Sense environment, show local state, handle stale data, replay alerts |
 | Field Systems Series | Magnetic Actuator Node | `magnetic_actuator_v0` | Hall sensor, MOSFET, diode, low-voltage electromagnet | planned | Learn feedback, current/time guards, and actuator boundaries |
@@ -93,6 +93,19 @@ voltage dividers, Boolean interlocks, and the optimization-boundary blueprint.
 The boundary module treats the Trainer Board as a future tactile control
 surface for replayable high-dimensional EML experiments, not as a physical
 high-dimensional optimizer.
+
+### 008: Arty A7 Reflex Logic
+
+Core idea:
+
+```text
+switch bits -> fixed-point request -> guard clamp -> onboard LEDs -> UART JSONL trace
+```
+
+Best first FPGA course because it uses the Arty A7 board itself before adding
+Pmods. The core lab is simulation-first and onboard-only. Pmod 8LD, SSD, and
+ENC become optional upgrades after the learner understands the switch-to-guard
+trace.
 
 ### Robotics Path: Portable Guard Kernels
 

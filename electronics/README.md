@@ -10,6 +10,7 @@ released courses.
 
 - [Start Here](START_HERE.md)
 - [ESP32 Launch Track](esp32/README.md)
+- [Arty A7 Track](artya7/README.md)
 - [Starter Bundle](starter-bundle/README.md)
 - [Course Index](COURSE_INDEX.md)
 - [001 Reflex Guard](courses/001-reflex-guard/README.md)
@@ -21,6 +22,7 @@ released courses.
 
 ```text
 esp32/       Courses 1-5 launch track skeleton
+artya7/      Arty A7 / Forge Logic course skeletons
 courses/     learner-facing course content
 kernels/     shared EML kernels
 tools/       validators, replay tools, and packet helpers

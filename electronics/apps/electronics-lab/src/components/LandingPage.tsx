@@ -1214,39 +1214,41 @@ export function OptimizationBoundaryCourseSelect({
 
 export function ArtyA7Preview({ onBack }: { onBack: () => void }) {
   return (
-    <main className="landing-shell" aria-label="Arty A7 electronics roadmap">
+    <main className="landing-shell" aria-label="Arty A7 electronics courses">
       <section className="course-select-page roadmap-page">
         <button className="landing-back-button" type="button" onClick={onBack}>
           Back
         </button>
         <div className="course-select-copy">
-          <p>FPGA / Forge Logic</p>
-          <h1>Arty A7</h1>
+          <p>FPGA / Forge Logic Courses</p>
+          <h1>Arty A7 Courses</h1>
           <span>
-            The FPGA track is available as an advanced roadmap preview. The suggested path starts with Reflex Lab, but experienced FPGA users can inspect this lane directly.
+            The FPGA lane starts with an onboard-only Arty A7 reflex loop before any Pmods, audio, VGA, or external outputs become part of the course path.
           </span>
         </div>
 
         <div className="roadmap-grid">
           <article className="course-mode-card roadmap-card">
             <Cpu aria-hidden="true" />
-            <h2>EML Signal Weaver</h2>
+            <p>planning skeleton</p>
+            <h2>008: Arty A7 Reflex Logic</h2>
             <p>
-              A procedural media demo where one EML definition drives audio, visuals, controls, and replayable traces.
+              Switches feed a fixed-point reflex kernel, a guard clamp drives onboard LEDs, and UART frames become the evidence surface.
             </p>
           </article>
           <article className="course-mode-card roadmap-card">
             <BookOpen aria-hidden="true" />
-            <h2>Planned Pmods</h2>
+            <p>optional upgrades</p>
+            <h2>Pmod Upgrade Path</h2>
             <p>
-              OLEDrgb, keypad, seven-segment display, light/color sensors, encoder, VGA, I2S2 audio, and 8LD output.
+              Pmod 8LD, SSD, and ENC are the first upgrade candidates. OLEDrgb, VGA, I2S2, ALS, and COLOR belong to later courses.
             </p>
           </article>
         </div>
 
         <div className="roadmap-note">
-          <strong>Suggested order:</strong>
-          <span>Reflex Lab Series first for the smoothest path. Experienced users can jump into Forge Logic readiness notes without unlocking anything.</span>
+          <strong>Boundary:</strong>
+          <span>Simulation is open by default. FPGA programming, live UART capture, and Pmod wiring require explicit operator approval.</span>
         </div>
       </section>
     </main>
